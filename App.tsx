@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 import React from 'react'
 import OnLanding from './src/screens/onBoardingScreens/OnLanding'
 import RegisterScreen from './src/screens/onBoardingScreens/RegisterScreen';
@@ -14,8 +14,7 @@ const Logo = () => {
   return (
     <View style={{ flex: 1, flexDirection: 'row', justifyContent: "space-between" }}>
       <Image
-        // style={{ width: 50, height: 50 }}
-        source={require('../Quibs/src/assets/logo.png')}
+        source={require('../Quib/src/assets/logo.png')}
       />
     </View>
 
