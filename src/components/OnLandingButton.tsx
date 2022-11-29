@@ -1,16 +1,17 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+import { useNavigation } from '@react-navigation/native';
 interface props {
     text: string;
     onPress: any;
-
 }
 
 
 export default function OnLandingButton({ text, onPress }: props) {
+    const navigation = useNavigation();
     return (
 
-        <TouchableOpacity activeOpacity={.4} onPress={onPress}>
+        <TouchableOpacity activeOpacity={.4} onPress={()=>{navigation.navigate(onPress as never)}}>
             <View style={styles.button}>
                 <Text style={styles.buttonTxt}>{text}</Text>
             </View>

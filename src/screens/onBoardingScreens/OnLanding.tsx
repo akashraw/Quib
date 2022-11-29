@@ -56,23 +56,17 @@ export default function OnLanding({navigation}: props) {
           }}>
           <OnLandingButton
             text={'Join'}
-            onPress={() => {
-              navigation.navigate('Register');
-            }}
+            onPress="Register"
           />
           <OnLandingButton
             text={'Visit'}
-            onPress={() => {
-              navigation.navigate('Register');
-            }}
+            onPress="null"
           />
         </View>
         <View style={{marginTop: 20, alignItems: 'center'}}>
           <OnLandingButton
             text={'Log In'}
-            onPress={() => {
-              navigation.navigate('Login');
-            }}
+            onPress="Login"
           />
         </View>
       </View>

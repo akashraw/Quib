@@ -1,27 +1,40 @@
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, Touchable, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import OnLanding from './src/screens/onBoardingScreens/OnLanding'
 import RegisterScreen from './src/screens/onBoardingScreens/RegisterScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import OnLandingButton from './src/components/OnLandingButton';
 import LoginScreen from './src/screens/onBoardingScreens/LoginScreen';
 
+export type RootStackParamList = {
+  Home: undefined;
+  Register: undefined;
+  Login: undefined;
+
+}
 
 const Stack = createNativeStackNavigator();
-
-const Logo = () => {
+interface props {
+  navigation: any;
+}
+const Logo: React.FC = () => {
+  const navigation = useNavigation();
   return (
-    <View style={{ flex: 1, flexDirection: 'row', justifyContent: "space-between" }}>
-      <Image
-        source={require('../Quib/src/assets/logo.png')}
-      />
+    <View >
+      <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
+        <Image
+          source={require('./src/assets/logo.png')}
+        />
+      </TouchableOpacity>
+
     </View>
 
   )
 }
 
-export default function App() {
+export default function App({navigation} : any) {
+  
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#91b9b8' } }} initialRouteName="Home">
@@ -29,7 +42,7 @@ export default function App() {
         <Stack.Screen name='Register' component={RegisterScreen} options={{
           headerTitle: () => <Logo />,
           headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Log In" onPress={null} />,
+          headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
         }} />
         <Stack.Screen name='Login' component={LoginScreen} options={{
           headerTitle: () => <Logo />,
