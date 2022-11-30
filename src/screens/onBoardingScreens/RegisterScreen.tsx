@@ -6,6 +6,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import CheckBox from '@react-native-community/checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Style } from '../../constants/Styles';
+import { GetAllMovies } from '../../services/QuibMovies';
 
 interface props {
     navigation: any;
@@ -19,6 +20,7 @@ export default function RegisterScreen(props: props) {
     const [Name, setName] = useState('');
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [Img, setImg] = useState('');
+    const [selectImg, setSelectImg] = useState(false);
 
     const Color = "#5555";
 
@@ -29,6 +31,19 @@ export default function RegisterScreen(props: props) {
             )
         else return <Image style={{ width: 100, height: 100, resizeMode: 'contain', borderWidth: 3, borderColor: '#222222', borderRadius: 64, }} source={{ uri: Img }} />
     }
+    const SelImg = () => {
+        if (!selectImg)
+            return (
+                <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
+                    <Text style={styles.upTxt}>Choose Image</Text>
+                </TouchableOpacity>
+            )
+        else return (
+            <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
+                <Text style={styles.upTxt}>Change Image</Text>
+            </TouchableOpacity>
+        )
+    }
     const Register = () => {
         // if (!Email && !Password && !ConfirmPassword && !Name && !Img && toggleCheckBox)
         //     return console.log('please fill the form');
@@ -37,7 +52,9 @@ export default function RegisterScreen(props: props) {
             .then((res) => {
                 console.log(res)
             })
+            
     }
+    
     const lunchImgLib = () => {
         ImagePicker.openPicker({
             width: 100,
@@ -46,6 +63,7 @@ export default function RegisterScreen(props: props) {
             includeBase64: true,
         }).then(image => setImg(image.path))
             .catch(e => { console.log(e) });
+            setSelectImg(true);
     }
 
     return (
@@ -81,9 +99,7 @@ export default function RegisterScreen(props: props) {
                 {/* upload */}
                 <View style={styles.upPhotoWrap}>
                     <UserIcon />
-                    <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
-                        <Text style={styles.upTxt}>Choose Image</Text>
-                    </TouchableOpacity>
+                    <SelImg />
                 </View>
                 <View style={styles.scrollWrap}>
                     <ScrollView>

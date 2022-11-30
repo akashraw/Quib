@@ -59,7 +59,7 @@ export default function LoginScreen(props: props) {
             <OnLandingButton text={'Join'} onPress="Register" />
           </View>
           <View style={{paddingVertical:10,}}>
-            <OnLandingButton text={'Visit'} onPress="Login" />
+            <OnLandingButton text={'Visit'} onPress="Choose" />
           </View>
         </View>
       </View>

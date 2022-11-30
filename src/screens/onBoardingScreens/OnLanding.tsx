@@ -60,7 +60,7 @@ export default function OnLanding({navigation}: props) {
           />
           <OnLandingButton
             text={'Visit'}
-            onPress="null"
+            onPress="Choose"
           />
         </View>
         <View style={{marginTop: 20, alignItems: 'center'}}>
@@ -117,10 +117,10 @@ const Slides = [
   },
   {
     key: 2,
-    img: require('../../assets/onLanding/JawsQuibs.png'),
+    img: require('../../assets/onLanding/TheConversationQuib.png'),
   },
   {
     key: 3,
-    img: require('../../assets/onLanding/TheConversationQuib.png'),
+    img: require('../../assets/onLanding/JawsQuibs.png'),
   },
 ];

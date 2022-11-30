@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import OnLandingButton from './src/components/OnLandingButton';
 import LoginScreen from './src/screens/onBoardingScreens/LoginScreen';
+import ChooseMovies from './src/screens/visitScreen/ChooseMovies';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -47,7 +48,12 @@ export default function App({navigation} : any) {
         <Stack.Screen name='Login' component={LoginScreen} options={{
           headerTitle: () => <Logo />,
           headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Join" onPress={null} />,
+          headerRight: () => <OnLandingButton text="Join" onPress="Register" />,
+        }} />
+        <Stack.Screen name='Choose' component={ChooseMovies} options={{
+          headerTitle: () => <Logo />,
+          headerBackVisible: false,
+          headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
         }} />
 
       </Stack.Navigator>
