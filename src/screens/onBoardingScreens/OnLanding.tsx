@@ -27,7 +27,6 @@ export default function OnLanding({navigation}: props) {
         <Text style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
           horizontal
-          snapToInterval={width}
           decelerationRate="fast"
           pagingEnabled
           keyExtractor={(_, index) => index.toString()}
