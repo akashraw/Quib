@@ -17,11 +17,11 @@ export default function ChooseMovies() {
 
   const MovieBanner = ({ item, index }: any) => {
     return (
-      <View>
+      <View style={{margin:5,}}>
         {/* bannner top */}
         <View key={index} style={styles.movieBanner}>
-          <View>
-            <Image style={{width:55, height:70}} source={item.thumb} />
+          <View style={{padding:5}}>
+            <Image style={{width:40, height:55}} source={item.thumb} />
           </View>
           <View>
             <Text style={[styles.title, styles.txt]}>{item?.title}</Text>
@@ -30,10 +30,10 @@ export default function ChooseMovies() {
           </View>
         </View>
         {/* banner bottom */}
-        <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'center',}}>
-          <Text style={[styles.txt, {color:Style.defaultRed, fontWeight:'bold', textAlign:'center'}]}>Play Quibs</Text>
+        {/* <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'center', backgroundColor:'#CCCC99',}}>
+          <Text style={[styles.txt, {color:Style.defaultRed, fontWeight:'bold', textAlign:'center'}]}>PLAY QUIB</Text>
           <Icon name='caret-forward-outline' size={28} color={Style.defaultRed} />
-        </View>
+        </View> */}
       </View>
 
 
@@ -41,11 +41,12 @@ export default function ChooseMovies() {
   }
   return (
     <SafeAreaView>
-      <View style={{ alignItems: 'center' }}>
+      <View style={{ alignItems: 'center', margin:10,}}>
         <FlatList
           bounces={false}
+          numColumns={0}
           keyExtractor={(_, index) => index.toString()}
-          pagingEnabled
+          showsVerticalScrollIndicator={false}
           data={GetAllMovies}
           renderItem={({ item, index }) => (MovieBanner({ item, index }))}
         />
@@ -57,14 +58,16 @@ export default function ChooseMovies() {
 
 const styles = StyleSheet.create({
   movieBanner: {
-    width: vw(50),
-    height: vh(15),
+    width: vw(85),
+    height: vh(9),
     flexDirection: 'row',
-    backgroundColor: Style.defaultTxtColor,
+    backgroundColor: Style.quibColor,
     alignItems: 'center',
   },
   txt:{
-    fontSize:16,
+    fontSize:14,
+    color:Style.quibText,
+    fontWeight:'bold'
   },
   title:{},
   year: {},

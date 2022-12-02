@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Touchable, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import OnLanding from './src/screens/onBoardingScreens/OnLanding'
 import RegisterScreen from './src/screens/onBoardingScreens/RegisterScreen';
@@ -6,7 +6,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import OnLandingButton from './src/components/OnLandingButton';
 import LoginScreen from './src/screens/onBoardingScreens/LoginScreen';
-import ChooseMovies from './src/screens/visitScreen/ChooseMovies';
+import ChooseMovies from './src/screens/visitScreens/ChooseMovies';
+import { Style } from './src/constants/Styles';
+import  Icon from 'react-native-vector-icons/FontAwesome';
+import QuibPlayer from './src/screens/quibPlayer/QuibPlayer';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -19,7 +22,7 @@ const Stack = createNativeStackNavigator();
 interface props {
   navigation: any;
 }
-const Logo: React.FC = () => {
+const Logo = () => {
   const navigation = useNavigation();
   return (
     <View >
@@ -33,9 +36,20 @@ const Logo: React.FC = () => {
 
   )
 }
+const WWQ = () => {
+  const navigation = useNavigation();
+  return (
+    <View >
+      <TouchableOpacity  style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}} onPress={() => navigation.navigate('Home' as never)}>
+        <Icon name='angle-left' size={50} color={Style.defaultRed} />
+        <Text style={{fontSize:20, fontWeight:'bold', paddingLeft:6, color:Style.defaultRed}}>What we're quibbing</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
 
-export default function App({navigation} : any) {
-  
+export default function App({ navigation }: any) {
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#91b9b8' } }} initialRouteName="Home">
@@ -51,11 +65,15 @@ export default function App({navigation} : any) {
           headerRight: () => <OnLandingButton text="Join" onPress="Register" />,
         }} />
         <Stack.Screen name='Choose' component={ChooseMovies} options={{
-          headerTitle: () => <Logo />,
+          headerTitle: () => <WWQ />,
           headerBackVisible: false,
           headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
         }} />
-
+        <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
+          headerTitle: () => <WWQ />,
+          headerBackVisible: false,
+          headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
 
