@@ -11,21 +11,27 @@ const screen = Dimensions.get('window');
 interface props {
     navigation: any;
 }
+const getFormattedTime=(time: number)=>{
+    const hours = Math.floor(time/3600);
+    const mintues = Math.floor((time-(hours*3600))/60);
+    const seconds = time -(hours*3600)-(mintues*60);
+    return {hours, mintues, seconds}
+}
 export default function QuibPlayer(props: props) {
-    const MovieLen = 3;
+    const MovieLen = 60;
     const animationRef = useRef<Lottie>(null)
     const timer = useRef(0);
     const [MovieTime, setMovieTime] = useState(0);
     const [Active, setActive] = useState(false);
     const [PlayPause, setPlayPause] = useState('play');
-
+    const {hours, mintues, seconds} = getFormattedTime(MovieTime);
     //play button
     const toggle = () => {
         if (Active == false) {
             setActive(!Active);
             return setPlayPause('pause');
         }
-        if (Active == true) {
+        else {
             setActive(!Active);
             return setPlayPause('play');
         }
@@ -44,7 +50,14 @@ export default function QuibPlayer(props: props) {
     if (MovieTime === MovieLen) {
         clearInterval(timer.current);
     }
-
+    const IncSecond = () => {
+        if (MovieTime < MovieLen)
+            return setMovieTime((MovieTime) => MovieTime + 1)
+    }
+    const DecSecond = () => {
+        if (MovieTime > 0)
+            return setMovieTime((MovieTime) => MovieTime - 1)
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
@@ -57,15 +70,15 @@ export default function QuibPlayer(props: props) {
                     }
                     headerNode={
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => setMovieTime((MovieTime) => MovieTime - 1)}>
+                            <TouchableOpacity onPress={DecSecond}>
                                 <Icon name='minus-circle-outline' size={32} color={Style.defaultRed} />
                             </TouchableOpacity>
                             <TouchableOpacity>
                                 <View style={styles.timer}>
-                                    <Text style={{ textAlign: 'center', color: '#fff' }}>{MovieTime}</Text>
+                                    <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours<10)?`0`+`${hours}`:`${hours}`}:{(mintues<10)?(`0`+`${mintues}`):`${mintues}`}:{(seconds<10)?(`0`+`${seconds}`):`${seconds}`}</Text>
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setMovieTime((MovieTime) => MovieTime + 1)}>
+                            <TouchableOpacity onPress={IncSecond}>
                                 <Icon name='plus-circle-outline' size={32} color={Style.defaultRed} />
                             </TouchableOpacity>
                         </View>
