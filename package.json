@@ -15,6 +15,8 @@
     "@react-native-cookies/cookies": "^6.2.1",
     "@react-navigation/native": "^6.0.14",
     "@react-navigation/native-stack": "^6.9.2",
+    "lottie-ios": "^3.4.0",
+    "lottie-react-native": "^5.1.4",
     "react": "18.1.0",
     "react-native": "0.70.6",
     "react-native-image-crop-picker": "^0.38.1",

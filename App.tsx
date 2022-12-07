@@ -48,11 +48,12 @@ const WWQ = () => {
   )
 }
 
+
 export default function App({ navigation }: any) {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#91b9b8' } }} initialRouteName="Home">
+      <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader} }} initialRouteName="Home">
         <Stack.Screen name='Home' component={OnLanding} options={{ headerTitle: () => <Logo /> }} />
         <Stack.Screen name='Register' component={RegisterScreen} options={{
           headerTitle: () => <Logo />,
@@ -70,9 +71,7 @@ export default function App({ navigation }: any) {
           headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
         }} />
         <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
-          headerTitle: () => <WWQ />,
-          headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
+          headerShown:false
         }} />
       </Stack.Navigator>
     </NavigationContainer>
