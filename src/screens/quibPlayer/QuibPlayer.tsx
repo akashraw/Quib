@@ -1,55 +1,59 @@
 import { Image, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Style } from '../../constants/Styles'
 import { vmin, vmax, vw, vh, percentage } from 'rxn-units';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import PageHeader from '../../components/CustomHeader';
 import Lottie from 'lottie-react-native'
+import Slider from '@react-native-community/slider'
 const screen = Dimensions.get('window');
 
 interface props {
     navigation: any;
 }
-const getFormattedTime=(time: number)=>{
-    const hours = Math.floor(time/3600);
-    const mintues = Math.floor((time-(hours*3600))/60);
-    const seconds = time -(hours*3600)-(mintues*60);
-    return {hours, mintues, seconds}
+const getFormattedTime = (time: number) => {
+    const hours = Math.floor(time / 3600);
+    const mintues = Math.floor((time - (hours * 3600)) / 60);
+    const seconds = time - (hours * 3600) - (mintues * 60);
+    return { hours, mintues, seconds }
 }
 export default function QuibPlayer(props: props) {
     const MovieLen = 60;
-    const animationRef = useRef<Lottie>(null)
+    const isActive = useRef(false);
     const timer = useRef(0);
     const [MovieTime, setMovieTime] = useState(0);
-    const [Active, setActive] = useState(false);
+    const [PreviewTime, setPreviewTime] = useState(0)
     const [PlayPause, setPlayPause] = useState('play');
-    const {hours, mintues, seconds} = getFormattedTime(MovieTime);
+    const { hours, mintues, seconds } = getFormattedTime(MovieTime);
     //play button
     const toggle = () => {
-        if (Active == false) {
-            setActive(!Active);
+        if (isActive.current == false) {
+            isActive.current = true;
             return setPlayPause('pause');
         }
         else {
-            setActive(!Active);
+            isActive.current = false;
             return setPlayPause('play');
         }
 
     }
-    //timer 
-    useEffect(() => {
 
-        if (Active && MovieTime < MovieLen) {
+    useEffect(() => {
+        if (isActive.current) {
             timer.current = setInterval(() => {
-                setMovieTime((MovieTime) => MovieTime + 1);
+                setMovieTime(MovieTime => MovieTime + 1);
             }, 1000);
         }
-    }, [Active])
-    //timer cleanup
-    if (MovieTime === MovieLen) {
-        clearInterval(timer.current);
-    }
+        if (MovieTime >= MovieLen) {
+            clearInterval(timer.current);
+            setPlayPause('play');
+            isActive.current = false;
+        }
+        return () => clearInterval(timer.current);
+    }, [isActive.current, MovieTime]);
+
+    // add and take seconds
     const IncSecond = () => {
         if (MovieTime < MovieLen)
             return setMovieTime((MovieTime) => MovieTime + 1)
@@ -75,7 +79,7 @@ export default function QuibPlayer(props: props) {
                             </TouchableOpacity>
                             <TouchableOpacity>
                                 <View style={styles.timer}>
-                                    <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours<10)?`0`+`${hours}`:`${hours}`}:{(mintues<10)?(`0`+`${mintues}`):`${mintues}`}:{(seconds<10)?(`0`+`${seconds}`):`${seconds}`}</Text>
+                                    <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={IncSecond}>
@@ -107,6 +111,22 @@ export default function QuibPlayer(props: props) {
                 <View style={styles.quibScrubber}>
                     <View style={styles.quibZero}>
                         <Text style={{ color: Style.defaultRed, textAlign: 'center' }}>Quib Zero</Text>
+                    </View>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Slider
+                            tapToSeek={true}
+                            maximumValue={MovieLen}
+                            minimumTrackTintColor={Style.defaultRed}
+                            maximumTrackTintColor={Style.defaultTxtColor}
+                            style={{ width: vw(70), paddingHorizontal: 10, }}
+                            value={MovieTime}
+                            step={1}
+                            // onValueChange={Time => setMovieTime(Time)}
+                            onSlidingComplete={val => setMovieTime(val)}
+                            // onTouchStart={() => {isActive.current = false; setPlayPause('play')} }
+                            // onTouchEnd={() => isActive.current = true}
+                            thumbImage={require('../../assets/')}
+                        />
                     </View>
                     <View style={{ justifyContent: 'center' }}>
                         <Icon name='sync' size={30} color={Style.defaultRed} style={{ textAlign: 'center', }} />

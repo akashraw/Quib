@@ -14,7 +14,7 @@ export default function ChooseMovies(props: props) {
 
   const MovieBanner = ({ item, index }: any) => {
     return (
-      <TouchableOpacity onPress={()=>props.navigation.push("Qplayer")}>
+      <TouchableOpacity onPress={()=>props.navigation.navigate("Qplayer")}>
         <View style={{ margin: 5, }}>
           {/* bannner top */}
           <View key={index} style={styles.movieBanner}>

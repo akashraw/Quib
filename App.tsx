@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import OnLanding from './src/screens/onBoardingScreens/OnLanding'
 import RegisterScreen from './src/screens/onBoardingScreens/RegisterScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,6 +10,8 @@ import ChooseMovies from './src/screens/visitScreens/ChooseMovies';
 import { Style } from './src/constants/Styles';
 import  Icon from 'react-native-vector-icons/FontAwesome';
 import QuibPlayer from './src/screens/quibPlayer/QuibPlayer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API, GetAllMoviesAPI } from './src/constants/Api';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -50,6 +52,8 @@ const WWQ = () => {
 
 
 export default function App({ navigation }: any) {
+
+  
 
   return (
     <NavigationContainer>

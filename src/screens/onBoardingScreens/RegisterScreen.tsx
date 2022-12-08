@@ -118,7 +118,7 @@ export default function RegisterScreen(props: props) {
                     <Text style={{ color: '#333333', marginLeft: 20, }}>I Agree</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                    <TouchableOpacity activeOpacity={.4} onPress={Register}>
+                    <TouchableOpacity activeOpacity={.4} onPress={GetAllMovies}>
                         <View style={styles.button}>
                             <Text style={styles.buttonTxt}>Register</Text>
                         </View>
