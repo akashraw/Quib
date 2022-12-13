@@ -10,6 +10,7 @@ import {
 import React from 'react';
 import OnLandingButton from '../../components/OnLandingButton';
 import {StringData} from '../../constants/Constant';
+import { vh, vw } from 'rxn-units';
 
 //for width
 const width = Dimensions.get('screen').width;
@@ -26,6 +27,7 @@ export default function OnLanding({navigation}: props) {
       <View style={styles.headWrap}>
         <Text style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
+        style={{marginHorizontal:vw(2)}}
           horizontal
           snapToAlignment='center'
           decelerationRate="fast"
@@ -91,10 +93,11 @@ const styles = StyleSheet.create({
   },
   flatList: {
     marginTop: 25,
+    paddingHorizontal: vw(2),
   },
   image: {
     width: width,
-    height: 250,
+    height: vh(35),
     resizeMode: 'contain',
   },
   pagination: {

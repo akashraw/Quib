@@ -10,8 +10,7 @@ import ChooseMovies from './src/screens/visitScreens/ChooseMovies';
 import { Style } from './src/constants/Styles';
 import  Icon from 'react-native-vector-icons/FontAwesome';
 import QuibPlayer from './src/screens/quibPlayer/QuibPlayer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API, GetAllMoviesAPI } from './src/constants/Api';
+import ProfileScreen from './src/screens/profileScreens/ProfileScreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -75,6 +74,10 @@ export default function App({ navigation }: any) {
           headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
         }} />
         <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
+          gestureEnabled: false ,
+          headerShown:false
+        }} />
+        <Stack.Screen name='Test' component={ProfileScreen} options={{
           headerShown:false
         }} />
       </Stack.Navigator>
