@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import OnLandingButton from '../../components/OnLandingButton';
-import {StringData} from '../../constants/Constant';
+import { StringData } from '../../constants/Constant';
 import { vh, vw } from 'rxn-units';
 
 //for width
@@ -21,13 +21,13 @@ interface props {
   navigation: any;
 }
 
-export default function OnLanding({navigation}: props) {
+export default function OnLanding({ navigation }: props) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headWrap}>
         <Text style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
-        style={{marginHorizontal:vw(2)}}
+          style={{ marginHorizontal: vw(2) }}
           horizontal
           snapToAlignment='center'
           decelerationRate="fast"
@@ -36,20 +36,20 @@ export default function OnLanding({navigation}: props) {
           showsHorizontalScrollIndicator={false}
           bounces={false}
           data={Slides}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <View style={styles.flatList}>
               <Image key={index} source={item.img} style={styles.image} />
             </View>
           )}
         />
-        
+
       </View>
       <View style={styles.pagination}>
-          {Slides.map((_, index) => {
-            return <View key={index} style={styles.dot} />;
-          })}
-        </View>
-      <View style={{flex: 1}}>
+        {Slides.map((_, index) => {
+          return <View key={index} style={styles.dot} />;
+        })}
+      </View>
+      <View style={{ flex: 1 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -65,7 +65,7 @@ export default function OnLanding({navigation}: props) {
             onPress="Choose"
           />
         </View>
-        <View style={{marginTop: 20, alignItems: 'center'}}>
+        <View style={{ marginTop: 20, alignItems: 'center' }}>
           <OnLandingButton
             text={'Log In'}
             onPress="Login"
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   pagination: {
-    flexDirection:'row',
-    left: width/2.3,
+    flexDirection: 'row',
+    left: width / 2.3,
   },
   dot: {
     width: DOT_SIZE,

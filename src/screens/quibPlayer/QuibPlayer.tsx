@@ -1,13 +1,13 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native'
-import React, { useEffect, useState, useRef } from 'react'
+import { Image, StyleSheet, Text, View, TouchableOpacity, FlatList, ListRenderItemInfo } from 'react-native'
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Style } from '../../constants/Styles'
 import { vmin, vmax, vw, vh, percentage } from 'rxn-units';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import PageHeader from '../../components/CustomHeader';
-// import Slider from '@react-native-community/slider'
 import { Slider } from '@miblanchard/react-native-slider'
-
+import DATA from '../../constants/Arrival.json'
+import { API } from '../../constants/Api';
 interface props {
     navigation: any;
 }
@@ -68,7 +68,67 @@ export default function QuibPlayer(props: props) {
     const SyncTime = () => {
         return setQuibTime(MovieTime);
     }
+    const QuibHead = ({ hours, mintues, seconds, image }: any) => {
+        return (
+            <View style={{ flexDirection: 'row', flex: 1, justifyContent:'space-evenly', alignItems:'center' }}>
+                <TouchableOpacity>
+                    <Image source={{ uri: API + image }} style={{ width: vw(10), height: vw(10), borderRadius:vw(2) }} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <View style={[...[styles.timer], { width: vw(14), height: vw(4), marginBottom: vw(2) }]}>
+                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Image source={require('../../assets/bump-red.png')} />
+                </TouchableOpacity>
+            </View>
 
+        )
+    }
+    const QuibList = useCallback(({ item, index }: any) => {
+        let { hours, mintues, seconds } = getFormattedTime(item.Time);
+        if (item.IsScreenshot == 0) {
+            return (
+                <View key={index} style={styles.flatlistContainer}>
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.AvatarBase32ImagePath} />
+                    <View style={styles.flatlistComps}>
+                        <Text style={{ color: Style.defaultTxtColor, }}>{item.Body}</Text>
+                    </View>
+                </View>
+            )
+        }
+        else {
+            return (
+                <View key={index} style={styles.flatlistContainer}>
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={null} />
+                    <View style={styles.flatlistComps}>
+                        <Image source={{ uri: API + item.Body }} style={{ width: vw(70), height: vw(30), resizeMode: 'contain' }} />
+                    </View>
+                </View>
+            )
+        }
+    }, [])
+
+    const InitialQuib = () => {
+        return (
+            <View style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: '#E6E6E6',
+
+            }}
+            >
+                <View>
+                    <Text style={styles.heading}>Timeline quib for</Text>
+                </View>
+                <View>
+                    <Image style={styles.image} source={require('../../assets/Movie/arrival.jpeg')} />
+                </View>
+            </View>
+        )
+    }
     return (
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
             <View style={{ width: vw(100), }}>
@@ -102,15 +162,17 @@ export default function QuibPlayer(props: props) {
             </View>
             {/* Quibs */}
             <View style={styles.container}>
-                <View style={{ alignItems: 'center', padding: 10 }}>
-                    <View>
-                        <Text style={styles.heading}>Timeline quib for</Text>
-                    </View>
-                    <View>
-                        <Image style={styles.image} source={require('../../assets/Movie/arrival.jpeg')} />
-                    </View>
-                </View>
-                
+
+                {/* Quib List */}
+                <FlatList
+                    data={DATA}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={InitialQuib}
+                    renderItem={({ item, index }: any) => (
+                        <QuibList item={item} index={index} />
+                    )}
+                />
+
             </View>
 
             {/* Quib timeline */}
@@ -131,7 +193,7 @@ export default function QuibPlayer(props: props) {
                                 value={QuibTime}
                                 trackClickable={true}
                                 step={1}
-                                onValueChange={value => {
+                                onSlidingComplete={value => {
                                     value = Array.isArray(value) ? value[0] : value;
                                     setQuibTime(value);
                                 }}
@@ -146,7 +208,6 @@ export default function QuibPlayer(props: props) {
                                 }}
                                 trackStyle={{ marginLeft: vw(1), }}
                                 animateTransitions={true}
-                            // thumbTouchSize={}
                             />
 
                         </View>
@@ -161,13 +222,14 @@ export default function QuibPlayer(props: props) {
                                 value={MovieTime}
                                 trackClickable={true}
                                 step={1}
-                                onValueChange={value => {
-                                    value = Array.isArray(value) ? value[0] : value;
-                                    setMovieTime(value);
-                                }}
+                                // onValueChange={value => {
+                                //     value = Array.isArray(value) ? value[0] : value;
+                                //     setMovieTime(value);
+                                // }}
                                 onSlidingComplete={value => {
                                     value = Array.isArray(value) ? value[0] : value;
                                     setQuibTime(value);
+                                    setMovieTime(value);
                                 }}
                                 renderThumbComponent={() => {
                                     return <Image source={require('../../assets/top.png')}
@@ -193,13 +255,10 @@ export default function QuibPlayer(props: props) {
 
 const styles = StyleSheet.create({
     container: {
-
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#E6E6E6',
-        margin: 5,
-        width: vw(80),
+        width: vw(90),
         overflow: 'hidden',
+        padding: vw(3),
     },
     heading: {
         fontSize: 24,
@@ -236,5 +295,17 @@ const styles = StyleSheet.create({
         borderRadius: vw(5),
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    flatlistComps: {
+        paddingVertical: vw(2),
+    },
+    flatlistContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E6E6E6',
+        paddingVertical: vw(1),
+        paddingHorizontal: vw(3),
+        marginVertical: vw(3),
     }
 })
