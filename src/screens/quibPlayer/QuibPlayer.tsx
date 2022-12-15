@@ -17,17 +17,18 @@ const getFormattedTime = (time: number) => {
     const seconds = time - (hours * 3600) - (mintues * 60);
     return { hours, mintues, seconds }
 }
+
 export default function QuibPlayer(props: props) {
-    const MovieLen = 60;
+    const MovieLen = 6981;
     const isActive = useRef(false);
     const timer = useRef(0);
     const [MovieTime, setMovieTime] = useState(0);
     const [QuibTime, setQuibTime] = useState(0);
     const [PlayPause, setPlayPause] = useState('play');
     const { hours, mintues, seconds } = getFormattedTime(MovieTime);
+    const flatRef = useRef<FlatList>(null);
 
-    // timer 
-
+    // movie timer  stopwatch
     useEffect(() => {
         if (isActive.current && MovieTime < MovieLen) {
             timer.current = setInterval(() => {
@@ -43,7 +44,7 @@ export default function QuibPlayer(props: props) {
         return () => clearInterval(timer.current);
     }, [isActive.current, MovieTime]);
 
-    //play button
+    //play button control
     const toggle = () => {
         if (isActive.current == false) {
             isActive.current = true;
@@ -55,7 +56,7 @@ export default function QuibPlayer(props: props) {
         }
 
     }
-    //Inc and dec
+    //Inc and dec on timer
     const IncSecond = () => {
         if (MovieTime < MovieLen)
             return setMovieTime((MovieTime) => MovieTime + 1)
@@ -65,33 +66,52 @@ export default function QuibPlayer(props: props) {
             return setMovieTime((MovieTime) => MovieTime - 1)
     }
 
+
+    // to sync the movie and quib scruber
     const SyncTime = () => {
         return setQuibTime(MovieTime);
     }
-    const QuibHead = ({ hours, mintues, seconds, image }: any) => {
+
+    //Quib list quibs head in (profile image, name, timestamp and quib)
+    const QuibHead = ({ hours, mintues, seconds, image, name }: any) => {
         return (
-            <View style={{ flexDirection: 'row', flex: 1, justifyContent:'space-evenly', alignItems:'center' }}>
-                <TouchableOpacity>
-                    <Image source={{ uri: API + image }} style={{ width: vw(10), height: vw(10), borderRadius:vw(2) }} />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <View style={[...[styles.timer], { width: vw(14), height: vw(4), marginBottom: vw(2) }]}>
-                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={{ flex: 1, flexDirection: 'row', }}>
+                    <View style={{ justifyContent: 'flex-start', }}>
+                        <TouchableOpacity>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <Image source={{ uri: API + image }} style={{ width: vw(8), height: vw(8), borderRadius: vw(.5), marginRight: vw(1) }} />
+                                <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }}>{name}</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Image source={require('../../assets/bump-red.png')} />
-                </TouchableOpacity>
+                    <View style={{ justifyContent: 'center', position: 'absolute', left: vw(30) }}>
+                        <TouchableOpacity>
+                            <View style={[...[styles.timer], { width: vw(14), height: vw(4), marginBottom: vw(2) }]}>
+                                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ right: vw(0), position: 'absolute' }}>
+                        <TouchableOpacity>
+                            <Image source={require('../../assets/bump-red.png')} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
+
 
         )
     }
+
+    //Quib List
     const QuibList = useCallback(({ item, index }: any) => {
+        // console.log('render')
         let { hours, mintues, seconds } = getFormattedTime(item.Time);
         if (item.IsScreenshot == 0) {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.AvatarBase32ImagePath} />
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.AvatarBase32ImagePath} name={item.DisplayName} />
                     <View style={styles.flatlistComps}>
                         <Text style={{ color: Style.defaultTxtColor, }}>{item.Body}</Text>
                     </View>
@@ -101,7 +121,7 @@ export default function QuibPlayer(props: props) {
         else {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={null} />
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={null} name={null} />
                     <View style={styles.flatlistComps}>
                         <Image source={{ uri: API + item.Body }} style={{ width: vw(70), height: vw(30), resizeMode: 'contain' }} />
                     </View>
@@ -109,7 +129,7 @@ export default function QuibPlayer(props: props) {
             )
         }
     }, [])
-
+    // intial Quib 
     const InitialQuib = () => {
         return (
             <View style={{
@@ -166,11 +186,27 @@ export default function QuibPlayer(props: props) {
                 {/* Quib List */}
                 <FlatList
                     data={DATA}
+                    // maxToRenderPerBatch={2}
+                    // initialNumToRender={500}
+                    initialNumToRender={10}
+                    windowSize={5}
+                    maxToRenderPerBatch={5}
+                    updateCellsBatchingPeriod={30}
+                    removeClippedSubviews={false}
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={InitialQuib}
-                    renderItem={({ item, index }: any) => (
-                        <QuibList item={item} index={index} />
-                    )}
+                    keyExtractor={(_, index) => index.toString()}
+                    renderItem={QuibList}
+                    initialScrollIndex={0}
+                    ref={flatRef}
+                    onScrollToIndexFailed={(error) => {
+                        flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: true });
+                        setTimeout(() => {
+                            if (DATA.length !== 0 && flatRef !== null) {
+                                flatRef.current?.scrollToIndex({ index: error.index, animated: true });
+                            }
+                        }, 100);
+                    }}
                 />
 
             </View>
@@ -226,10 +262,24 @@ export default function QuibPlayer(props: props) {
                                 //     value = Array.isArray(value) ? value[0] : value;
                                 //     setMovieTime(value);
                                 // }}
-                                onSlidingComplete={value => {
+                                onSlidingComplete={async (value) => {
                                     value = Array.isArray(value) ? value[0] : value;
                                     setQuibTime(value);
                                     setMovieTime(value);
+                                    const ScurbIndex = DATA.findIndex((item, index) => {
+                                        let time:any= item.Time;
+                                        let val:any=value;
+                                        if (item.Time == val) {
+                                            return index;
+                                        } else {
+                                            return time.reduce((prev: number, curr: number) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev)
+                                        }
+                                    })
+                                    console.log(ScurbIndex);
+                                    flatRef.current?.scrollToIndex({
+                                        animated: true,
+                                        index: ScurbIndex
+                                    });
                                 }}
                                 renderThumbComponent={() => {
                                     return <Image source={require('../../assets/top.png')}
