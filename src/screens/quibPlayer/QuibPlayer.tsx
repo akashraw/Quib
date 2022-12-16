@@ -17,7 +17,9 @@ const getFormattedTime = (time: number) => {
     const seconds = time - (hours * 3600) - (mintues * 60);
     return { hours, mintues, seconds }
 }
-
+const ReduceIndex = (time: number)=>{
+    return DATA.reduce((acc, curr)=>{return Math.abs(curr.Time-time)<Math.abs(acc.Time-time)? (curr):(acc)})
+}
 export default function QuibPlayer(props: props) {
     const MovieLen = 6981;
     const isActive = useRef(false);
@@ -34,6 +36,11 @@ export default function QuibPlayer(props: props) {
             timer.current = setInterval(() => {
                 setQuibTime(MovieTime + 1)
                 setMovieTime(MovieTime => MovieTime + 1)
+                let index = ReduceIndex(MovieTime);
+                let ScrubIndex = DATA.findIndex(()=>{
+                    
+                })                
+                
             }, 1000);
         }
         else {
@@ -200,13 +207,14 @@ export default function QuibPlayer(props: props) {
                     initialScrollIndex={0}
                     ref={flatRef}
                     onScrollToIndexFailed={(error) => {
-                        flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: true });
+                        flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: false });
                         setTimeout(() => {
                             if (DATA.length !== 0 && flatRef !== null) {
-                                flatRef.current?.scrollToIndex({ index: error.index, animated: true });
+                                flatRef.current?.scrollToIndex({ index: error.index, animated: false });
                             }
-                        }, 100);
+                        }, 100)
                     }}
+
                 />
 
             </View>
@@ -263,23 +271,35 @@ export default function QuibPlayer(props: props) {
                                 //     setMovieTime(value);
                                 // }}
                                 onSlidingComplete={async (value) => {
+                                    console.log(value);
+
                                     value = Array.isArray(value) ? value[0] : value;
                                     setQuibTime(value);
                                     setMovieTime(value);
+                                    const Reduce = DATA.reduce((accumulator, current) => {
+                                        const val = Array.isArray(value) ? value[0] : value;
+                                        return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
+                                    })
+
+
                                     const ScurbIndex = DATA.findIndex((item, index) => {
-                                        let time:any= item.Time;
-                                        let val:any=value;
-                                        if (item.Time == val) {
+                                        if (item.Time == Reduce.Time) {
                                             return index;
-                                        } else {
-                                            return time.reduce((prev: number, curr: number) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev)
                                         }
                                     })
-                                    console.log(ScurbIndex);
-                                    flatRef.current?.scrollToIndex({
-                                        animated: true,
-                                        index: ScurbIndex
-                                    });
+                                    
+                                    if (ScurbIndex < 0) {
+                                        flatRef.current?.scrollToOffset({
+                                            animated: false,
+                                            offset: 0
+                                        })
+                                    }
+                                    else {
+                                        flatRef.current?.scrollToIndex({
+                                            animated: false,
+                                            index: ScurbIndex
+                                        })
+                                    }
                                 }}
                                 renderThumbComponent={() => {
                                     return <Image source={require('../../assets/top.png')}
