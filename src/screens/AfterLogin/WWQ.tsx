@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Style } from '../../constants/Styles'
 import { vmin, vmax, vw, vh, percentage } from 'rxn-units';
 import { API, GetAllMoviesAPI } from '../../constants/Api';
-import { GetAllMovies } from '../../services/QuibAPIs';
+import { getAllMovies } from '../../services/QuibAPIs';
 
 interface props {
     navigation: any;
@@ -12,7 +12,7 @@ interface props {
 const WWQ = (props: props) => {
     const [res, setRes] = useState([]);
     useEffect(() => {
-        GetAllMovies().then(res => setRes(res));
+        getAllMovies().then(res => setRes(res));
     }, [])
     const headerOptions = {
         method: 'GET',
