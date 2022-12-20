@@ -9,7 +9,7 @@ import LoginScreen from './src/screens/onBoardingScreens/LoginScreen';
 import ChooseMovies from './src/screens/visitScreens/ChooseMovies';
 import { Style } from './src/constants/Styles';
 import  Icon from 'react-native-vector-icons/FontAwesome';
-import QuibPlayer from './src/screens/quibPlayer/QuibPlayer';
+import QuibPlayer from './src/components/quibPlayer/QuibPlayer';
 import ProfileScreen from './src/screens/profileScreens/ProfileScreen';
 
 export type RootStackParamList = {
@@ -56,7 +56,7 @@ export default function App({ navigation }: any) {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader} }} initialRouteName="Home">
+      <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader}, statusBarColor: Style.quibHeader}} initialRouteName="Home">
         <Stack.Screen name='Home' component={OnLanding} options={{ headerTitle: () => <Logo /> }} />
         <Stack.Screen name='Register' component={RegisterScreen} options={{
           headerTitle: () => <Logo />,
@@ -66,7 +66,6 @@ export default function App({ navigation }: any) {
         <Stack.Screen name='Login' component={LoginScreen} options={{
           headerTitle: () => <Logo />,
           headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Join" onPress="Register" />,
         }} />
         <Stack.Screen name='Choose' component={ChooseMovies} options={{
           headerTitle: () => <WWQ />,

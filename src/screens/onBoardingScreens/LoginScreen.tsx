@@ -1,10 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image } from 'react-native'
 import React, { useState } from 'react'
-import { Eula, StringData } from '../../constants/Constant'
-import Icon from 'react-native-vector-icons/FontAwesome'
-import ImagePicker from 'react-native-image-crop-picker';
-import CheckBox from '@react-native-community/checkbox';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StringData } from '../../constants/Constant'
 import { Style } from '../../constants/Styles';
 import OnLandingButton from '../../components/OnLandingButton';
 
@@ -46,19 +42,21 @@ export default function LoginScreen(props: props) {
             placeholderTextColor={Color}
             onChangeText={(text) => setPassword(text)} style={styles.inputTxt} />
         </View>
-        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom:10, }}>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 10, }}>
           <TouchableOpacity activeOpacity={.4} onPress={Login}>
             <View style={styles.button}>
-              <Text style={styles.buttonTxt}>Login</Text>
+              <Text style={styles.buttonTxt}>Submit</Text>
             </View>
           </TouchableOpacity>
-          <Text style={{ color: Style.defaultTxtColor }}>Forgot the password?</Text>
+          <TouchableOpacity activeOpacity={.2}>
+            <Text style={{ color: Style.forgetPass }}>Forgot the password?</Text>
+          </TouchableOpacity>
         </View>
         <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-          <View style={{paddingVertical:10,}}>
+          <View style={{ paddingVertical: 10, }}>
             <OnLandingButton text={'Join'} onPress="Register" />
           </View>
-          <View style={{paddingVertical:10,}}>
+          <View style={{ paddingVertical: 10, }}>
             <OnLandingButton text={'Visit'} onPress="Choose" />
           </View>
         </View>
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 32,
     borderRadius: 16,
-    marginBottom:10,
+    marginBottom: 10,
   },
   buttonTxt: {
     fontSize: 14,

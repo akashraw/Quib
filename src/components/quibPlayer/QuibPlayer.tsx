@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Style } from '../../constants/Styles'
 import { vmin, vmax, vw, vh, percentage } from 'rxn-units';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import PageHeader from '../../components/CustomHeader';
+import PageHeader from '../CustomHeader';
 import { Slider } from '@miblanchard/react-native-slider'
 import DATA from '../../constants/Arrival.json'
 import { API } from '../../constants/Api';

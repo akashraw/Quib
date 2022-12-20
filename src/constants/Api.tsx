@@ -1,4 +1,7 @@
-export const API = 'http://www.quibs.com/'
-export const GetAllMoviesAPI = `${API}ChooseMovie/GetAllMovies`
+export const API = 'https://50.17.46.131/';
+export const GetAllMoviesAPI = `${API}Movies`;
+export const LoginAPI = `${API}Login/GetUserByEmail`;
+export const RecentQuibMovieAPI = `${API}RecentMovies`;
+
 
 

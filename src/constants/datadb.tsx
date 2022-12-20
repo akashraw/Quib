@@ -1,4 +1,4 @@
-const GetAllMovies=[ 
+const GetAllMovie=[ 
       {
         id: 1,
         title: "The Terminator",

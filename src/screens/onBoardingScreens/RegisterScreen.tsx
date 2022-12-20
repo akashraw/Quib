@@ -6,7 +6,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import CheckBox from '@react-native-community/checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Style } from '../../constants/Styles';
-import { GetAllMovies } from '../../services/QuibMovies';
+import { GetAllMovies } from '../../services/QuibAPIs';
 
 interface props {
     navigation: any;
@@ -48,10 +48,7 @@ export default function RegisterScreen(props: props) {
         // if (!Email && !Password && !ConfirmPassword && !Name && !Img && toggleCheckBox)
         //     return console.log('please fill the form');
         // else console.log('correct')
-        fetch('http://www.quibs.com/ChooseMovie/GetAllMovies')
-            .then((res) => {
-                console.log(res)
-            })
+        return null
             
     }
     
@@ -118,7 +115,7 @@ export default function RegisterScreen(props: props) {
                     <Text style={{ color: '#333333', marginLeft: 20, }}>I Agree</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                    <TouchableOpacity activeOpacity={.4} onPress={GetAllMovies}>
+                    <TouchableOpacity activeOpacity={.4} onPress={Register}>
                         <View style={styles.button}>
                             <Text style={styles.buttonTxt}>Register</Text>
                         </View>

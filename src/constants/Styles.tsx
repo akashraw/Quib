@@ -4,5 +4,6 @@ export const Style={
     quibColor:"#FFFFCC",
     quibText:'#333333',
     quibPlayColor:'#CCCC99',
-    quibHeader:'#91b9b8'
+    quibHeader:'#CCCC99',
+    forgetPass: '#337ab7'
 }
