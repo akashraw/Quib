@@ -8,19 +8,26 @@ import PageHeader from '../CustomHeader';
 import { Slider } from '@miblanchard/react-native-slider'
 import DATA from '../../constants/Arrival.json'
 import { API } from '../../constants/Api';
+import FastImage from 'react-native-fast-image';
+import { getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
+
+
 interface props {
     navigation: any;
+    route: any
 }
+
+
 const getFormattedTime = (time: number) => {
     const hours = Math.floor(time / 3600);
     const mintues = Math.floor((time - (hours * 3600)) / 60);
     const seconds = time - (hours * 3600) - (mintues * 60);
     return { hours, mintues, seconds }
 }
-const ReduceIndex = (time: number)=>{
-    return DATA.reduce((acc, curr)=>{return Math.abs(curr.Time-time)<Math.abs(acc.Time-time)? (curr):(acc)})
-}
-export default function QuibPlayer(props: props) {
+
+
+
+export default function QuibPlayer({ navigation, route }: props) {
     const MovieLen = 6981;
     const isActive = useRef(false);
     const timer = useRef(0);
@@ -28,19 +35,38 @@ export default function QuibPlayer(props: props) {
     const [QuibTime, setQuibTime] = useState(0);
     const [PlayPause, setPlayPause] = useState('play');
     const { hours, mintues, seconds } = getFormattedTime(MovieTime);
+    const [movieQuib, setMovieQuib] = useState([]);
+    const [IsLoading, setIsLoading] = useState(true)
     const flatRef = useRef<FlatList>(null);
+    // const [Poster, setPoster] = useState(String);
+    const posterRef = useRef(String);
+    const [isPoster, setIsPoster] = useState(Boolean);
+    const MovieId = route.params;
+
+    //Api calls 
+
+    useEffect(() => {
+        Promise.all([
+            getMoviePoster(MovieId)
+                // .then((res: any) => setPoster(res.map((res: any) => res.posterContent)))
+                .then((res: any) => posterRef.current = (res.map((res: any) => res.posterContent)))
+                .then(() => FileCheck()),
+            GetQuibsById(MovieId)
+                .then((res: any) => setMovieQuib(res))
+        ]).then(() => setIsLoading(false))
+        return console.log(posterRef.current)
+
+    }, [])
+
+
 
     // movie timer  stopwatch
     useEffect(() => {
+
         if (isActive.current && MovieTime < MovieLen) {
             timer.current = setInterval(() => {
                 setQuibTime(MovieTime + 1)
                 setMovieTime(MovieTime => MovieTime + 1)
-                let index = ReduceIndex(MovieTime);
-                let ScrubIndex = DATA.findIndex(()=>{
-                    
-                })                
-                
             }, 1000);
         }
         else {
@@ -50,6 +76,19 @@ export default function QuibPlayer(props: props) {
         }
         return () => clearInterval(timer.current);
     }, [isActive.current, MovieTime]);
+
+
+    //file check
+    const FileCheck = () => {
+        let FS = posterRef.current.toString().split('.').pop();
+
+        if (FS == 'jpeg' || FS == 'jpg') {
+            setIsPoster(true);
+            return
+        }
+        else setIsPoster(false);
+
+    }
 
     //play button control
     const toggle = () => {
@@ -87,7 +126,7 @@ export default function QuibPlayer(props: props) {
                     <View style={{ justifyContent: 'flex-start', }}>
                         <TouchableOpacity>
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <Image source={{ uri: API + image }} style={{ width: vw(8), height: vw(8), borderRadius: vw(.5), marginRight: vw(1) }} />
+                                <FastImage source={{ uri: API + image }} style={{ width: vw(8), height: vw(8), borderRadius: vw(.5), marginRight: vw(1) }} />
                                 <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }}>{name}</Text>
                             </View>
                         </TouchableOpacity>
@@ -113,14 +152,15 @@ export default function QuibPlayer(props: props) {
 
     //Quib List
     const QuibList = useCallback(({ item, index }: any) => {
-        // console.log('render')
-        let { hours, mintues, seconds } = getFormattedTime(item.Time);
-        if (item.IsScreenshot == 0) {
+        let { hours, mintues, seconds } = getFormattedTime(item.time);
+        console.log('render');
+        
+        if (!item.isScreenshot) {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.AvatarBase32ImagePath} name={item.DisplayName} />
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} name={item.displayName} />
                     <View style={styles.flatlistComps}>
-                        <Text style={{ color: Style.defaultTxtColor, }}>{item.Body}</Text>
+                        <Text style={{ color: Style.defaultTxtColor, }}>{item.body}</Text>
                     </View>
                 </View>
             )
@@ -130,7 +170,15 @@ export default function QuibPlayer(props: props) {
                 <View key={index} style={styles.flatlistContainer}>
                     <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={null} name={null} />
                     <View style={styles.flatlistComps}>
-                        <Image source={{ uri: API + item.Body }} style={{ width: vw(70), height: vw(30), resizeMode: 'contain' }} />
+                        <FastImage
+                            source={{
+                                uri: API + item.body,
+                                cache: FastImage.cacheControl.immutable,
+                                priority: FastImage.priority.normal
+                            }}
+                            resizeMode={FastImage.resizeMode.contain}
+                            style={{ width: vw(70), height: vw(30) }}
+                        />
                     </View>
                 </View>
             )
@@ -151,7 +199,15 @@ export default function QuibPlayer(props: props) {
                     <Text style={styles.heading}>Timeline quib for</Text>
                 </View>
                 <View>
-                    <Image style={styles.image} source={require('../../assets/Movie/arrival.jpeg')} />
+                    <FastImage
+                        style={styles.image}
+                        source={{
+                            // uri: `${API}${Poster}`,
+                            uri: ((isPoster) ? `${API}${posterRef.current}` : `data:image/jpeg;base64,${posterRef.current}`),
+                            priority: FastImage.priority.high,
+                            cache: FastImage.cacheControl.immutable
+                        }}
+                    />
                 </View>
             </View>
         )
@@ -161,8 +217,13 @@ export default function QuibPlayer(props: props) {
             <View style={{ width: vw(100), }}>
                 <PageHeader
                     leftNode={
-                        <TouchableOpacity activeOpacity={.5} onPress={() => props.navigation.goBack()}>
-                            <Image source={require('../../assets/Movie/arrival.jpeg')} style={{ marginLeft: 5, width: 35, height: 45, borderRadius: 5, resizeMode: "contain" }} />
+                        <TouchableOpacity activeOpacity={.5} onPress={() => navigation.goBack()}>
+                            <FastImage
+                                source={{
+                                    uri: ((isPoster) ? `${API}${posterRef.current}` : `data:image/png;base64,${posterRef.current}`),
+                                    cache: FastImage.cacheControl.immutable,
+                                }}
+                                style={{ marginLeft: 5, width: 35, height: 45, borderRadius: 5 }} />
                         </TouchableOpacity>
                     }
                     headerNode={
@@ -192,14 +253,14 @@ export default function QuibPlayer(props: props) {
 
                 {/* Quib List */}
                 <FlatList
-                    data={DATA}
+                    data={movieQuib}
                     // maxToRenderPerBatch={2}
                     // initialNumToRender={500}
                     initialNumToRender={10}
                     windowSize={5}
-                    maxToRenderPerBatch={5}
+                    maxToRenderPerBatch={10}
                     updateCellsBatchingPeriod={30}
-                    removeClippedSubviews={false}
+                    // removeClippedSubviews={false}
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={InitialQuib}
                     keyExtractor={(_, index) => index.toString()}
@@ -207,10 +268,10 @@ export default function QuibPlayer(props: props) {
                     initialScrollIndex={0}
                     ref={flatRef}
                     onScrollToIndexFailed={(error) => {
-                        flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: false });
+                        flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: true });
                         setTimeout(() => {
                             if (DATA.length !== 0 && flatRef !== null) {
-                                flatRef.current?.scrollToIndex({ index: error.index, animated: false });
+                                flatRef.current?.scrollToIndex({ index: error.index, animated: true });
                             }
                         }, 100)
                     }}
@@ -271,8 +332,6 @@ export default function QuibPlayer(props: props) {
                                 //     setMovieTime(value);
                                 // }}
                                 onSlidingComplete={async (value) => {
-                                    console.log(value);
-
                                     value = Array.isArray(value) ? value[0] : value;
                                     setQuibTime(value);
                                     setMovieTime(value);
@@ -287,16 +346,16 @@ export default function QuibPlayer(props: props) {
                                             return index;
                                         }
                                     })
-                                    
+
                                     if (ScurbIndex < 0) {
                                         flatRef.current?.scrollToOffset({
-                                            animated: false,
+                                            animated: true,
                                             offset: 0
                                         })
                                     }
                                     else {
                                         flatRef.current?.scrollToIndex({
-                                            animated: false,
+                                            animated: true,
                                             index: ScurbIndex
                                         })
                                     }
@@ -326,8 +385,8 @@ export default function QuibPlayer(props: props) {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        width: vw(90),
-        overflow: 'hidden',
+        width: vw(95),
+        // overflow: 'hidden',
         padding: vw(3),
     },
     heading: {
@@ -338,8 +397,9 @@ const styles = StyleSheet.create({
     },
     image: {
         resizeMode: 'contain',
-        width: vw(75),
-        height: vh(60),
+        width: vw(70),
+        height: vh(50),
+        margin: vw(5)
     },
     quibScrubber: {
         flexDirection: 'row',

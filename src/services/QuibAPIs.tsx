@@ -1,4 +1,4 @@
-import { GetAllMoviesAPI, MostActiveQuibAPI, RecentQuibMovieAPI } from "../constants/Api"
+import { GetAllMoviesAPI, GetQuibsByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI } from "../constants/Api"
 
 interface props {
     user: string;
@@ -64,5 +64,49 @@ export async function getAllMovies() {
     }
 
     return json;
+}
+//Get all the Quib by movie ID
+export async function GetQuibsById(id: any) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    try {
+        let json;
+        let response = await fetch(`${GetQuibsByIdAPI}?MovieId=${id.MovieId}`, headerOptions);
+        json = await response.json();
+        return json;
+    }
+    catch (error) {
+        console.log(error);
+
+    }
+}
+//get movie poster
+interface poss{
+    posterContent:any;
+}
+export async function getMoviePoster(id: any) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    try {
+        let json;
+        let response = await fetch(`${MoviePosterByIdAPI}?MovieId=${id.MovieId}`, headerOptions);
+        json = await response.json();
+        
+        return json;
+    }
+    catch (error) {
+        console.log(error);
+
+    }
 }
 

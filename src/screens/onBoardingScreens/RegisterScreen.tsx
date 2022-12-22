@@ -6,7 +6,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import CheckBox from '@react-native-community/checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Style } from '../../constants/Styles';
-import { GetAllMovies } from '../../services/QuibAPIs';
 
 interface props {
     navigation: any;

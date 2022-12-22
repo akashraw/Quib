@@ -42,6 +42,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
 const styles = StyleSheet.create({
   pageHeaderContainer: {
+    flex:1,
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
