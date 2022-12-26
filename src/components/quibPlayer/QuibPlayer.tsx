@@ -9,12 +9,13 @@ import { Slider } from '@miblanchard/react-native-slider'
 import DATA from '../../constants/Arrival.json'
 import { API } from '../../constants/Api';
 import FastImage from 'react-native-fast-image';
-import { getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
+import { getMovieLength, getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
 
 
 interface props {
     navigation: any;
-    route: any
+    route: any,
+    title: any
 }
 
 
@@ -28,33 +29,39 @@ const getFormattedTime = (time: number) => {
 
 
 export default function QuibPlayer({ navigation, route }: props) {
-    const MovieLen = 6981;
+    const MovieLen = useRef(0);
     const isActive = useRef(false);
     const timer = useRef(0);
     const [MovieTime, setMovieTime] = useState(0);
     const [QuibTime, setQuibTime] = useState(0);
-    const [PlayPause, setPlayPause] = useState('play');
+    const [PlayPause, setPlayPause] = useState('play-circle-outline');
     const { hours, mintues, seconds } = getFormattedTime(MovieTime);
-    const [movieQuib, setMovieQuib] = useState([]);
+    const [movieQuib, setMovieQuib] = useState<any[]>([]);
     const [IsLoading, setIsLoading] = useState(true)
     const flatRef = useRef<FlatList>(null);
     // const [Poster, setPoster] = useState(String);
     const posterRef = useRef(String);
     const [isPoster, setIsPoster] = useState(Boolean);
     const MovieId = route.params;
+    const Movietitle = route.params.Movietitle;
+    // const Movietitle = route.params;
+    const a = useRef<number[]>([]);
+    const b = useRef<number>(0);
 
     //Api calls 
 
     useEffect(() => {
         Promise.all([
             getMoviePoster(MovieId)
-                // .then((res: any) => setPoster(res.map((res: any) => res.posterContent)))
                 .then((res: any) => posterRef.current = (res.map((res: any) => res.posterContent)))
                 .then(() => FileCheck()),
             GetQuibsById(MovieId)
-                .then((res: any) => setMovieQuib(res))
-        ]).then(() => setIsLoading(false))
-        return console.log(posterRef.current)
+                .then((res: any) => { setMovieQuib(res); a.current = res.map((res: any) => res.time) }),
+            // .then(() => setC(() => movieQuib.map((res, inde) => { b.current[inde] = inde; return res.time }))),
+            // .then(() => console.log(a.current)),
+            getMovieLength(MovieId)
+                .then((res: any) => MovieLen.current = (res.map((res: any) => res.length)))
+        ]).then(() => setIsLoading(false));
 
     }, [])
 
@@ -63,19 +70,31 @@ export default function QuibPlayer({ navigation, route }: props) {
     // movie timer  stopwatch
     useEffect(() => {
 
-        if (isActive.current && MovieTime < MovieLen) {
+        if (isActive.current && MovieTime < MovieLen.current) {
+            // console.log(a.current[MovieTime]);
+            if (a.current[b.current] <= MovieTime) {
+                flatRef.current?.scrollToIndex({
+                    animated: true,
+                    index: b.current
+                })
+                console.log(a.current[b.current]);
+                b.current = b.current + 1;
+            }
+
             timer.current = setInterval(() => {
                 setQuibTime(MovieTime + 1)
-                setMovieTime(MovieTime => MovieTime + 1)
+                setMovieTime(MovieTime => MovieTime + 1);
             }, 1000);
         }
         else {
             clearInterval(timer.current);
-            setPlayPause('play');
+            setPlayPause('play-circle-outline');
             isActive.current = false;
         }
+
         return () => clearInterval(timer.current);
     }, [isActive.current, MovieTime]);
+
 
 
     //file check
@@ -94,17 +113,17 @@ export default function QuibPlayer({ navigation, route }: props) {
     const toggle = () => {
         if (isActive.current == false) {
             isActive.current = true;
-            return setPlayPause('pause');
+            return setPlayPause('pause-circle-outline');
         }
         else {
             isActive.current = false;
-            return setPlayPause('play');
+            return setPlayPause('play-circle-outline');
         }
 
     }
     //Inc and dec on timer
     const IncSecond = () => {
-        if (MovieTime < MovieLen)
+        if (MovieTime < MovieLen.current)
             return setMovieTime((MovieTime) => MovieTime + 1)
     }
     const DecSecond = () => {
@@ -153,8 +172,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     //Quib List
     const QuibList = useCallback(({ item, index }: any) => {
         let { hours, mintues, seconds } = getFormattedTime(item.time);
-        console.log('render');
-        
+
         if (!item.isScreenshot) {
             return (
                 <View key={index} style={styles.flatlistContainer}>
@@ -196,7 +214,7 @@ export default function QuibPlayer({ navigation, route }: props) {
             }}
             >
                 <View>
-                    <Text style={styles.heading}>Timeline quib for</Text>
+                    {/* <Text style={styles.heading}>Timeline quib for</Text> */}
                 </View>
                 <View>
                     <FastImage
@@ -217,38 +235,33 @@ export default function QuibPlayer({ navigation, route }: props) {
             <View style={{ width: vw(100), }}>
                 <PageHeader
                     leftNode={
-                        <TouchableOpacity activeOpacity={.5} onPress={() => navigation.goBack()}>
-                            <FastImage
-                                source={{
-                                    uri: ((isPoster) ? `${API}${posterRef.current}` : `data:image/png;base64,${posterRef.current}`),
-                                    cache: FastImage.cacheControl.immutable,
-                                }}
-                                style={{ marginLeft: 5, width: 35, height: 45, borderRadius: 5 }} />
-                        </TouchableOpacity>
-                    }
-                    headerNode={
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <TouchableOpacity activeOpacity={.5} onPress={DecSecond}>
-                                <Icon name='minus-circle-outline' size={32} color={Style.defaultRed} />
-                            </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={.5}>
-                                <View style={styles.timer}>
-                                    <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={.5} onPress={IncSecond}>
-                                <Icon name='plus-circle-outline' size={32} color={Style.defaultRed} />
+                        <View>
+                            <TouchableOpacity activeOpacity={.5} onPress={() => navigation.goBack()}>
+                                <FastImage
+                                    source={{
+                                        uri: ((isPoster) ? `${API}${posterRef.current}` : `data:image/png;base64,${posterRef.current}`),
+                                        cache: FastImage.cacheControl.immutable,
+                                    }}
+                                    style={{ marginLeft: 5, width: 35, height: 45, borderRadius: 5 }} />
                             </TouchableOpacity>
                         </View>
                     }
+                    headerNode={
+                        <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
+                            <Text style={styles.heading}>{Movietitle}</Text>
+                        </View>
+                    }
                     rightNode={
-                        <TouchableOpacity activeOpacity={.5} onPress={() => { toggle(); }} hitSlop={{ bottom: 10, left: 20, right: 10, top: 10 }}>
-                            <Icon name={PlayPause} size={40} color={Style.defaultRed} />
-                        </TouchableOpacity>
+                        <View style={{ flex: 1 }}></View>
                     }
                 />
             </View>
-            {/* Quibs */}
+
+            {/* Quibs flatlist */}
+            {/* Quibs flatlist */}
+            {/* Quibs flatlist */}
+            {/* Quibs flatlist */}
+            {/* Quibs flatlist */}
             <View style={styles.container}>
 
                 {/* Quib List */}
@@ -281,15 +294,23 @@ export default function QuibPlayer({ navigation, route }: props) {
             </View>
 
             {/* Quib timeline */}
-            <View style={{ position: 'absolute', bottom: 0, width: vw(100), height: vh(9), backgroundColor: Style.quibColor, }}>
+            {/* Quib timeline */}
+            {/* Quib timeline */}
+            {/* Quib timeline */}
+            <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', backgroundColor: Style.quibColor, }}>
                 <View style={styles.quibScrubber}>
                     <View style={styles.quibZero}>
-                        <Text style={{ color: Style.defaultRed, textAlign: 'center' }}>Quib Zero</Text>
+                        <TouchableOpacity activeOpacity={.5} onPress={() => { toggle(); }} hitSlop={{ bottom: 10, left: 20, right: 10, top: 10 }}>
+                            <Icon name={PlayPause} size={50} color={Style.defaultRed} />
+                        </TouchableOpacity>
                     </View>
+
+
+                    {/*quib Scrubber*/}
                     <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: vw(3) }}>
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                             <Slider
-                                maximumValue={MovieLen}
+                                maximumValue={MovieLen.current}
                                 minimumTrackTintColor='#00000000'
                                 maximumTrackTintColor='#00000000'
                                 // minimumTrackTintColor={Style.defaultRed}
@@ -305,10 +326,10 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 renderThumbComponent={() => {
                                     if (QuibTime == MovieTime) {
                                         return <Image source={require('../../assets/bottom.png')}
-                                            style={{ width: vw(5), marginLeft: vw(-3), left: vw(2), height: vw(5), resizeMode: 'contain', bottom: vw(0.5), }}
+                                            style={{ width: vw(5), marginLeft: vw(-3), left: vw(2), height: vw(5), resizeMode: 'contain', bottom: vw(0.2), }}
                                         />
                                     } else return <Image source={require('../../assets/bottom_line.png')}
-                                        style={{ width: vw(5), marginLeft: vw(-3), left: vw(2), height: vw(5), resizeMode: 'contain', bottom: vw(0.5), }}
+                                        style={{ width: vw(5), marginLeft: vw(-3), left: vw(2), height: vw(5), resizeMode: 'contain', bottom: vw(0.2), }}
                                     />
                                 }}
                                 trackStyle={{ marginLeft: vw(1), }}
@@ -316,11 +337,14 @@ export default function QuibPlayer({ navigation, route }: props) {
                             />
 
                         </View>
-                        {/* Movie Scrubber  */}
 
+
+
+
+                        {/* Movie Scrubber  */}
                         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: vw(-13) }}>
                             <Slider
-                                maximumValue={MovieLen}
+                                maximumValue={MovieLen.current}
                                 minimumTrackTintColor={Style.defaultRed}
                                 maximumTrackTintColor={Style.defaultTxtColor}
                                 containerStyle={{ width: vw(65), }}
@@ -343,9 +367,11 @@ export default function QuibPlayer({ navigation, route }: props) {
 
                                     const ScurbIndex = DATA.findIndex((item, index) => {
                                         if (item.Time == Reduce.Time) {
+                                            b.current = index;
                                             return index;
                                         }
                                     })
+
 
                                     if (ScurbIndex < 0) {
                                         flatRef.current?.scrollToOffset({
@@ -362,7 +388,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 }}
                                 renderThumbComponent={() => {
                                     return <Image source={require('../../assets/top.png')}
-                                        style={{ width: vw(5), marginLeft: vw(-3), left: vw(2), height: vw(5), resizeMode: 'contain', bottom: vw(2.3), }}
+                                        style={{ width: vw(5), marginLeft: vw(-3), left: vw(2), height: vw(5), resizeMode: 'contain', bottom: vw(2.4), }}
                                     />;
                                 }}
                                 trackStyle={{ marginLeft: vw(1), }}
@@ -370,10 +396,30 @@ export default function QuibPlayer({ navigation, route }: props) {
                             // thumbTouchSize={}
                             />
                         </View>
+
+
+
+
                     </View>
                     <View style={{ justifyContent: 'center' }} >
                         <TouchableOpacity activeOpacity={.5} onPress={SyncTime}>
                             <Icon name='sync' size={30} color={Style.defaultRed} style={{ textAlign: 'center', }} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                {/* inc or dec seconds */}
+                <View style={{ flex: 1, flexDirection: 'row', marginBottom:vw(.8), marginTop:vw(-1.5) }}>
+                    <View style={{ width: vw(100), marginBottom: vw(2), flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={.5} onPress={DecSecond}>
+                            <Icon name='minus-circle-outline' size={32} color={Style.defaultRed} />
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={.5}>
+                            <View style={styles.timer}>
+                                <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={.5} onPress={IncSecond}>
+                            <Icon name='plus-circle-outline' size={32} color={Style.defaultRed} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -404,17 +450,12 @@ const styles = StyleSheet.create({
     quibScrubber: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 15,
-        paddingTop: 5,
+        paddingHorizontal: vw(3),
+        paddingTop: vw(.5),
     },
     quibZero: {
-        borderWidth: 3,
-        width: vw(12),
-        height: vw(12),
-        borderRadius: vw(6),
         alignItems: 'center',
         justifyContent: 'center',
-        borderColor: Style.defaultRed
     },
     timer: {
         marginHorizontal: vw(3),

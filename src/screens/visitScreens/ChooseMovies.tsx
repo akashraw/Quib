@@ -43,7 +43,7 @@ export default function ChooseMovies(props: props) {
     const check: string = item.posterContentThumb;
     let FS = check.split('.').pop();
     return (
-      <TouchableOpacity onPress={() => props.navigation.navigate("Test", { MovieId: item.id })}>
+      <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title})}>
         <View style={{ margin: vw(2), flexDirection: 'row', justifyContent: 'center' }}>
           {/* bannner top */}
           <View key={index} style={styles.movieBanner}>
@@ -98,7 +98,7 @@ export default function ChooseMovies(props: props) {
   return (
     <SafeAreaView>
       <View style={{ alignItems: 'center', }}>
-        <Loaded />
+        <Loaded/>
       </View>
     </SafeAreaView>
 

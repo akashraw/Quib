@@ -9,13 +9,14 @@ import { Slider } from '@miblanchard/react-native-slider'
 import DATA from '../../constants/Arrival.json'
 import { API } from '../../constants/Api';
 import FastImage from 'react-native-fast-image';
-import { getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
+import { getMovieLength, getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
 
 
 interface props {
     navigation: any;
     route: any
 }
+
 
 
 const getFormattedTime = (time: number) => {
@@ -28,33 +29,38 @@ const getFormattedTime = (time: number) => {
 
 
 export default function ProfileScreen({ navigation, route }: props) {
-    const MovieLen = 6981;
+    const MovieLen = useRef(0);
     const isActive = useRef(false);
     const timer = useRef(0);
     const [MovieTime, setMovieTime] = useState(0);
     const [QuibTime, setQuibTime] = useState(0);
     const [PlayPause, setPlayPause] = useState('play');
     const { hours, mintues, seconds } = getFormattedTime(MovieTime);
-    const [movieQuib, setMovieQuib] = useState([]);
+    const [movieQuib, setMovieQuib] = useState<any[]>([]);
     const [IsLoading, setIsLoading] = useState(true)
     const flatRef = useRef<FlatList>(null);
     // const [Poster, setPoster] = useState(String);
     const posterRef = useRef(String);
     const [isPoster, setIsPoster] = useState(Boolean);
     const MovieId = route.params;
+    const a = useRef<number[]>([]);
+    const b = useRef<number>(0);
 
     //Api calls 
 
     useEffect(() => {
         Promise.all([
             getMoviePoster(MovieId)
-                // .then((res: any) => setPoster(res.map((res: any) => res.posterContent)))
                 .then((res: any) => posterRef.current = (res.map((res: any) => res.posterContent)))
                 .then(() => FileCheck()),
             GetQuibsById(MovieId)
-                .then((res: any) => setMovieQuib(res))
-        ]).then(() => setIsLoading(false))
-        return console.log(posterRef.current)
+                .then((res: any) => { setMovieQuib(res); a.current = res.map((res: any) => res.time) })
+                // .then(() => setC(() => movieQuib.map((res, inde) => { b.current[inde] = inde; return res.time }))),
+                .then(() => console.log(a.current)),
+            getMovieLength(MovieId)
+                .then((res: any) => MovieLen.current = (res.map((res: any) => res.length)))
+        ]).then(() => setIsLoading(false));
+
 
     }, [])
 
@@ -63,10 +69,20 @@ export default function ProfileScreen({ navigation, route }: props) {
     // movie timer  stopwatch
     useEffect(() => {
 
-        if (isActive.current && MovieTime < MovieLen) {
+        if (isActive.current && MovieTime < MovieLen.current) {
+            // console.log(a.current[MovieTime]);
+            if (a.current[b.current] <= MovieTime) {
+                flatRef.current?.scrollToIndex({
+                    animated: true,
+                    index: b.current
+                })
+                console.log(a.current[b.current]);
+                b.current = b.current + 1;
+            }
+
             timer.current = setInterval(() => {
                 setQuibTime(MovieTime + 1)
-                setMovieTime(MovieTime => MovieTime + 1)
+                setMovieTime(MovieTime => MovieTime + 1);
             }, 1000);
         }
         else {
@@ -74,6 +90,7 @@ export default function ProfileScreen({ navigation, route }: props) {
             setPlayPause('play');
             isActive.current = false;
         }
+
         return () => clearInterval(timer.current);
     }, [isActive.current, MovieTime]);
 
@@ -104,7 +121,7 @@ export default function ProfileScreen({ navigation, route }: props) {
     }
     //Inc and dec on timer
     const IncSecond = () => {
-        if (MovieTime < MovieLen)
+        if (MovieTime < MovieLen.current)
             return setMovieTime((MovieTime) => MovieTime + 1)
     }
     const DecSecond = () => {
@@ -153,7 +170,6 @@ export default function ProfileScreen({ navigation, route }: props) {
     //Quib List
     const QuibList = useCallback(({ item, index }: any) => {
         let { hours, mintues, seconds } = getFormattedTime(item.time);
-        console.log('render');
 
         if (!item.isScreenshot) {
             return (
@@ -261,17 +277,13 @@ export default function ProfileScreen({ navigation, route }: props) {
                     <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: vw(3) }}>
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                             <Slider
-                                maximumValue={MovieLen}
+                                maximumValue={MovieLen.current}
                                 minimumTrackTintColor='#00000000'
                                 maximumTrackTintColor='#00000000'
                                 // minimumTrackTintColor={Style.defaultRed}
                                 // maximumTrackTintColor={Style.defaultTxtColor}
                                 containerStyle={{ width: vw(65), }}
                                 value={QuibTime}
-                                onValueChange={value => {
-
-
-                                }}
                                 trackClickable={true}
                                 step={1}
                                 onSlidingComplete={value => {
@@ -296,29 +308,26 @@ export default function ProfileScreen({ navigation, route }: props) {
 
                         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: vw(-13) }}>
                             <Slider
-                                maximumValue={MovieLen}
+                                maximumValue={MovieLen.current}
                                 minimumTrackTintColor={Style.defaultRed}
                                 maximumTrackTintColor={Style.defaultTxtColor}
                                 containerStyle={{ width: vw(65), }}
                                 value={MovieTime}
                                 trackClickable={true}
                                 step={1}
-                                // onValueChange={value => {
-                                //     value = Array.isArray(value) ? value[0] : value;
-                                //     setMovieTime(value);
-                                // }}
                                 onSlidingComplete={async (value) => {
                                     value = Array.isArray(value) ? value[0] : value;
                                     setQuibTime(value);
                                     setMovieTime(value);
+                                    //this reducer function is used to find the closest quib to the scrubber value
                                     const Reduce = DATA.reduce((accumulator, current) => {
                                         const val = Array.isArray(value) ? value[0] : value;
                                         return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
                                     })
-
-
+                                    //to find the index  after scrubber use
                                     const ScurbIndex = DATA.findIndex((item, index) => {
                                         if (item.Time == Reduce.Time) {
+                                            b.current = index;
                                             return index;
                                         }
                                     })
@@ -354,7 +363,7 @@ export default function ProfileScreen({ navigation, route }: props) {
                     </View>
                 </View>
                 {/*header*/}
-                <View style={{ width: vw(100), flexDirection: 'row', flex: 1, marginBottom:vw(2) }}>
+                <View style={{ width: vw(100), flexDirection: 'row', flex: 1, marginBottom: vw(2) }}>
                     <PageHeader
                         leftNode={
                             <TouchableOpacity activeOpacity={.5} onPress={() => navigation.goBack()}>
@@ -363,7 +372,7 @@ export default function ProfileScreen({ navigation, route }: props) {
                                         uri: ((isPoster) ? `${API}${posterRef.current}` : `data:image/png;base64,${posterRef.current}`),
                                         cache: FastImage.cacheControl.immutable,
                                     }}
-                                    style={{ marginLeft: vw(8), marginRight:vw(-12), width: 30, height: 35, borderRadius: 5 }} />
+                                    style={{ marginLeft: vw(8), marginRight: vw(-12), width: 30, height: 35, borderRadius: 5 }} />
                             </TouchableOpacity>
                         }
                         headerNode={
@@ -381,14 +390,14 @@ export default function ProfileScreen({ navigation, route }: props) {
                                 </TouchableOpacity>
                             </View>
                         }
-                        // rightNode={
-                        //     <TouchableOpacity activeOpacity={.5} onPress={() => { toggle(); }} hitSlop={{ bottom: 10, left: 20, right: 10, top: 10 }}>
-                        //         <Icon name={PlayPause} size={40} color={Style.defaultRed} />
-                        //     </TouchableOpacity>
-                        // }
-                        // rightNode={
-                        //     <View></View>
-                        // }
+                    // rightNode={
+                    //     <TouchableOpacity activeOpacity={.5} onPress={() => { toggle(); }} hitSlop={{ bottom: 10, left: 20, right: 10, top: 10 }}>
+                    //         <Icon name={PlayPause} size={40} color={Style.defaultRed} />
+                    //     </TouchableOpacity>
+                    // }
+                    // rightNode={
+                    //     <View></View>
+                    // }
                     />
                 </View>
             </View>

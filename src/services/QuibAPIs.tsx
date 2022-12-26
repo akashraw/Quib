@@ -1,4 +1,4 @@
-import { GetAllMoviesAPI, GetQuibsByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI } from "../constants/Api"
+import { GetAllMoviesAPI, getMovieLengthAPI, GetQuibsByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI } from "../constants/Api"
 
 interface props {
     user: string;
@@ -86,8 +86,8 @@ export async function GetQuibsById(id: any) {
     }
 }
 //get movie poster
-interface poss{
-    posterContent:any;
+interface poss {
+    posterContent: any;
 }
 export async function getMoviePoster(id: any) {
     const headerOptions = {
@@ -101,7 +101,7 @@ export async function getMoviePoster(id: any) {
         let json;
         let response = await fetch(`${MoviePosterByIdAPI}?MovieId=${id.MovieId}`, headerOptions);
         json = await response.json();
-        
+
         return json;
     }
     catch (error) {
@@ -110,3 +110,24 @@ export async function getMoviePoster(id: any) {
     }
 }
 
+//getMovie length
+export async function getMovieLength(id: any) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    try {
+        let json;
+        let response = await fetch(`${getMovieLengthAPI}?MovieId=${id.MovieId}`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        return json;
+    }
+    catch (error) {
+        console.log(error);
+
+    }
+}
