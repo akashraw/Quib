@@ -89,18 +89,15 @@ export default function OnLanding({ navigation }: props) {
           }}>
           <OnLandingButton
             text={'Join'}
-            onPress="Register"
-          />
+            onPress="Register" viewStyle={null} textStyle={null}          />
           <OnLandingButton
             text={'Visit'}
-            onPress="Choose"
-          />
+            onPress="Choose" viewStyle={null} textStyle={null}          />
         </View>
         <View style={{ marginTop: 20, alignItems: 'center' }}>
           <OnLandingButton
             text={'Log In'}
-            onPress="Login"
-          />
+            onPress="Login" viewStyle={null} textStyle={null}          />
         </View>
       </View>
     </SafeAreaView>

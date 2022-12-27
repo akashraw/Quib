@@ -4,7 +4,6 @@ import { Eula, StringData } from '../../constants/Constant'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import ImagePicker from 'react-native-image-crop-picker';
 import CheckBox from '@react-native-community/checkbox';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Style } from '../../constants/Styles';
 
 interface props {

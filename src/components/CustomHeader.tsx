@@ -42,22 +42,22 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
 const styles = StyleSheet.create({
   pageHeaderContainer: {
-    // justifyContent: 'center',
+    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor:Style.quibHeader,
     padding:5,
   },
   leftItem: {
-    flex:1
+    // flex:1
   },
   rightItem: {
-    flex:1
+    
   },
   headerItem: {
     // alignSelf:'center',
     // textAlign:'center',
-    flex:2
+    // flex:2
   }
 });
 

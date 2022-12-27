@@ -86,9 +86,7 @@ export async function GetQuibsById(id: any) {
     }
 }
 //get movie poster
-interface poss {
-    posterContent: any;
-}
+
 export async function getMoviePoster(id: any) {
     const headerOptions = {
         method: 'GET',
@@ -130,4 +128,9 @@ export async function getMovieLength(id: any) {
         console.log(error);
 
     }
+}
+
+//get user profile
+export async function getUserProfile(id: any){
+    
 }

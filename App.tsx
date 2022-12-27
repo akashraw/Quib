@@ -8,7 +8,7 @@ import OnLandingButton from './src/components/OnLandingButton';
 import LoginScreen from './src/screens/onBoardingScreens/LoginScreen';
 import ChooseMovies from './src/screens/visitScreens/ChooseMovies';
 import { Style } from './src/constants/Styles';
-import  Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import QuibPlayer from './src/components/quibPlayer/QuibPlayer';
 import ProfileScreen from './src/screens/profileScreens/ProfileScreen';
 
@@ -37,13 +37,13 @@ const Logo = () => {
 
   )
 }
-const WWQ = () => {
+const WWQ = (props:any) => {
   const navigation = useNavigation();
   return (
     <View >
-      <TouchableOpacity  style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}} onPress={() => navigation.navigate('Home' as never)}>
+      <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('Home' as never)}>
         <Icon name='angle-left' size={50} color={Style.defaultRed} />
-        <Text style={{fontSize:20, fontWeight:'bold', paddingLeft:6, color:Style.defaultRed}}>What we're quibbing</Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', paddingLeft: 6, color: Style.defaultRed }}>{props.title}</Text>
       </TouchableOpacity>
     </View>
   )
@@ -52,32 +52,33 @@ const WWQ = () => {
 
 export default function App({ navigation }: any) {
 
-  
+
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader}, statusBarColor: Style.quibHeader}} initialRouteName="Home">
+      <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader }} initialRouteName="Home">
         <Stack.Screen name='Home' component={OnLanding} options={{ headerTitle: () => <Logo /> }} />
         <Stack.Screen name='Register' component={RegisterScreen} options={{
           headerTitle: () => <Logo />,
           headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
+          headerRight: () => <OnLandingButton text="Log In" onPress="Login" viewStyle={null} textStyle={null} />,
         }} />
         <Stack.Screen name='Login' component={LoginScreen} options={{
           headerTitle: () => <Logo />,
           headerBackVisible: false,
         }} />
         <Stack.Screen name='Choose' component={ChooseMovies} options={{
-          headerTitle: () => <WWQ />,
+          headerTitle: () => <WWQ title={`What we're quibbing`}/>,
           headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Log In" onPress="Login" />,
+          headerRight: () => <OnLandingButton text="Log In" onPress="Test" viewStyle={null} textStyle={null} />,
         }} />
         <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
-          gestureEnabled: false ,
-          headerShown:false
+          gestureEnabled: false,
+          headerShown: false
         }} />
         <Stack.Screen name='Test' component={ProfileScreen} options={{
-          headerShown:false
+          headerTitle: () => <WWQ title={'Quib Community'} />,
+          headerBackVisible: false,
         }} />
       </Stack.Navigator>
     </NavigationContainer>

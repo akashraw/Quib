@@ -87,7 +87,7 @@ export default function ChooseMovies(props: props) {
         showsVerticalScrollIndicator={false}
         sections={[
           { title: 'Recent Quib', data: RecentMovies, renderItem: ({ item, index }) => MovieBanner({ item, index }) },
-          { title: 'Most Quib', data: ActiveMovies, renderItem: ({ item, index }) => MovieBanner({ item, index }) },
+          { title: 'Most Active Quib', data: ActiveMovies, renderItem: ({ item, index }) => MovieBanner({ item, index }) },
           { title: 'Alhpabetical Order', data: allMovieRes, renderItem: ({ item, index }) => MovieBanner({ item, index }) }
         ]}
         renderSectionHeader={({ section }) => SectionHeading(section)}
