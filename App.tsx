@@ -11,6 +11,9 @@ import { Style } from './src/constants/Styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import QuibPlayer from './src/components/quibPlayer/QuibPlayer';
 import ProfileScreen from './src/screens/profileScreens/ProfileScreen';
+import CustomTabBarExample from './src/screens/profileScreens/ProfileScreenTabView';
+import TabViewExample from './src/screens/profileScreens/ProfileScreenTabView';
+import ProfileScreenTabViews from './src/screens/profileScreens/ProfileScreenTabViews';
 
 export type RootStackParamList = {
   Home: undefined;

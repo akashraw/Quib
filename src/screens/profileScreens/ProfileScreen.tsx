@@ -3,8 +3,9 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import React from 'react'
 import { Style } from '../../constants/Styles'
 import PagerView from 'react-native-pager-view'
-import { vw } from 'rxn-units'
+import { vh, vw } from 'rxn-units'
 import OnLandingButton from '../../components/OnLandingButton'
+import ProfileScreenTabViews from './ProfileScreenTabViews'
 
 interface props {
     navigation: any,
@@ -34,7 +35,10 @@ export default function ProfileScreen({ navigation }: props) {
                         </View>
                     </View>
                 </View>
-                <PagerView style={styles.pagerView} initialPage={0} >
+                <View style={{height:vh(100), marginHorizontal:vw(3)}}>
+                    <ProfileScreenTabViews/>
+                </View>
+                {/* <PagerView style={styles.pagerView} initialPage={0} >
                     <View key={1} style={{ backgroundColor: Style.quibHeader, width: vw(95), height: vw(10), flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: vw(3), alignSelf: 'center', alignItems: 'center', marginTop: vw(3), paddingLeft: vw(3) }}>
                         <Text style={{ color: Style.defaultRed, fontSize: 18, fontWeight: 'bold' }}>Quibbed</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
@@ -56,7 +60,7 @@ export default function ProfileScreen({ navigation }: props) {
                             <Icon name='chevron-right' color={Style.defaultTxtColor} size={18} style={{ paddingTop: vw(.6), paddingLeft: vw(4) }} />
                         </View>
                     </View>
-                </PagerView>
+                </PagerView> */}
             </View>
         </SafeAreaView>
     )
@@ -79,7 +83,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#fff'
     },
-    pagerView:{
-        flex:1,
+    pagerView: {
+        width: vw(100),
+        height: vw(100)
     }
 })
