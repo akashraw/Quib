@@ -12,6 +12,7 @@ import FastImage from 'react-native-fast-image';
 import { getMovieLength, getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
 import { SvgUri } from 'react-native-svg';
 import { LocalSvg } from 'react-native-svg';
+import SyncButton from './SyncButton';
 
 
 interface props {
@@ -320,15 +321,20 @@ export default function QuibPlayer({ navigation, route }: props) {
             {/* Quib timeline */}
             <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', backgroundColor: Style.quibColor, }}>
                 <View style={styles.quibScrubber}>
-                    <View style={{ ...styles.quibZero, marginRight: vw(-2) }}>
-                        <TouchableOpacity activeOpacity={.5} onPress={() => { toggle(); }}>
-                            <Icon name={PlayPause} size={40} color={Style.defaultRed} />
+                    <View style={{ ...styles.quibZero, marginRight: vw(0) }}>
+                        <TouchableOpacity>
+                            <LocalSvg
+                                style={{  }}
+                                width={vw(10)}
+                                height={vw(10)}
+                                asset={require('../../assets/SVG/carousel-off.svg')}
+                            />
                         </TouchableOpacity>
                     </View>
 
 
                     {/*quib Scrubber*/}
-                    <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: vw(3) }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', marginLeft: vw(2), paddingTop: vw(3) }}>
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                             <Slider
                                 maximumValue={MovieLen.current}
@@ -448,10 +454,9 @@ export default function QuibPlayer({ navigation, route }: props) {
 
 
                     </View>
-                    <View style={{ justifyContent: 'center' }} >
-                        <TouchableOpacity activeOpacity={.5} onPress={SyncTime}>
-                            <Icon name='sync' size={30} color={Style.defaultRed} style={{ textAlign: 'center', }} />
-                        </TouchableOpacity>
+                    <View style={{ justifyContent: 'center', flex: 1, marginLeft: vw(3), width: vw(10), height: vw(10) }} >
+                        <SyncButton isSync={false} isMovieSync={false} />
+                        {/* <Icon name='sync' size={30} color={Style.defaultRed} style={{ textAlign: 'center', }} /> */}
                     </View>
                 </View>
                 {/* inc or dec seconds */}
@@ -487,8 +492,8 @@ const styles = StyleSheet.create({
     quibScrubber: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: vw(3),
-        paddingTop: vw(.5),
+        marginHorizontal:vw(3),
+        paddingTop: vw(.8),
     },
     quibZero: {
         alignItems: 'center',

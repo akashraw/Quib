@@ -16,16 +16,17 @@ export default function ProfileScreen({ navigation }: props) {
         <SafeAreaView style={{}}>
             <View style={{ paddingVertical: vw(3), backgroundColor: '#E0DECA' }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: vw(3) }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image
-                            source={require('../../assets/Movie/arrival.jpeg')}
-                            style={{ width: vw(20), height: vw(25), borderRadius: vw(1) }}
-                        />
+                    <View style={{flex:1}}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image
+                                source={require('../../assets/Movie/arrival.jpeg')}
+                                style={{ width: vw(20), height: vw(25), borderRadius: vw(1) }}
+                            />
+                        </View>
                         <View style={{ paddingLeft: vw(2), paddingBottom: vw(10) }}>
                             <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 14 }}>User Name</Text>
                         </View>
                     </View>
-
                     <View >
                         <View style={{ padding: vw(2) }}>
                             <OnLandingButton text='Edit Profile' onPress={'Join'} viewStyle={styles.button} textStyle={styles.buttonTxt as any} />
@@ -35,8 +36,8 @@ export default function ProfileScreen({ navigation }: props) {
                         </View>
                     </View>
                 </View>
-                <View style={{height:vh(100), marginHorizontal:vw(3)}}>
-                    <ProfileScreenTabViews/>
+                <View style={{ height: vh(100), }}>
+                    <ProfileScreenTabViews />
                 </View>
                 {/* <PagerView style={styles.pagerView} initialPage={0} >
                     <View key={1} style={{ backgroundColor: Style.quibHeader, width: vw(95), height: vw(10), flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: vw(3), alignSelf: 'center', alignItems: 'center', marginTop: vw(3), paddingLeft: vw(3) }}>
