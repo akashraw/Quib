@@ -14,6 +14,7 @@ import ProfileScreen from './src/screens/profileScreens/ProfileScreen';
 import CustomTabBarExample from './src/screens/profileScreens/ProfileScreenTabView';
 import TabViewExample from './src/screens/profileScreens/ProfileScreenTabView';
 import ProfileScreenTabViews from './src/screens/profileScreens/ProfileScreenTabViews';
+import QuibCarousel from './src/components/quibPlayer/QuibCarousel';
 
 export type RootStackParamList = {
   Home: undefined;
