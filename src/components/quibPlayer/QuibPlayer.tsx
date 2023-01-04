@@ -65,7 +65,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                 .then((res: any) => posterRef.current = (res.map((res: any) => res.posterContent)))
                 .then(() => FileCheck()),
             GetQuibsById(MovieId)
-                .then((res: any) => { setMovieQuib(res); a.current = res.map((res: any) => res.time); resMap.current = res.filter((item: any) => item.isScreenshot == true || item.isSeedQuib == true); }),
+                .then((res: any) => { setMovieQuib(res); a.current = res.map((res: any) => res.time); resMap.current = res.filter((item: any) => item.isScreenshot == true); }),
             // .then(() => setC(() => movieQuib.map((res, inde) => { b.current[inde] = inde; return res.time }))),
             // .then(() => console.log(a.current)),
             getMovieLength(MovieId)
@@ -177,8 +177,6 @@ export default function QuibPlayer({ navigation, route }: props) {
                     </View>
                 </View>
             </View>
-
-
         )
     }
 
@@ -189,7 +187,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         if (!item.isScreenshot) {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} name={item.displayName} />
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} />
                     <View style={styles.flatlistComps}>
                         <Text style={{ color: Style.defaultTxtColor, }}>{item.body}</Text>
                     </View>
@@ -199,7 +197,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         else {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={null} name={null} />
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} image={null} name={null} />
                     <View style={styles.flatlistComps}>
                         <FastImage
                             source={{
@@ -250,27 +248,27 @@ export default function QuibPlayer({ navigation, route }: props) {
 
         return (
             <Modal
-                style={{ flexDirection: 'row', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }}
+                style={{ flexDirection: 'row', flex: 1, margin:5000 ,height: vh(90)}}
                 animationType="fade"
-                transparent={false}
+                transparent={true}
                 visible={isVisble}
                 onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
+                    // Alert.alert("Modal has been closed.");
                     setIsVisble(false)
                 }}
             >
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(4, 59, 92, 0.8 )', height: vh(89), marginTop: vh(7) }}>
                     <FlatList
-                        //    ref={}
-                        style={{ width: vw(80), height: vh(70), }}
-                        contentContainerStyle={{ justifyContent: 'center' }}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={{ width: vw(96), height: vh(60), marginTop: vw(-90), alignSelf: 'center' }}
+                        contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', }}
                         data={resMap.current}
-                        renderItem={QuibList}
+                        renderItem={({ item, index }) => < QuibCarousel item={item} index={index} />}
                         initialNumToRender={10}
                         windowSize={5}
                         maxToRenderPerBatch={10}
                         updateCellsBatchingPeriod={30}
-                        // removeClippedSubviews={false}
                         showsVerticalScrollIndicator={false}
                         keyExtractor={(_, index) => index.toString()}
                         initialScrollIndex={0}
@@ -280,7 +278,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         )
     }
     return (
-        <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
+        <SafeAreaView style={{ flex: 1, alignItems: 'center', backgroundColor: '#fff' }}>
             <View style={{ width: vw(100), }}>
 
                 <PageHeader
@@ -320,24 +318,21 @@ export default function QuibPlayer({ navigation, route }: props) {
                     }
                 />
             </View>
-            <QuibCar />
             {/* Quibs flatlist */}
             {/* Quibs flatlist */}
             {/* Quibs flatlist */}
             {/* Quibs flatlist */}
             {/* Quibs flatlist */}
             <View style={styles.container}>
+                <QuibCar />
 
                 {/* Quib List */}
                 <FlatList
                     data={movieQuib}
-                    // maxToRenderPerBatch={2}
-                    // initialNumToRender={500}
                     initialNumToRender={10}
                     windowSize={5}
                     maxToRenderPerBatch={10}
                     updateCellsBatchingPeriod={30}
-                    // removeClippedSubviews={false}
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={InitialQuib}
                     keyExtractor={(_, index) => index.toString()}
@@ -354,9 +349,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                     }}
 
                 />
-
             </View>
-
             {/* Quib timeline */}
             {/* Quib timeline */}
             {/* Quib timeline */}
@@ -373,8 +366,6 @@ export default function QuibPlayer({ navigation, route }: props) {
                             />
                         </TouchableOpacity>
                     </View>
-
-
                     {/*quib Scrubber*/}
                     <View style={{ alignItems: 'center', justifyContent: 'center', marginLeft: vw(2), paddingTop: vw(3), }}>
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -395,16 +386,12 @@ export default function QuibPlayer({ navigation, route }: props) {
                                         const val = Array.isArray(value) ? value[0] : value;
                                         return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
                                     })
-
-
                                     const ScurbIndex = DATA.findIndex((item, index) => {
                                         if (item.Time == Reduce.Time) {
                                             b.current = index;
                                             return index;
                                         }
                                     })
-
-
                                     if (ScurbIndex < 0) {
                                         flatRef.current?.scrollToOffset({
                                             animated: true,
@@ -433,11 +420,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 trackStyle={{ marginLeft: vw(1), }}
                                 animateTransitions={true}
                             />
-
                         </View>
-
-
-
 
                         {/* Movie Scrubber  */}
                         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: vw(-13) }}>
@@ -461,16 +444,12 @@ export default function QuibPlayer({ navigation, route }: props) {
                                         const val = Array.isArray(value) ? value[0] : value;
                                         return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
                                     })
-
-
                                     const ScurbIndex = DATA.findIndex((item, index) => {
                                         if (item.Time == Reduce.Time) {
                                             b.current = index;
                                             return index;
                                         }
                                     })
-
-
                                     if (ScurbIndex < 0) {
                                         flatRef.current?.scrollToOffset({
                                             animated: true,
@@ -490,12 +469,15 @@ export default function QuibPlayer({ navigation, route }: props) {
                                             style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(2.4), }}
                                         />
                                     } else return (
-                                        <LocalSvg
-                                            style={{ marginLeft: vw(-23), left: vw(12.6), bottom: vw(-1.1), }}
-                                            width={vw(25)}
-                                            height={vw(25)}
-                                            asset={require('../../assets/all-sync-mode.svg')}
-                                        />
+                                        <TouchableOpacity style={{ paddingRight: vw(.5), overflow: 'hidden' }}>
+                                            <LocalSvg
+                                                style={{ marginLeft: vw(-21.5), left: vw(11.5), bottom: vw(-1.1), }}
+                                                width={vw(25)}
+                                                height={vw(25)}
+                                                asset={require('../../assets/all-sync-mode.svg')}
+                                            />
+                                        </TouchableOpacity>
+
                                     )
                                 }}
                                 trackStyle={{ marginLeft: vw(1), }}
@@ -503,10 +485,6 @@ export default function QuibPlayer({ navigation, route }: props) {
                             // thumbTouchSize={}
                             />
                         </View>
-
-
-
-
                     </View>
                     <View style={{ justifyContent: 'center', flex: 1, marginLeft: vw(3), width: vw(10), height: vw(10) }} >
 
