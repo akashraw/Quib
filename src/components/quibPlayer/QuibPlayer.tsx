@@ -65,7 +65,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                 .then((res: any) => posterRef.current = (res.map((res: any) => res.posterContent)))
                 .then(() => FileCheck()),
             GetQuibsById(MovieId)
-                .then((res: any) => { setMovieQuib(res); a.current = res.map((res: any) => res.time); resMap.current = res.filter((item: any) => item.isScreenshot == true); }),
+                .then((res: any) => { setMovieQuib(res); a.current = res.map((res: any) => res.time); resMap.current = res.filter((item: any) => item.isScreenshot == true || item.isSeedQuib); }),
             // .then(() => setC(() => movieQuib.map((res, inde) => { b.current[inde] = inde; return res.time }))),
             // .then(() => console.log(a.current)),
             getMovieLength(MovieId)
@@ -242,44 +242,67 @@ export default function QuibPlayer({ navigation, route }: props) {
         )
     }
 
-    const QuibCar = () => {
-
+    const QuibCarouselModal = () => {
+        if (isVisble == true) return (
+            <View style={{
+                flex:1,
+                justifyContent: 'center', alignItems: 'center', position: 'absolute', overflow: 'hidden',
+                backgroundColor: 'rgba(4, 59, 92, 0.8 )', zIndex: 2, elevation: 2, height:vmax(),
+            }}>
+                <FlatList
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={{ width: vw(100), height: vh(50), marginTop: vw(-90), alignSelf: 'center', backgroundColor: 'transparent' }}
+                    contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(2) }}
+                    data={resMap.current}
+                    renderItem={({ item, index }) => < QuibCarousel item={item} index={index} />}
+                    initialNumToRender={10}
+                    windowSize={5}
+                    maxToRenderPerBatch={10}
+                    updateCellsBatchingPeriod={30}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={(_, index) => index.toString()}
+                    initialScrollIndex={0}
+                />
+            </View>
+        )
+        else return null;
         // console.log(resMap.current);
 
-        return (
-            <Modal
-                style={{ flexDirection: 'row', flex: 1, margin:5000 ,height: vh(90)}}
-                animationType="fade"
-                transparent={true}
-                visible={isVisble}
-                onRequestClose={() => {
-                    // Alert.alert("Modal has been closed.");
-                    setIsVisble(false)
-                }}
-            >
-                <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(4, 59, 92, 0.8 )', height: vh(89), marginTop: vh(7) }}>
-                    <FlatList
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={{ width: vw(96), height: vh(60), marginTop: vw(-90), alignSelf: 'center' }}
-                        contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', }}
-                        data={resMap.current}
-                        renderItem={({ item, index }) => < QuibCarousel item={item} index={index} />}
-                        initialNumToRender={10}
-                        windowSize={5}
-                        maxToRenderPerBatch={10}
-                        updateCellsBatchingPeriod={30}
-                        showsVerticalScrollIndicator={false}
-                        keyExtractor={(_, index) => index.toString()}
-                        initialScrollIndex={0}
-                    />
-                </View>
-            </Modal>
-        )
+        // return (
+        //     <Modal
+        //         style={{ flexDirection: 'row', flex: 1, height: vh(90) }}
+        //         animationType="fade"
+        //         transparent={true}
+        //         visible={isVisble}
+        //         onRequestClose={() => {
+        //             // Alert.alert("Modal has been closed.");
+        //             setIsVisble(false)
+        //         }}
+        //     >
+        //         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(4, 59, 92, 0.8 )', height: vh(89), marginTop: vh(7) }}>
+        //             <FlatList
+        //                 horizontal
+        //                 showsHorizontalScrollIndicator={false}
+        //                 style={{ width: vw(96), height: vh(60), marginTop: vw(-90), alignSelf: 'center' }}
+        //                 contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', }}
+        //                 data={resMap.current}
+        //                 renderItem={({ item, index }) => < QuibCarousel item={item} index={index} />}
+        //                 initialNumToRender={10}
+        //                 windowSize={5}
+        //                 maxToRenderPerBatch={10}
+        //                 updateCellsBatchingPeriod={30}
+        //                 showsVerticalScrollIndicator={false}
+        //                 keyExtractor={(_, index) => index.toString()}
+        //                 initialScrollIndex={0}
+        //             />
+        //         </View>
+        //     </Modal>
+        // )
     }
     return (
         <SafeAreaView style={{ flex: 1, alignItems: 'center', backgroundColor: '#fff' }}>
-            <View style={{ width: vw(100), }}>
+            <View style={{ width: vw(100), zIndex: 3, elevation: 3,}}>
 
                 <PageHeader
                     leftNode={
@@ -324,8 +347,17 @@ export default function QuibPlayer({ navigation, route }: props) {
             {/* Quibs flatlist */}
             {/* Quibs flatlist */}
             <View style={styles.container}>
-                <QuibCar />
+                {/*modal*/}
+                {/*modal*/}
+                {/*modal*/}
+                {/*modal*/}
 
+                <QuibCarouselModal />
+
+
+                {/* Quib List */}
+                {/* Quib List */}
+                {/* Quib List */}
                 {/* Quib List */}
                 <FlatList
                     data={movieQuib}
@@ -354,10 +386,10 @@ export default function QuibPlayer({ navigation, route }: props) {
             {/* Quib timeline */}
             {/* Quib timeline */}
             {/* Quib timeline */}
-            <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', backgroundColor: Style.quibColor, }}>
+            <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', backgroundColor: Style.quibColor, height: vh(10), zIndex: 3, elevation: 3, }}>
                 <View style={styles.quibScrubber}>
                     <View style={{ ...styles.quibZero, marginRight: vw(0) }}>
-                        <TouchableOpacity onPress={() => setIsVisble(true)}>
+                        <TouchableOpacity onPress={() => setIsVisble(!isVisble)}>
                             <LocalSvg
                                 style={{}}
                                 width={vw(10)}
@@ -507,6 +539,7 @@ export default function QuibPlayer({ navigation, route }: props) {
 
 const styles = StyleSheet.create({
     container: {
+        flex:1,
         alignItems: 'center',
         width: vw(95),
         // overflow: 'hidden',
@@ -528,7 +561,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginHorizontal: vw(3),
-        paddingTop: vw(.8),
+        paddingTop: vw(1.5),
         paddingBottom: vw(1.5)
     },
     quibZero: {

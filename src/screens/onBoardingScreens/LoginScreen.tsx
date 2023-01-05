@@ -54,10 +54,10 @@ export default function LoginScreen(props: props) {
         </View>
         <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
           <View style={{ paddingVertical: 10, }}>
-            <OnLandingButton text={'Join'} onPress="Register" />
+            <OnLandingButton text={'Join'} onPress="Register" viewStyle={undefined} textStyle={undefined} />
           </View>
           <View style={{ paddingVertical: 10, }}>
-            <OnLandingButton text={'Visit'} onPress="Choose" />
+            <OnLandingButton text={'Visit'} onPress="Choose" viewStyle={undefined} textStyle={undefined} />
           </View>
         </View>
       </View>

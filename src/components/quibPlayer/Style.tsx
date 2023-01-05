@@ -4,6 +4,11 @@ import { Style } from "../../constants/Styles";
 import React from "react";
 
 export const styles = StyleSheet.create({
+    quibHead:{
+        flex:1,
+        flexDirection:"row",
+        
+    },
     timer: {
         marginHorizontal: vw(3),
         backgroundColor: Style.defaultRed,
@@ -15,9 +20,10 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     flatlistComps: {
-        paddingVertical: vw(2),
+        paddingVertical: vw(0),
     },
     flatlistContainer: {
+        
         backgroundColor:'#fff',
         height: vw(50),
         width: vw(50),
@@ -25,8 +31,8 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#E6E6E6',
-        paddingVertical: vw(1),
-        paddingHorizontal: vw(3),
+        paddingVertical: vw(2),
+        paddingHorizontal: vw(2),
         marginVertical: vw(3),
     },
    

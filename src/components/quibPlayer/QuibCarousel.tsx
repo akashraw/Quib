@@ -19,9 +19,10 @@ const getFormattedTime = (time: number) => {
 function QuibCarousel({ item, index }: any) {
     let { hours, mintues, seconds } = getFormattedTime(item.time);
     //Quib list quibs head in (profile image, name, timestamp and quib)
-    const QuibHead = ({ hours, mintues, seconds }: any) => {
+    const QuibHead = ({ hours, mintues, seconds, isSS, image, name }: any) => {
+        if (isSS == true)
             return (
-                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex:2, elevation:4,  }}>
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex: 2, elevation: 4, }}>
                     <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', }}>
                         {/* <View style={{ justifyContent: 'flex-start', }}>
                             <TouchableOpacity>
@@ -51,92 +52,82 @@ function QuibCarousel({ item, index }: any) {
                     </View>
                 </View>
             )
-        //  else return (
-        //     <View style={{ flex: 1, flexDirection: 'row' }}>
-        //         <View style={{ flex: 1, flexDirection: 'row', }}>
-        //             <View style={{ justifyContent: 'flex-start', }}>
-        //                 <TouchableOpacity>
-        //                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(8) }}>
-        //                         <FastImage source={{ uri: API + image }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
-        //                         <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}:</Text>
-        //                     </View>
-        //                 </TouchableOpacity>
-        //             </View>
-        //             <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', position: 'absolute', paddingLeft: vw(12) }}>
-        //                 <TouchableOpacity>
-        //                     <View style={[...[styles.timer], { width: vw(14), height: vw(4), marginBottom: vw(2) }]}>
-        //                         <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
-        //                     </View>
-        //                 </TouchableOpacity>
-        //             </View>
-        //             <View style={{ right: vw(0), position: 'absolute' }}>
-        //                 <TouchableOpacity>
-        //                     <LocalSvg
-        //                         fill={'#00000000'}
-        //                         width={20}
-        //                         height={20}
-        //                         asset={require('../../assets/bump.svg')}
-        //                     />
-        //                 </TouchableOpacity>
-        //             </View>
-        //         </View>
-        //     </View>
-        // )
+        else return (
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={{ flex: 1, flexDirection: 'row', }}>
+                    {/* <View style={{ justifyContent: 'flex-start', }}>
+                        <TouchableOpacity>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(8) }}>
+                                <FastImage source={{ uri: API + image }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
+                                <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}:</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View> */}
+                    <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', position: 'absolute', paddingLeft: vw(12) }}>
+                        <TouchableOpacity>
+                            <View style={[...[styles.timer], { width: vw(14), height: vw(4), marginBottom: vw(2) }]}>
+                                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ right: vw(0), position: 'absolute' }}>
+                        <TouchableOpacity>
+                            <LocalSvg
+                                fill={'#00000000'}
+                                width={20}
+                                height={20}
+                                asset={require('../../assets/bump.svg')}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        )
     }
 
     //Quib List
     const QuibList = () => {
-
-        
-            return(
+        if (!item.isScreenshot)
+            return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} />
-                    <View style={styles.flatlistComps}>
-                        <FastImage
-                            source={{
-                                uri: API + item.body,
-                                cache: FastImage.cacheControl.immutable,
-                                priority: FastImage.priority.normal
-                            }}
-                            resizeMode={FastImage.resizeMode.contain}
-                            style={{ width: vw(40), height: vw(40) }}
-                        />
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={null} />
+                    </View>
+                    <View style={[styles.flatlistComps, { flex: 1, flexDirection: 'row', marginTop: vw(-35) }]}>
+                        <View style={{ flex: 1, justifyContent: 'flex-start', }}>
+                            <TouchableOpacity>
+                                <View style={{ flexDirection: 'row', position: 'absolute', justifyContent: 'center', alignItems: 'center', paddingTop: vw(20) }}>
+                                    <FastImage source={{ uri: API + item.avatarBase32ImagePath }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
+                                    <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{item.displayName}:</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1, }}>
+                        <Text style={{ flex: 1, color: Style.defaultTxtColor, fontSize:12, fontWeight:'500', textAlign:'left' }}>{item.body}</Text>
                     </View>
                 </View>
             )
-            // return (
-            //     <View key={index} style={styles.flatlistContainer}>
-            //         <View style={{flex:1, flexDirection:'row'}}>
-            //             <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} />
-            //         </View>
-            //         <View style={[styles.flatlistComps, {flex:1, marginTop:vw(-15)}]}>
-            //             <Text style={{ color: Style.defaultTxtColor, }}>{item.body}</Text>
-            //         </View>
-            //     </View>
-            // )
-        
-        // else {
-        //     return (
-        //         <View key={index} style={styles.flatlistContainer}>
-        //             <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot}/>
-        //             <View style={styles.flatlistComps}>
-        //                 <FastImage
-        //                     source={{
-        //                         uri: API + item.body,
-        //                         cache: FastImage.cacheControl.immutable,
-        //                         priority: FastImage.priority.normal
-        //                     }}
-        //                     resizeMode={FastImage.resizeMode.contain}
-        //                     style={{ width: vw(40), height: vw(40) }}
-        //                 />
-        //             </View>
-        //         </View>
-        //     )
-        // }
-    }
 
+        else return (
+            <View key={index} style={styles.flatlistContainer}>
+                <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} image={null} name={null} />
+                <View style={styles.flatlistComps}>
+                    <FastImage
+                        source={{
+                            uri: API + item.body,
+                            cache: FastImage.cacheControl.immutable,
+                            priority: FastImage.priority.normal
+                        }}
+                        resizeMode={FastImage.resizeMode.contain}
+                        style={{ width: vw(45), height: vw(40) }}
+                    />
+                </View>
+            </View>
+        )
+    }
     return (
-        <View>
+        <View style={{marginRight:vw(3)}}>
             <QuibList />
         </View>
     )
