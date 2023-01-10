@@ -5,5 +5,6 @@ export const Style={
     quibText:'#333333',
     quibPlayColor:'#CCCC99',
     quibHeader:'#CCCC99',
-    forgetPass: '#337ab7'
+    forgetPass: '#337ab7',
+    borderColor:'#E6E6E6'
 }

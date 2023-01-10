@@ -3,7 +3,7 @@ import { vw } from "rxn-units";
 import { Style } from "../../constants/Styles";
 import React from "react";
 
-export const styles = StyleSheet.create({
+export const quibPlayerStyles = StyleSheet.create({
     quibHead:{
         flex:1,
         flexDirection:"row",
