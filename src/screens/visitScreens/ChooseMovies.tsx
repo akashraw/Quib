@@ -6,7 +6,8 @@ import { API } from '../../constants/Api';
 import { getAllMovies, getMostActiveMovies, getRecentMovies } from '../../services/QuibAPIs';
 import { Bounce, CircleFade, Pulse, Wave } from 'react-native-animated-spinkit'
 import FastImage from 'react-native-fast-image';
-
+import Icon from 'react-native-vector-icons/AntDesign'
+import OnLandingButton from '../../components/OnLandingButton';
 interface props {
   navigation: any;
 }
@@ -43,7 +44,7 @@ export default function ChooseMovies(props: props) {
     const check: string = item.posterContentThumb;
     let FS = check.split('.').pop();
     return (
-      <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title})}>
+      <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
         <View style={{ margin: vw(2), flexDirection: 'row', justifyContent: 'center' }}>
           {/* bannner top */}
           <View key={index} style={styles.movieBanner}>
@@ -67,9 +68,28 @@ export default function ChooseMovies(props: props) {
 
   }
   const SectionHeading = (section: any) => {
-    return (
-      <View style={{ backgroundColor: Style.quibHeader, width: vw(95), height: vw(10), justifyContent: 'center', marginTop: vw(3), paddingLeft: vw(8) }}>
+    if (!section.sort) {
+      return (
+        <View style={{ backgroundColor: Style.quibHeader, width: vw(95), height: vw(10), justifyContent: 'center', marginTop: vw(3), paddingLeft: vw(8) }}>
+          <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
+          {/* <Icon name='swap' size={36} color={Style.defaultTxtColor} /> */}
+        </View>
+      )
+    } else return (
+      <View style={{
+        backgroundColor: Style.quibHeader, width: vw(95), height: vw(10),
+        justifyContent: 'space-between', alignItems: 'center', marginTop: vw(3),
+        paddingLeft: vw(8), flex: 1, flexDirection: 'row', alignSelf:'center'
+      }}>
         <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
+        {/* <View style={{ }}>
+        </View> */}
+        <TouchableOpacity activeOpacity={.4} onPress={undefined} >
+          <View style={styles.button}>
+            <Text style={styles.buttonTxt}>Sort </Text>
+            <Icon name='swap' size={18} color='' style={{ transform: [{ rotate: '90deg' }], fontWeight: 'bold' }} />
+          </View>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -86,9 +106,9 @@ export default function ChooseMovies(props: props) {
         keyExtractor={(_, index) => index.toString()}
         showsVerticalScrollIndicator={false}
         sections={[
-          { title: 'Recent Quib', data: RecentMovies, renderItem: ({ item, index }) => MovieBanner({ item, index }) },
-          { title: 'Most Active Quib', data: ActiveMovies, renderItem: ({ item, index }) => MovieBanner({ item, index }) },
-          { title: 'Alhpabetical Order', data: allMovieRes, renderItem: ({ item, index }) => MovieBanner({ item, index }) }
+          { title: 'Recent Quib', sort: false, data: RecentMovies, renderItem: ({ item, index }) => MovieBanner({ item, index }) },
+          { title: 'Most Active Quib', sort: false, data: ActiveMovies, renderItem: ({ item, index }) => MovieBanner({ item, index }) },
+          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }) => MovieBanner({ item, index }) }
         ]}
         renderSectionHeader={({ section }) => SectionHeading(section)}
       />
@@ -98,7 +118,7 @@ export default function ChooseMovies(props: props) {
   return (
     <SafeAreaView>
       <View style={{ alignItems: 'center', }}>
-        <Loaded/>
+        <Loaded />
       </View>
     </SafeAreaView>
 
@@ -117,6 +137,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Style.quibText,
     fontWeight: 'bold'
+  },
+  button: {
+    marginRight: vw(8), 
+    alignSelf:'center',
+    flexDirection: 'row', 
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth:2,
+    borderColor:Style.defaultRed,
+    // backgroundColor: Style.defaultRed,
+    width: vw(30),
+    height: vw(8),
+    borderRadius: vw(2),
+    // marginBottom: 10,
+  },
+  buttonTxt: {
+    textAlign: 'center',
+    fontSize: 14,
+    // color: '#EDEDED',
+    fontWeight: '500'
   },
   title: {},
   year: {},

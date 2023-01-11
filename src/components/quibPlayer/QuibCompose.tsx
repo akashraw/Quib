@@ -48,17 +48,17 @@ function QuibCompose({ hour, mins, secs }: props) {
               <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(item.hours < 10) ? `0${item.hours}` : `${item.hours}`}:{(item.min < 10) ? (`0${item.min}`) : `${item.min}`}:{(item.sec < 10) ? (`0${item.sec}`) : `${item.sec}`}</Text>
             </View>
           </View>
-          <View style={{ width: vw(75), height: vh(15), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, padding: vw(2) }}>
+          <View style={{ width: vw(75), height: vh(17), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, padding: vw(2) }}>
             <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.Quib}</Text>
           </View>
-          <View style={{justifyContent:'space-around', flexDirection:'row',}}>
-            <TouchableOpacity style={{ paddingTop: vw(1), zIndex: 2 }} activeOpacity={.4} disabled={false} >
-              <View style={[...[styles.button], ]}>
+          <View style={{ justifyContent: 'space-around', flexDirection: 'row', }}>
+            <TouchableOpacity style={{ paddingTop:vw(2), zIndex: 2 }} activeOpacity={.4} disabled={false} >
+              <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                 <Text style={styles.buttonTxt}>Delete</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={{ paddingTop: vw(1), zIndex: 2 }} activeOpacity={.4} disabled={false} >
-              <View style={styles.button}>
+            <TouchableOpacity style={{ paddingTop:vw(2), zIndex: 2 }} activeOpacity={.4} disabled={false} >
+              <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                 <Text style={styles.buttonTxt}>Post</Text>
               </View>
             </TouchableOpacity>
@@ -101,14 +101,15 @@ function QuibCompose({ hour, mins, secs }: props) {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#990000',
+    justifyContent:'center',
     width: 100,
     height: 32,
     borderRadius: 16,
-    paddingTop: 6,
+    // paddingTop: 6,
   },
   buttonTxt: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 12,
     color: '#fff'
   },
 })

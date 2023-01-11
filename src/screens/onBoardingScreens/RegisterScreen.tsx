@@ -1,10 +1,13 @@
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground } from 'react-native'
 import React, { useState } from 'react'
 import { Eula, StringData } from '../../constants/Constant'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import ImagePicker from 'react-native-image-crop-picker';
-import CheckBox from '@react-native-community/checkbox';
-import { Style } from '../../constants/Styles';
+import ImagePicker from 'react-native-image-crop-picker'
+import CheckBox from '@react-native-community/checkbox'
+import { Style } from '../../constants/Styles'
+import { vw } from 'rxn-units'
+import MatIcon from 'react-native-vector-icons/MaterialIcons'
+import MatComIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 interface props {
     navigation: any;
@@ -25,46 +28,67 @@ export default function RegisterScreen(props: props) {
     const UserIcon = () => {
         if (!Img)
             return (
-                <Icon name='user-circle-o' size={64} color={Style.defaultRed} />
-            )
-        else return <Image style={{ width: 100, height: 100, resizeMode: 'contain', borderWidth: 3, borderColor: '#222222', borderRadius: 64, }} source={{ uri: Img }} />
-    }
-    const SelImg = () => {
-        if (!selectImg)
-            return (
-                <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
-                    <Text style={styles.upTxt}>Choose Image</Text>
+                <TouchableOpacity onPress={lunchImgLib}>
+                    <View style={{borderRadius:vw(20), borderWidth:5, borderColor:Style.defaultRed}}>
+                        <MatComIcon name='account-edit' size={72} color={Style.defaultRed}/>
+                        {/* <Icon name='user-circle-o' size={64} color={Style.defaultRed} >
+                            <MatIcon name='edit' size={24} color='black' style={{zIndex:2}} />
+                        </Icon> */}
+                    </View>
                 </TouchableOpacity>
             )
         else return (
-            <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
-                <Text style={styles.upTxt}>Change Image</Text>
+            <TouchableOpacity onPress={lunchImgLib}>
+                <Image style={{ width: 100, height: 100, resizeMode: 'contain', borderWidth: 3, borderColor: Style.defaultRed, borderRadius: 64, }} source={{ uri: Img }} />
             </TouchableOpacity>
         )
     }
+    // const SelImg = () => {
+    //     if (!selectImg)
+    //         return (
+    //             <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
+    //                 <Text style={styles.upTxt}>Choose Image</Text>
+    //             </TouchableOpacity>
+    //         )
+    //     else return (
+    //         <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
+    //             <Text style={styles.upTxt}>Change Image</Text>
+    //         </TouchableOpacity>
+    //     )
+    // }
     const Register = () => {
         // if (!Email && !Password && !ConfirmPassword && !Name && !Img && toggleCheckBox)
         //     return console.log('please fill the form');
         // else console.log('correct')
         return null
-            
+
     }
-    
+
     const lunchImgLib = () => {
         ImagePicker.openPicker({
-            width: 100,
-            height: 100,
+            width: 200,
+            height: 200,
             cropping: true,
             includeBase64: true,
         }).then(image => setImg(image.path))
             .catch(e => { console.log(e) });
-            setSelectImg(true);
+        setSelectImg(true);
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.headWrap}>
-                <Text style={{ fontSize: 20, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold' }}>{StringData.registerHead}</Text>
+                <Image
+                    style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
+                    resizeMode={'contain'}
+                    source={require('../../assets/logo.png')}
+                />
+                <Text style={{ fontSize: 28, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(5) }}>{StringData.registerHead}</Text>
+            </View>
+            {/* upload */}
+            <View style={styles.upPhotoWrap}>
+                <UserIcon />
+                {/* <SelImg /> */}
             </View>
             <View >
                 <View style={styles.inputField}>
@@ -72,6 +96,24 @@ export default function RegisterScreen(props: props) {
                         value={Email}
                         placeholderTextColor={Color}
                         onChangeText={(text) => setEmail(text)} style={styles.inputTxt} />
+                </View>
+                <View style={styles.inputField}>
+                    <TextInput placeholder='Display name'
+                        value={Name}
+                        placeholderTextColor={Color}
+                        onChangeText={(text) => setName(text)} style={styles.inputTxt} />
+                </View>
+                <View style={styles.inputField}>
+                    <TextInput placeholder='First name'
+                        value={Name}
+                        placeholderTextColor={Color}
+                        onChangeText={(text) => setName(text)} style={styles.inputTxt} />
+                </View>
+                <View style={styles.inputField}>
+                    <TextInput placeholder='Last name'
+                        value={Name}
+                        placeholderTextColor={Color}
+                        onChangeText={(text) => setName(text)} style={styles.inputTxt} />
                 </View>
                 <View style={styles.inputField}>
                     <TextInput placeholder='Password'
@@ -85,34 +127,23 @@ export default function RegisterScreen(props: props) {
                         placeholderTextColor={Color}
                         onChangeText={(text) => setConfirmPassword(text)} style={styles.inputTxt} />
                 </View>
-                <View style={styles.inputField}>
-                    <TextInput placeholder='Display name'
-                        value={Name}
-                        placeholderTextColor={Color}
-                        onChangeText={(text) => setName(text)} style={styles.inputTxt} />
-                </View>
-                {/* upload */}
-                <View style={styles.upPhotoWrap}>
-                    <UserIcon />
-                    <SelImg />
-                </View>
-                <View style={styles.scrollWrap}>
+                {/* <View style={styles.scrollWrap}>
                     <ScrollView>
                         <Text style={{ color: '#333333' }}>
                             {Eula.Terms}
                         </Text>
                     </ScrollView>
-                </View>
-                <View style={{ flexDirection: 'row', marginHorizontal: 16, alignItems: 'center' }}>
+                </View> */}
+                <View style={{ flexDirection: 'row', marginHorizontal: 16, alignItems: 'center', justifyContent: 'center' , marginVertical:vw(2)}}>
                     <CheckBox
                         disabled={false}
                         value={toggleCheckBox}
                         tintColors={{ true: Style.defaultRed }}
                         onValueChange={(newValue) => setToggleCheckBox(newValue)}
                     />
-                    <Text style={{ color: '#333333', marginLeft: 20, }}>I Agree</Text>
+                    <Text style={{ color: '#333333', marginLeft: vw(2), fontWeight: '500' }}>{StringData.agreeEula}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: vw(5) }}>
                     <TouchableOpacity activeOpacity={.4} onPress={Register}>
                         <View style={styles.button}>
                             <Text style={styles.buttonTxt}>Register</Text>
@@ -128,29 +159,36 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        marginHorizontal: 16,
-        marginVertical: 20,
-        borderWidth: 1,
-        borderColor: '#3333',
+        // marginHorizontal: 16,
+        // marginVertical: 20,
+        // borderWidth: 1,
+        // borderColor: '#3333',
     },
     headWrap: {
-        marginTop: 20,
+        marginTop: vw(2),
     },
     inputField: {
-        borderBottomWidth: 1,
+        marginVertical: vw(2),
+        borderWidth: 1,
         borderColor: '#5555',
-        marginHorizontal: 16,
+        marginHorizontal: vw(5),
+        justifyContent: 'center',
+        borderRadius: vw(2),
     },
     inputTxt: {
-        paddingBottom: -2,
-        paddingTop: 20,
-        color: '#3333'
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingLeft: vw(4),
+        fontSize: 16,
+        // paddingBottom: -2,
+        // paddingTop: 20,
+        color: Style.defaultTxtColor
     },
     upPhotoWrap: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginTop: 20,
+        marginVertical: vw(3),
     },
     upButton: {
         width: 140,
@@ -174,12 +212,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: Style.defaultRed,
-        width: 100,
-        height: 32,
-        borderRadius: 16,
+        width: vw(30),
+        height: vw(10),
+        borderRadius: vw(2),
+        marginBottom: 10,
     },
     buttonTxt: {
-        fontSize: 14,
-        color: '#fff'
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#fff',
+        fontWeight: 'bold'
     },
 })

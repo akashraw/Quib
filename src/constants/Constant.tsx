@@ -1,6 +1,8 @@
 export const StringData={   
     onLandingHead: 'Share what you know and love about great movies',
-    registerHead:'Join the Quib beta',    
+    registerHead:'Join Us',
+    loginHead:'Log In',    
+    agreeEula:'I Agree with Terms & Conditions',
 }
 export const Eula={
     Terms:`Quib® terms of service:

@@ -28,7 +28,7 @@ export default function OnLanding({ navigation }: props) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headWrap}>
-        <Text style={styles.heading}>{StringData.onLandingHead}</Text>
+        <Text  style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
           style={{ marginHorizontal: vw(2)}}
           horizontal
@@ -89,15 +89,15 @@ export default function OnLanding({ navigation }: props) {
           }}>
           <OnLandingButton
             text={'Join'}
-            onPress="Register" viewStyle={null} textStyle={null}          />
+            onPress="Register" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
           <OnLandingButton
             text={'Visit'}
-            onPress="Choose" viewStyle={null} textStyle={null}          />
+            onPress="Choose" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
         </View>
         <View style={{ marginTop: 20, alignItems: 'center' }}>
           <OnLandingButton
             text={'Log In'}
-            onPress="Login" viewStyle={null} textStyle={null}          />
+            onPress="Login" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
         </View>
       </View>
     </SafeAreaView>
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   heading: {
+    paddingHorizontal:vw(1),
     color: '#990000',
     fontSize: 24,
     textAlign: 'center',
@@ -139,6 +140,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     marginLeft: DOT_SPACING,
   },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Style.defaultRed,
+    width: vw(30),
+    height: vw(10),
+    borderRadius: vw(2),
+    marginBottom: 10,
+},
+buttonTxt: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold'
+},
 });
 
 const Slides = [

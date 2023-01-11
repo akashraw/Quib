@@ -1,12 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TextProps, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
+import { Style } from '../constants/Styles';
+import { vw } from 'rxn-units';
 interface props {
     text: string;
     onPress: any;
     viewStyle: ViewProps['style'] | null;
-    textStyle: ViewProps['style'] | null;
+    textStyle: TextProps['style'] | null;
 
 }
 
@@ -26,15 +28,18 @@ export default function OnLandingButton({ text, onPress, viewStyle, textStyle }:
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: '#990000',
-        width: 100,
-        height: 32,
-        borderRadius: 16,
-        paddingTop: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Style.defaultRed,
+        width: vw(30),
+        height: vw(10),
+        borderRadius: vw(2),
+        marginBottom: 10,
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 14,
-        color: '#fff'
+        fontSize: 16,
+        color: '#fff',
+        fontWeight: 'bold'
     },
 })

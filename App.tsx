@@ -15,6 +15,7 @@ import CustomTabBarExample from './src/screens/profileScreens/ProfileScreenTabVi
 import TabViewExample from './src/screens/profileScreens/ProfileScreenTabView';
 import ProfileScreenTabViews from './src/screens/profileScreens/ProfileScreenTabViews';
 import QuibCarousel from './src/components/quibPlayer/QuibCarousel';
+import { vw } from 'rxn-units';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -30,9 +31,10 @@ interface props {
 const Logo = () => {
   const navigation = useNavigation();
   return (
-    <View >
+    <View style={{ alignItems: 'center', justifyContent: 'center', width: vw(100), backgroundColor: Style.quibHeader, paddingVertical: vw(2) }}>
       <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
         <Image
+          style={{width:vw(35), height:vw(15)}}
           source={require('./src/assets/logo.png')}
         />
       </TouchableOpacity>
@@ -41,7 +43,7 @@ const Logo = () => {
 
   )
 }
-const WWQ = (props:any) => {
+const WWQ = (props: any) => {
   const navigation = useNavigation();
   return (
     <View >
@@ -61,20 +63,22 @@ export default function App({ navigation }: any) {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader }} initialRouteName="Home">
-        <Stack.Screen name='Home' component={OnLanding} options={{ headerTitle: () => <Logo /> }} />
+        <Stack.Screen name='Home' component={OnLanding} options={{ header: () => <Logo />, }} />
         <Stack.Screen name='Register' component={RegisterScreen} options={{
-          headerTitle: () => <Logo />,
+          header: () => <Logo />,
           headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Log In" onPress="Login" viewStyle={null} textStyle={null} />,
+          headerShown:false,
+          statusBarColor: '#fff'
+          // headerRight: () => <OnLandingButton text="Log In" onPress="Login" viewStyle={null} textStyle={null} />,
         }} />
         <Stack.Screen name='Login' component={LoginScreen} options={{
-          headerTitle: () => <Logo />,
-          headerBackVisible: false,
+          headerShown: false,
+          statusBarColor: '#fff'
         }} />
         <Stack.Screen name='Choose' component={ChooseMovies} options={{
-          headerTitle: () => <WWQ title={`What we're quibbing`}/>,
+          headerTitle: () => <WWQ title={`What we're quibbing`} />,
           headerBackVisible: false,
-          headerRight: () => <OnLandingButton text="Log In" onPress="Test" viewStyle={null} textStyle={null} />,
+          headerRight: () => <OnLandingButton text="Log In" onPress="Test" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
         }} />
         <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
           gestureEnabled: false,
@@ -91,4 +95,21 @@ export default function App({ navigation }: any) {
 }
 
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  button: {
+    marginTop:vw(3),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Style.defaultRed,
+    width: vw(25),
+    height: vw(8),
+    borderRadius: vw(2),
+    marginBottom: 10,
+},
+buttonTxt: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold'
+},
+})
