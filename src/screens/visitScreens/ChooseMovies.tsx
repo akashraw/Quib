@@ -1,5 +1,5 @@
-import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity, SectionList } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity, SectionList, Button, BackHandler, TouchableWithoutFeedback } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Style } from '../../constants/Styles'
 import { vmin, vmax, vw, vh, percentage } from 'rxn-units';
 import { API } from '../../constants/Api';
@@ -8,6 +8,9 @@ import { Bounce, CircleFade, Pulse, Wave } from 'react-native-animated-spinkit'
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/AntDesign'
 import OnLandingButton from '../../components/OnLandingButton';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useBottomSheetBackHandler } from './useBottomSheetBack';
+import { RadioButton } from 'react-native-paper';
 interface props {
   navigation: any;
 }
@@ -26,6 +29,11 @@ export default function ChooseMovies(props: props) {
   const [RecentMovies, setRecentMovies] = useState([]);
   const [ActiveMovies, setActiveMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  // const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const { handleSheetPositionChange } = useBottomSheetBackHandler(bottomSheetModalRef);
+  const [value, setValue] = React.useState('first');
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -33,13 +41,69 @@ export default function ChooseMovies(props: props) {
       getAllMovies().then(res => setallMovieRes(res)),
       getMostActiveMovies().then(res => setActiveMovies(res))
       ]).then(() => setIsLoading(false))
-    }, 1000)
+    }, 1000);
 
     // getRecentMovies().then(res => setRecentMovies(res));
     // getAllMovies().then(res => setallMovieRes(res));
     // getMostActiveMovies().then(res => setActiveMovies(res));
-  }, [])
+  }, []);
 
+  // variables
+  const snapPoints = useMemo(() => ['15%', '35 %'], []);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        // disappearsOnIndex=s{1}
+        // appearsOnIndex={2}
+        opacity={.6}
+        onPress={bottomSheetModalRef.current?.dismiss()}
+        pressBehavior='collapse'
+      />
+    ),
+    []
+  );
+
+  //FOR bottom sheet modal for sorting function
+  const BottomSheet = () => {
+
+    // renders
+    return (
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        onChange={handleSheetPositionChange}
+        // containerStyle={{ width: vw(100), height: vh(100), backgroundColor: 'grey' }}
+        backdropComponent={renderBackdrop}
+
+      >
+        <TouchableWithoutFeedback onPress={() => bottomSheetModalRef.current?.close()} style={{ width: vw(100), height: vh(100), backgroundColor: 'grey' }}>
+          <View style={styles.contentContainer}>
+
+            <View style={{ paddingBottom: vw(2) }}>
+              <Text style={{ fontSize: 16, fontWeight: '500' }}>Sort By</Text>
+            </View>
+            <RadioButton.Group onValueChange={value => setValue(value)} value={value} >
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Alphabetical Z-A" value="Alphabetical Z-A" />
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Alphabetical A-Z" value="Alphabetical A-Z" />
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Year wise ascending" value="Year wise ascending" />
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Year wise descending" value="Year wise descending" />
+            </RadioButton.Group>
+
+          </View>
+        </TouchableWithoutFeedback>
+      </BottomSheetModal>
+    );
+  };
+
+  // for rending movie card list 
   const MovieBanner = ({ item, index }: any) => {
     const check: string = item.posterContentThumb;
     let FS = check.split('.').pop();
@@ -79,15 +143,15 @@ export default function ChooseMovies(props: props) {
       <View style={{
         backgroundColor: Style.quibHeader, width: vw(95), height: vw(10),
         justifyContent: 'space-between', alignItems: 'center', marginTop: vw(3),
-        paddingLeft: vw(8), flex: 1, flexDirection: 'row', alignSelf:'center'
+        paddingLeft: vw(8), flex: 1, flexDirection: 'row', alignSelf: 'center'
       }}>
         <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
         {/* <View style={{ }}>
         </View> */}
-        <TouchableOpacity activeOpacity={.4} onPress={undefined} >
+        <TouchableOpacity activeOpacity={.4} onPress={handlePresentModalPress} >
           <View style={styles.button}>
-            <Text style={styles.buttonTxt}>Sort </Text>
-            <Icon name='swap' size={18} color='' style={{ transform: [{ rotate: '90deg' }], fontWeight: 'bold' }} />
+            {/* <Text style={styles.buttonTxt}>Sort </Text> */}
+            <Icon name='swap' size={20} color={Style.defaultRed} style={{ transform: [{ rotate: '90deg' }] }} />
           </View>
         </TouchableOpacity>
       </View>
@@ -116,16 +180,29 @@ export default function ChooseMovies(props: props) {
   }
 
   return (
-    <SafeAreaView>
+    <BottomSheetModalProvider>
+      {/* <SafeAreaView> */}
       <View style={{ alignItems: 'center', }}>
         <Loaded />
+        <BottomSheet />
       </View>
-    </SafeAreaView>
-
+      {/* </SafeAreaView> */}
+    </BottomSheetModalProvider>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: 'center',
+    backgroundColor: 'grey',
+  },
+  contentContainer: {
+
+    flex: 1,
+    alignItems: 'center',
+  },
   movieBanner: {
     width: vw(80),
     height: vh(10),
@@ -139,13 +216,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   button: {
-    marginRight: vw(8), 
-    alignSelf:'center',
-    flexDirection: 'row', 
+    marginRight: vw(8),
+    alignSelf: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth:2,
-    borderColor:Style.defaultRed,
+    borderWidth: 2,
+    borderColor: Style.defaultRed,
     // backgroundColor: Style.defaultRed,
     width: vw(30),
     height: vw(8),
