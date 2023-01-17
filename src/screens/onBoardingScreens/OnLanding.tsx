@@ -92,7 +92,7 @@ export default function OnLanding({ navigation }: props) {
             onPress="Register" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
           <OnLandingButton
             text={'Visit'}
-            onPress="Choose" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
+            onPress="Bottom" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
         </View>
         <View style={{ marginTop: 20, alignItems: 'center' }}>
           <OnLandingButton
