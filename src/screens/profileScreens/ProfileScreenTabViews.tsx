@@ -1,11 +1,28 @@
 import * as React from 'react';
 import { View, useWindowDimensions, Text, StatusBar, Animated, TouchableWithoutFeedback, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import { FlatList } from 'react-native-gesture-handler';
 import { TabView, SceneMap, SceneRendererProps, NavigationState } from 'react-native-tab-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { vh, vw } from 'rxn-units';
 import { API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
+import MovieCard from '../visitScreens/MovieCard';
+
+const Dummy = [
+    { key: 1, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 2, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 3, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 4, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 5, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 6, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 7, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 8, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 9, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 10, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 11, title: 'Arrival', year: 2015, director: 'Test Testing' },
+    { key: 12, title: 'Arrival', year: 2015, director: 'Test Testing' },
+]
 
 type Route = {
     key: string;
@@ -24,48 +41,20 @@ const Quibbed = () => {
         //         <Icon name='chevron-right' color={Style.defaultTxtColor} size={18} style={{ paddingTop: vw(.6), paddingLeft: vw(4) }} />
         //     </View>
         // </View>
-        <TouchableOpacity
-        //  onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title})}
-        >
-            <View style={{ margin: vw(2), flexDirection: 'row', justifyContent: 'center' }}>
-                {/* bannner top */}
-                <View style={styles.movieBanner}>
-                    {/* <ImageBackground source={require('../../assets/Movie/arrival.jpeg')} style={{ width: vw(30), height: vw(40), justifyContent: 'flex-end' }} imageStyle={{ resizeMode: 'cover', alignSelf: 'center' }} >
-                        <View style={{ alignItems: 'center', }}>
-                            <Text style={[styles.title, styles.txt]}>Arrival</Text>
-                            <Text style={[styles.year, styles.txt]}>2015</Text>
-                            <Text style={[styles.director, styles.txt]}>test</Text>
-                        </View>
-                    </ImageBackground> */}
-                    <Image
-                        style={{ width: vw(30), height: vw(35), marginHorizontal: vw(2), resizeMode: 'cover', borderRadius: vw(1) }}
-                        //   resizeMode={FastImage.resizeMode.contain}
-                        source={require('../../assets/Movie/arrival.jpeg')}
-                    />
-                    <View style={{width:vw(30), overflow:'hidden'}}>
-                        <View style={{ alignItems: 'center', flexDirection: 'row', }}>
-                            <Text style={[styles.title, styles.txt]} numberOfLines={1}>Arrival </Text>
-                            <Text style={[styles.year, styles.txt]}>(2015) </Text>
-                        </View>
-                        <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
-                            <Text style={[styles.director, styles.txt,]}>Test Testing</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        </TouchableOpacity>
-
+        <View>
+            <FlatList
+                scrollEnabled={true}
+                showsVerticalScrollIndicator={false}
+                data={Dummy}
+                numColumns={3}
+                renderItem={({ item, index }: any) => (<View style={{flex:1, justifyContent:'center', alignItems:'center'}}><MovieCard key={index} title={item.title} year={item.year} director={item.director} /></View>)}
+            />
+        </View>
     )
 }
 const Following = () => {
     return (
-        // <View style={{ backgroundColor: Style.quibHeader, width: vw(95), height: vw(10), flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: vw(3), alignSelf: 'center', alignItems: 'center', marginTop: vw(3), paddingLeft: vw(3) }}>
-        //     <Text style={{ color: Style.defaultRed, fontSize: 18, fontWeight: 'bold' }}>Following</Text>
-        //     <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-        //         <Text style={{ color: Style.defaultTxtColor, fontSize: 18, fontWeight: 'normal' }}>0</Text>
-        //         <Icon name='chevron-right' color={Style.defaultTxtColor} size={18} style={{ paddingTop: vw(.6), paddingLeft: vw(4) }} />
-        //     </View>
-        // </View>
+       
         <TouchableOpacity
         //  onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title})}
         >
@@ -91,18 +80,20 @@ const Followers = () => {
         <TouchableOpacity
         //  onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title})}
         >
-            <View style={{ margin: vw(2), flexDirection: 'row', justifyContent: 'center' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems:'center', alignSelf:'center' }}>
                 {/* bannner top */}
                 <View style={styles.movieBanner}>
                     <Image
-                        style={{ width: 45, height: 60, marginHorizontal: vw(2), resizeMode: 'contain' }}
+                        style={{ width: vw(15), height: vw(15), borderRadius:vw(7), marginHorizontal: vw(2), resizeMode: 'contain' }}
                         //   resizeMode={FastImage.resizeMode.contain}
                         source={require('../../assets/Movie/arrival.jpeg')} />
                     <View>
-                        <Text style={[styles.title, styles.txt]}>Arrival</Text>
-                        <Text style={[styles.year, styles.txt]}>2015</Text>
-                        <Text style={[styles.director, styles.txt]}>test</Text>
+                        <Text style={[styles.title, styles.txt, {fontSize:14}]}>@itzTimmy</Text>
+                        <Text style={[styles.year, styles.txt, {fontSize:12, textAlign:'center'}]}>Timithoe</Text>
                     </View>
+                </View>
+                <View>
+                    
                 </View>
             </View>
         </TouchableOpacity>
@@ -149,21 +140,11 @@ export default function ProfileScreenTabViews() {
                 return (
                     <View style={styles.tab}>
                         <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
-                            {/* <Ionicons
-              name={route.icon}
-              size={26}
-              style={[styles.icon, styles.inactive]}
-            /> */}
                             <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
                         </Animated.View>
                         <Animated.View
                             style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}
                         >
-                            {/* <Ionicons
-              name={route.icon}
-              size={26}
-              style={[styles.icon, styles.active]}
-            /> */}
                             <Text style={[styles.label, styles.active]}>{route.title}</Text>
                         </Animated.View>
                     </View>
@@ -189,6 +170,7 @@ export default function ProfileScreenTabViews() {
 
     return (
         <TabView
+            swipeEnabled={false}
             style={{ marginTop: StatusBar.currentHeight, }}
             navigationState={{ index, routes }}
             renderScene={renderScene}
@@ -200,12 +182,14 @@ export default function ProfileScreenTabViews() {
 }
 const styles = StyleSheet.create({
     tabbar: {
-        marginHorizontal: vw(3),
+        borderRadius: vw(1),
+        marginBottom: vw(2),
+        marginHorizontal: vw(1),
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: Style.quibPlayColor,
-        elevation: 5,
+        elevation: 2,
         shadowColor: 'black',
         shadowOpacity: 0.1,
         shadowRadius: StyleSheet.hairlineWidth,
@@ -250,18 +234,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     movieBanner: {
-        overflow: 'hidden',
-        // overlayColor:,
-        width: vw(38),
-        height: vw(50),
-        paddingTop: vw(2),
+        alignSelf:'center',
+        width: vw(95),
+        height: vw(18),
         borderRadius: vw(2),
-        flexDirection: 'column',
-        justifyContent: 'center',
-        backgroundColor: Style.quibPlayColor,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        elevation: 4,
-        zIndex: 4,
+        alignContent:'center',
+        elevation: 2,
+        zIndex: 2,
     },
     txt: {
         fontSize: 14,

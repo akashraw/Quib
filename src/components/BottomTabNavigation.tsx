@@ -12,6 +12,7 @@ import { Style } from '../constants/Styles';
 import { vw } from 'rxn-units';
 import NotificationScreen from '../screens/notificationScreen/NotificationScreen';
 
+
 const Tab = createBottomTabNavigator();
 
 const WWQ = (props: any) => {
@@ -73,6 +74,8 @@ export default function BottomTabNavigation() {
                 options={{
                     tabBarLabel: 'Profile',
                     tabBarShowLabel:false,
+                    headerTitle: () => <WWQ title={`Profile`} />,
+                    headerRight: () => (<TouchableOpacity onPress={undefined}><IonIcon style={{paddingRight:vw(2)}} name='create-outline' size={20} color={Style.defaultRed}/></TouchableOpacity>),
                     tabBarIcon: ({focused}) => {
                         if(focused) return < IonIcon name='person' color={Style.defaultRed} size={24} />
                         else return < IonIcon name='person-outline' size={24} />

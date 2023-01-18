@@ -102,18 +102,6 @@ export default function ChooseMovies(props: props) {
       </BottomSheetModal>
     );
   };
-  //
-  // star icon change
-  // const IconChange = () => {
-  //   if (isFav.current == false) {
-  //     isFav.current = true;
-  //     return setStar('star');
-  //   }
-  //   else {
-  //     isFav.current = false;
-  //     return setStar('star-o');
-  //   }
-  // }
 
   // for rending movie card list 
   const MovieBanner = ({ item, index }: any) => {

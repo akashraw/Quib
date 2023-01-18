@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor:Style.quibHeader,
+    // backgroundColor:Style.quibHeader,
     padding:5,
   },
   leftItem: {
