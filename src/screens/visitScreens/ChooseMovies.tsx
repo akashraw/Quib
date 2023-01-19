@@ -84,7 +84,7 @@ export default function ChooseMovies(props: props) {
         backdropComponent={renderBackdrop}
 
       >
-        <TouchableWithoutFeedback onPress={() => bottomSheetModalRef.current?.close()} style={{ width: vw(100), height: vh(100), backgroundColor: 'l' }}>
+        <TouchableWithoutFeedback onPress={() => bottomSheetModalRef.current?.close()} style={{ width: vw(100), height: vh(100)  }}>
           <View style={styles.contentContainer}>
 
             <View style={{ paddingBottom: vw(2) }}>
@@ -195,7 +195,7 @@ export default function ChooseMovies(props: props) {
   const MovieCards = ({ item, index }: any) => {
 
     return (
-      <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} />
+      <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} viewStyle={undefined} textStyle={undefined} linearGradStyle={undefined}/>
     )
   }
 

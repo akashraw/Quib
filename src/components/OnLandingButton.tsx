@@ -1,7 +1,7 @@
-import { StyleSheet, Text, TextProps, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TextProps, TouchableOpacity, View, ViewProps } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
+// import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 import { Style } from '../constants/Styles';
 import { vw } from 'rxn-units';
 interface props {
