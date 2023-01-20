@@ -273,38 +273,6 @@ export default function QuibPlayer({ navigation, route }: props) {
             </View>
         )
         else return null;
-        // console.log(resMap.current);
-
-        // return (
-        //     <Modal
-        // style={{ flexDirection: 'row', flex: 1, height: vh(90) }}
-        // animationType="fade"
-        // transparent={true}
-        // visible={isVisble}
-        // onRequestClose={() => {
-        //     // Alert.alert("Modal has been closed.");
-        //     setIsVisble(false)
-        // }}
-        //     >
-        //         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(4, 59, 92, 0.8 )', height: vh(89), marginTop: vh(7) }}>
-        //             <FlatList
-        //                 horizontal
-        //                 showsHorizontalScrollIndicator={false}
-        //                 style={{ width: vw(96), height: vh(60), marginTop: vw(-90), alignSelf: 'center' }}
-        //                 contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', }}
-        //                 data={resMap.current}
-        //                 renderItem={({ item, index }) => < QuibCarousel item={item} index={index} />}
-        //                 initialNumToRender={10}
-        //                 windowSize={5}
-        //                 maxToRenderPerBatch={10}
-        //                 updateCellsBatchingPeriod={30}
-        //                 showsVerticalScrollIndicator={false}
-        //                 keyExtractor={(_, index) => index.toString()}
-        //                 initialScrollIndex={0}
-        //             />
-        //         </View>
-        //     </Modal>
-        // )
     }
 
     // variables

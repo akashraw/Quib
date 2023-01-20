@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground } from 'react-native'
 import React, { useState } from 'react'
 import { Eula, StringData } from '../../constants/Constant'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/Ionicons'
 import ImagePicker from 'react-native-image-crop-picker'
 import CheckBox from '@react-native-community/checkbox'
 import { Style } from '../../constants/Styles'
@@ -29,12 +29,19 @@ export default function RegisterScreen(props: props) {
         if (!Img)
             return (
                 <TouchableOpacity onPress={lunchImgLib}>
-                    <View style={{borderRadius:vw(20), borderWidth:5, borderColor:Style.defaultRed}}>
-                        <MatComIcon name='account-edit' size={72} color={Style.defaultRed}/>
+                    <View style={{ borderRadius: vw(20), borderWidth: 5, borderColor: Style.defaultRed, marginBottom: vw(1) }}>
+                        {/* <MatComIcon name='account-edit' size={72} color={Style.defaultRed}/> */}
+                        <ImageBackground source={require('../../assets/man.png')} imageStyle={{ width: vw(30), height: vw(30) }} style={{ justifyContent: 'center', width: vw(30), height: vw(30), alignItems: 'center', }} >
+                            <View style={{ paddingTop: vw(0), backgroundColor:'#00000060', width: vw(30), height: vw(30), borderRadius:vw(20), justifyContent:'center', alignItems:'center'}}>
+                                <Icon name='pencil-sharp' size={vw(10)} color={Style.defaultTxtColor} />
+                            </View>
+                            {/* <MatComIcon name='upload-outline' size={vw(10)} color={Style.defaultRed}/>     */}
+                        </ImageBackground>
                         {/* <Icon name='user-circle-o' size={64} color={Style.defaultRed} >
                             <MatIcon name='edit' size={24} color='black' style={{zIndex:2}} />
                         </Icon> */}
                     </View>
+                    {/* <Text style={{fontSize:12, color:Style.defaultLightGrey, textAlign:'center', fontWeight:'500'}}>Upload a profile picture</Text> */}
                 </TouchableOpacity>
             )
         else return (
@@ -43,19 +50,7 @@ export default function RegisterScreen(props: props) {
             </TouchableOpacity>
         )
     }
-    // const SelImg = () => {
-    //     if (!selectImg)
-    //         return (
-    //             <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
-    //                 <Text style={styles.upTxt}>Choose Image</Text>
-    //             </TouchableOpacity>
-    //         )
-    //     else return (
-    //         <TouchableOpacity style={styles.upButton} onPress={lunchImgLib}>
-    //             <Text style={styles.upTxt}>Change Image</Text>
-    //         </TouchableOpacity>
-    //     )
-    // }
+
     const Register = () => {
         // if (!Email && !Password && !ConfirmPassword && !Name && !Img && toggleCheckBox)
         //     return console.log('please fill the form');
@@ -83,7 +78,7 @@ export default function RegisterScreen(props: props) {
                     resizeMode={'contain'}
                     source={require('../../assets/logo.png')}
                 />
-                <Text style={{ fontSize: 28, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(5) }}>{StringData.registerHead}</Text>
+                <Text style={{ fontSize: 28, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(2) }}>{StringData.registerHead}</Text>
             </View>
             {/* upload */}
             <View style={styles.upPhotoWrap}>
@@ -134,7 +129,7 @@ export default function RegisterScreen(props: props) {
                         </Text>
                     </ScrollView>
                 </View> */}
-                <View style={{ flexDirection: 'row', marginHorizontal: 16, alignItems: 'center', justifyContent: 'center' , marginVertical:vw(2)}}>
+                <View style={{ flexDirection: 'row', marginHorizontal: 16, alignItems: 'center', justifyContent: 'center', marginVertical: vw(2) }}>
                     <CheckBox
                         disabled={false}
                         value={toggleCheckBox}
@@ -143,7 +138,7 @@ export default function RegisterScreen(props: props) {
                     />
                     <Text style={{ color: '#333333', marginLeft: vw(2), fontWeight: '500' }}>{StringData.agreeEula}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: vw(5) }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: vw(2) }}>
                     <TouchableOpacity activeOpacity={.4} onPress={Register}>
                         <View style={styles.button}>
                             <Text style={styles.buttonTxt}>Register</Text>
@@ -158,14 +153,14 @@ export default function RegisterScreen(props: props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: Style.quibBackColor,
         // marginHorizontal: 16,
         // marginVertical: 20,
         // borderWidth: 1,
         // borderColor: '#3333',
     },
     headWrap: {
-        marginTop: vw(2),
+        marginTop: vw(0),
     },
     inputField: {
         marginVertical: vw(2),
@@ -188,7 +183,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginVertical: vw(3),
+        marginVertical: vw(2),
     },
     upButton: {
         width: 140,

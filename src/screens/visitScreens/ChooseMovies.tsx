@@ -1,18 +1,19 @@
-import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity, SectionList, Button, BackHandler, TouchableWithoutFeedback, Pressable } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SectionList, TouchableWithoutFeedback, Pressable } from 'react-native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Style } from '../../constants/Styles'
-import { vmin, vmax, vw, vh, percentage } from 'rxn-units';
+import { vw, vh } from 'rxn-units';
 import { API } from '../../constants/Api';
 import { getAllMovies, getMostActiveMovies, getRecentMovies } from '../../services/QuibAPIs';
-import { Bounce, CircleFade, Pulse, Wave } from 'react-native-animated-spinkit'
+import { Wave } from 'react-native-animated-spinkit'
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/FontAwesome'
-import OnLandingButton from '../../components/OnLandingButton';
+// import QuibButton from '../../components/QuibButton';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from './useBottomSheetBack';
 import { RadioButton } from 'react-native-paper';
 import MovieCard from './MovieCard';
 import { FlatList } from 'react-native-gesture-handler';
+import { Shadow } from 'react-native-shadow-2';
 // import BottomTabNavigation from '../../components/BottomTabNavigation';
 interface props {
   navigation: any;
@@ -84,7 +85,7 @@ export default function ChooseMovies(props: props) {
         backdropComponent={renderBackdrop}
 
       >
-        <TouchableWithoutFeedback onPress={() => bottomSheetModalRef.current?.close()} style={{ width: vw(100), height: vh(100)  }}>
+        <TouchableWithoutFeedback onPress={() => bottomSheetModalRef.current?.close()} style={{ width: vw(100), height: vh(100) }}>
           <View style={styles.contentContainer}>
 
             <View style={{ paddingBottom: vw(2) }}>
@@ -105,21 +106,22 @@ export default function ChooseMovies(props: props) {
 
   // for rending movie card list 
   const MovieBanner = ({ item, index }: any) => {
- const [Star, setStar] = useState('star-o')
+    const [Star, setStar] = useState('star-o')
     const check: string = item.posterContentThumb;
-    const IconChange =()=>{
-      if(Star=='star')
-      return setStar('star-o')
+    const IconChange = () => {
+      if (Star == 'star')
+        return setStar('star-o')
       else return setStar('star')
     }
     let FS = check.split('.').pop();
     return (
 
-      <View style={{ margin: vw(2), flexDirection: 'row', justifyContent: 'center' }}>
+      <View style={{ margin: vw(2), flexDirection: 'row', justifyContent: 'center', }}>
         {/* bannner top */}
         <View key={index} style={styles.movieBanner}>
           <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+              {/* <Shadow distance={1} style={{ borderRadius: vw(2) }} > */}
               <FastImage
                 style={{ width: vw(15), height: vw(20), marginHorizontal: vw(2), borderRadius: vw(1) }}
                 // resizeMode={FastImage.resizeMode.contain}
@@ -128,6 +130,7 @@ export default function ChooseMovies(props: props) {
                   priority: FastImage.priority.normal,
                   cache: FastImage.cacheControl.immutable
                 }} />
+              {/* </Shadow> */}
               <View>
                 <Text style={[styles.title, styles.txt]}>{item.title}</Text>
                 <Text style={[...[styles.txt], { fontSize: 12 }]}>{item.releaseYear}</Text>
@@ -138,15 +141,15 @@ export default function ChooseMovies(props: props) {
           <View style={{ alignItems: 'center', marginRight: vw(2) }}>
             <View style={{ alignItems: 'center', alignSelf: 'flex-end', }}>
               <View style={{ width: vw(14), height: vw(14), marginBottom: vw(1), }}>
-                <View style={{width:vw(14), height:vw(7), borderWidth:1, alignItems:'center', justifyContent:'center',backgroundColor:Style.defaultRed, borderColor:Style.defaultRed, borderTopRightRadius:vw(4), borderTopLeftRadius:vw(4), borderBottomWidth:0}}>
-                  <Text style={{color:'#fff', fontWeight:'500', fontSize:14, alignSelf:'center'}}>4.2k</Text>
+                <View style={{ width: vw(14), height: vw(7), borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Style.defaultRed, borderColor: Style.defaultRed, borderTopRightRadius: vw(4), borderTopLeftRadius: vw(4), borderBottomWidth: 0 }}>
+                  <Text style={{ color: '#fff', fontWeight: '500', fontSize: 14, alignSelf: 'center' }}>4.2k</Text>
                 </View>
-                <View style={{width:vw(14), height:vw(7), borderWidth:1, alignItems:'center', justifyContent:'center', borderColor:Style.defaultRed, borderBottomLeftRadius:vw(4), borderBottomRightRadius:vw(4), borderTopWidth:0}}>
-                  <Text style={{fontSize:9, fontWeight:'500', color:Style.defaultTxtColor, textAlign:'center', alignSelf:'center' }}>Total Quibs</Text>
+                <View style={{ width: vw(14), height: vw(7), borderWidth: 1, alignItems: 'center', justifyContent: 'center', borderColor: Style.defaultRed, borderBottomLeftRadius: vw(4), borderBottomRightRadius: vw(4), borderTopWidth: 0 }}>
+                  <Text style={{ fontSize: 9, fontWeight: '500', color: Style.defaultTxtColor, textAlign: 'center', alignSelf: 'center' }}>Total Quibs</Text>
                 </View>
               </View>
               <TouchableOpacity onPress={IconChange}>
-                <Icon name={Star} size={20} />
+                <Icon name={Star} size={20} color={Style.defaultRed} />
               </TouchableOpacity>
             </View>
           </View>
@@ -195,15 +198,17 @@ export default function ChooseMovies(props: props) {
   const MovieCards = ({ item, index }: any) => {
 
     return (
-      <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} viewStyle={undefined} textStyle={undefined} linearGradStyle={undefined}/>
+      <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} viewStyle={undefined} textStyle={undefined} linearGradStyle={undefined} />
     )
   }
 
   const Loaded = () => {
     if (isLoading) {
-      return (<View style={{ top: vw(50), }}>
-        <Wave size={65} color={Style.defaultRed} animating={isLoading} />
-      </View>)
+      return (
+        <View style={{ height: vh(100), justifyContent:'center', alignItems:'center', paddingBottom:vw(35),backgroundColor:Style.quibBackColor }}>
+          <Wave size={65} color={Style.defaultRed} animating={isLoading} />
+        </View>
+      )
 
     } else return (
       <SectionList
@@ -223,7 +228,7 @@ export default function ChooseMovies(props: props) {
   return (
     <BottomSheetModalProvider>
       {/* <SafeAreaView> */}
-      <View style={{ alignItems: 'center', }}>
+      <View style={{ alignItems: 'center', backgroundColor: Style.quibBackColor }}>
         <Loaded />
         <BottomSheet />
       </View>
@@ -251,7 +256,7 @@ const styles = StyleSheet.create({
     width: vw(95),
     height: vh(12),
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#EEEEEE',
     // backgroundColor: 'Style.quibColor',
     alignItems: 'center',
   },

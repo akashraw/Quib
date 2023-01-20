@@ -12,7 +12,8 @@ import {
   ImageBackground,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {FlatList} from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
+import { Shadow } from 'react-native-shadow-2';
 import {
   TabView,
   SceneMap,
@@ -20,38 +21,38 @@ import {
   NavigationState,
 } from 'react-native-tab-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {vh, vw} from 'rxn-units';
-import OnLandingButton from '../../components/OnLandingButton';
-import {API} from '../../constants/Api';
-import {Style} from '../../constants/Styles';
+import { vh, vw } from 'rxn-units';
+import QuibButton from '../../components/QuibButton';
+import { API } from '../../constants/Api';
+import { Style } from '../../constants/Styles';
 import MovieCard from '../visitScreens/MovieCard';
 
 const Dummy = [
-  {key: 1, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 2, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 3, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 4, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 5, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 6, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 7, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 8, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 9, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 10, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 11, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 12, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 13, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 14, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 15, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 16, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 17, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 18, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 19, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 20, title: 'Arrival', year: 2015, director: 'Test Testing'},
-  {key: 21, title: 'Arrival', year: 2015, director: 'Test Testing 1'},
-  {key: 22, title: 'Arrival', year: 2015, director: 'Test Testing asd'},
-  {key: 23, title: 'Arrival', year: 2015, director: 'Test Testing asd'},
-  {key: 24, title: 'Arrival', year: 2015, director: 'Test Testing asd'},
-  {key: 25, title: 'Arrival', year: 2015, director: 'Test Testing asd'},
+  { key: 1, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 2, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 3, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 4, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 5, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 6, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 7, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 8, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 9, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 10, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 11, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 12, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 13, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 14, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 15, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 16, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 17, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 18, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 19, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 20, title: 'Arrival', year: 2015, director: 'Test Testing' },
+  { key: 21, title: 'Arrival', year: 2015, director: 'Test Testing 1' },
+  { key: 22, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
+  { key: 23, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
+  { key: 24, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
+  { key: 25, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
 ];
 
 type Route = {
@@ -71,25 +72,25 @@ const Quibbed = () => {
     //         <Icon name='chevron-right' color={Style.defaultTxtColor} size={18} style={{ paddingTop: vw(.6), paddingLeft: vw(4) }} />
     //     </View>
     // </View>
-    <View style={{flex: 1, paddingHorizontal: vw(2), alignSelf:'center'}}>
+    <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center' }}>
       <FlatList
         initialScrollIndex={0}
         showsVerticalScrollIndicator={false}
         data={Dummy}
         numColumns={3}
-        ListFooterComponent={<View style={{height: vw(22)}}/>}
+        ListFooterComponent={<View style={{ height: vw(22) }} />}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({item, index}: any) => (
+        renderItem={({ item, index }: any) => (
           <View
-            style={{justifyContent: 'center', alignItems: 'center'}}>
+            style={{ justifyContent: 'center', alignItems: 'center' }}>
             <MovieCard
               key={index}
               title={item.title}
               year={item.year}
               director={item.director}
-              viewStyle={styles.movieCardViewStyleProp}
+              viewStyle={undefined}
               textStyle={undefined}
-              linearGradStyle={styles.movieCardGradStleProp}
+              linearGradStyle={undefined}
             />
           </View>
         )}
@@ -120,8 +121,8 @@ const Following = () => {
             }}>
             <Image
               style={{
-                width: vw(15),
-                height: vw(15),
+                width: vw(14),
+                height: vw(14),
                 borderRadius: vw(8),
                 marginRight: vw(2),
                 resizeMode: 'contain',
@@ -131,20 +132,20 @@ const Following = () => {
               source={require('../../assets/Movie/arrival.jpeg')}
             />
             <View>
-              <Text style={[styles.title, styles.txt, {fontSize: 14}]}>
+              <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
                 @itzTimmy
               </Text>
               <Text
                 style={[
                   styles.year,
                   styles.txt,
-                  {fontSize: 12, textAlign: 'center'},
+                  { fontSize: 12, textAlign: 'center' },
                 ]}>
                 Timithoe
               </Text>
             </View>
           </View>
-          <OnLandingButton
+          <QuibButton
             text={'Unfollow'}
             onPress={undefined}
             viewStyle={styles.button}
@@ -158,61 +159,64 @@ const Following = () => {
 };
 const Followers = () => {
   return (
-    <TouchableOpacity>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          //   alignItems: 'center',
-          //   alignSelf: 'center',
-        }}>
-        {/* bannner top */}
+    <Shadow containerStyle={{ alignSelf:'center'}} distance={5}>
+      <TouchableOpacity>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            //   alignItems: 'center',
+            //   alignSelf: 'center',
+          }}>
+          {/* bannner top */}
 
-        {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
-        <View style={styles.followFollowers}>
-          <View
-            style={{
-              alignSelf: 'center',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            }}>
-            <Image
+          {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
+          <View style={styles.followFollowers}>
+            <View
               style={{
-                width: vw(15),
-                height: vw(15),
-                borderRadius: vw(8),
-                marginRight: vw(2),
-                resizeMode: 'contain',
                 alignSelf: 'center',
-              }}
-              //   resizeMode={FastImage.resizeMode.contain}
-              source={require('../../assets/Movie/arrival.jpeg')}
-            />
-            <View>
-              <Text style={[styles.title, styles.txt, {fontSize: 14}]}>
-                @itzTimmy
-              </Text>
-              <Text
-                style={[
-                  styles.year,
-                  styles.txt,
-                  {fontSize: 12, textAlign: 'center'},
-                ]}>
-                Timithoe
-              </Text>
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+              }}>
+              <Image
+                style={{
+                  width: vw(14),
+                  height: vw(14),
+                  borderRadius: vw(8),
+                  marginRight: vw(2),
+                  resizeMode: 'contain',
+                  alignSelf: 'center',
+                }}
+                //   resizeMode={FastImage.resizeMode.contain}
+                source={require('../../assets/Movie/arrival.jpeg')}
+              />
+              <View>
+                <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
+                  @itzTimmy
+                </Text>
+                <Text
+                  style={[
+                    styles.year,
+                    styles.txt,
+                    { fontSize: 12, textAlign: 'center' },
+                  ]}>
+                  Timithoe
+                </Text>
+              </View>
             </View>
+            <QuibButton
+              text={'Follow'}
+              onPress={undefined}
+              viewStyle={styles.button}
+              textStyle={styles.buttonTxt}
+            />
           </View>
-          <OnLandingButton
-            text={'Follow'}
-            onPress={undefined}
-            viewStyle={styles.button}
-            textStyle={styles.buttonTxt}
-          />
         </View>
-      </View>
-      {/* </View> */}
-    </TouchableOpacity>
+        {/* </View> */}
+      </TouchableOpacity>
+    </Shadow>
+
   );
 };
 
@@ -221,9 +225,9 @@ export default function ProfileScreenTabViews() {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'first', title: 'Quibbed'},
-    {key: 'second', title: 'Following'},
-    {key: 'thrid', title: 'Followers'},
+    { key: 'first', title: 'Quibbed' },
+    { key: 'second', title: 'Following' },
+    { key: 'thrid', title: 'Followers' },
   ]);
 
   const renderScene = SceneMap({
@@ -239,33 +243,33 @@ export default function ProfileScreenTabViews() {
       navigationState: State;
       position: Animated.AnimatedInterpolation<number>;
     }) =>
-    ({route, index}: {route: Route; index: number}) => {
-      const inputRange = navigationState.routes.map((_, i) => i);
+      ({ route, index }: { route: Route; index: number }) => {
+        const inputRange = navigationState.routes.map((_, i) => i);
 
-      const activeOpacity = position.interpolate({
-        inputRange,
-        outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
-      });
-      const inactiveOpacity = position.interpolate({
-        inputRange,
-        outputRange: inputRange.map((i: number) => (i === index ? 0 : 1)),
-      });
+        const activeOpacity = position.interpolate({
+          inputRange,
+          outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
+        });
+        const inactiveOpacity = position.interpolate({
+          inputRange,
+          outputRange: inputRange.map((i: number) => (i === index ? 0 : 1)),
+        });
 
-      return (
-        <View style={styles.tab}>
-          <Animated.View style={[styles.item, {opacity: inactiveOpacity}]}>
-            <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
-          </Animated.View>
-          <Animated.View
-            style={[styles.item, styles.activeItem, {opacity: activeOpacity}]}>
-            <Text style={[styles.label, styles.active]}>{route.title}</Text>
-          </Animated.View>
-        </View>
-      );
-    };
+        return (
+          <View style={styles.tab}>
+            <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
+              <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
+            </Animated.View>
+            <Animated.View
+              style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}>
+              <Text style={[styles.label, styles.active]}>{route.title}</Text>
+            </Animated.View>
+          </View>
+        );
+      };
 
   const renderTabBar = (
-    props: SceneRendererProps & {navigationState: State},
+    props: SceneRendererProps & { navigationState: State },
   ) => (
     <View style={styles.tabbar}>
       {props.navigationState.routes.map((route: Route, index: number) => {
@@ -273,7 +277,7 @@ export default function ProfileScreenTabViews() {
           <TouchableWithoutFeedback
             key={route.key}
             onPress={() => props.jumpTo(route.key)}>
-            {renderItem(props)({route, index})}
+            {renderItem(props)({ route, index })}
           </TouchableWithoutFeedback>
         );
       })}
@@ -283,12 +287,12 @@ export default function ProfileScreenTabViews() {
   return (
     <TabView
       swipeEnabled={false}
-      style={{marginTop: StatusBar.currentHeight}}
-      navigationState={{index, routes}}
+      style={{ marginTop: StatusBar.currentHeight }}
+      navigationState={{ index, routes }}
       renderScene={renderScene}
       renderTabBar={renderTabBar}
       onIndexChange={setIndex}
-      initialLayout={{width: layout.width}}
+      initialLayout={{ width: layout.width }}
     />
   );
 }
@@ -346,7 +350,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   followFollowers: {
-    paddingHorizontal: vw(2),
+    paddingHorizontal: vw(3),
     // paddingTop:vw(1),
     justifyContent: 'space-between',
     alignSelf: 'center',
@@ -358,7 +362,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'flex-start',
     alignItems: 'center',
     alignContent: 'center',
-    elevation: 2,
+    // elevation: 2,
     zIndex: 2,
   },
   txt: {

@@ -3,6 +3,7 @@ import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import com.zoontek.rnbootsplash.RNBootSplash;
 
 public class MainActivity extends ReactActivity {
 
@@ -11,13 +12,15 @@ public class MainActivity extends ReactActivity {
    * rendering of the component.
    */
   @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    RNBootSplash.init(this); // <- initialize the splash screen
+    super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
+  }
+  @Override
   protected String getMainComponentName() {
     return "Quibs";
   }
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(null);
-  }
+
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
    * you can specify the renderer you wish to use - the new renderer (Fabric) or the old renderer

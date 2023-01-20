@@ -6,14 +6,14 @@ import { Style } from '../constants/Styles';
 import { vw } from 'rxn-units';
 interface props {
     text: string;
-    onPress: any;
+    onPress: any|null;
     viewStyle: ViewProps['style'] | null;
     textStyle: TextProps['style'] | null;
 
 }
 
 
-export default function OnLandingButton({ text, onPress, viewStyle, textStyle }: props) {
+export default function QuibButton({ text, onPress, viewStyle, textStyle }: props) {
     const navigation = useNavigation();
     return (
 

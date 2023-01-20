@@ -8,5 +8,8 @@ export const Style={
     quibHeaderGrad:'#7D8F69',
     quibHeaderGradFade:'#CCCC9915',
     forgetPass: '#337ab7',
-    borderColor:'#E6E6E6'
+    borderColor:'#E6E6E6',
+    defaultGrey:'#3C4048',
+    defaultLightGrey:'#73777B',
+    quibBackColor: '#E0DECA'
 }

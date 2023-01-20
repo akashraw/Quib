@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, Scro
 import React, { useState } from 'react'
 import { StringData } from '../../constants/Constant'
 import { Style } from '../../constants/Styles';
-import OnLandingButton from '../../components/OnLandingButton';
+import QuibButton from '../../components/QuibButton';
 import { vmax, vw } from 'rxn-units';
 
 interface props {
@@ -27,13 +27,13 @@ export default function LoginScreen(props: props) {
   }
   return (
     <View style={{
-      height:vmax(),
+      // height:vmax(),
       flex: 1,
-      backgroundColor: '#fff',
+      // backgroundColor: '#fff',
       // marginHorizontal: 16,
       // marginVertical: 20,
       // borderWidth: 1,
-      borderColor: '#3333',
+      // borderColor: '#3333',
     }}>
       <SafeAreaView style={styles.container}>
         <View style={styles.headWrap}>
@@ -69,10 +69,10 @@ export default function LoginScreen(props: props) {
           </View>
           <View style={{ justifyContent: 'space-evenly', alignItems: 'center', marginTop: vw(10), flexDirection: 'row' }}>
             <View style={{ paddingVertical: 10, }}>
-              <OnLandingButton text={'Join'} onPress="Register" viewStyle={styles.button} textStyle={styles.buttonTxt} />
+              <QuibButton text={'Join'} onPress="Register" viewStyle={styles.button} textStyle={styles.buttonTxt} />
             </View>
             <View style={{ paddingVertical: 10, }}>
-              <OnLandingButton text={'Visit'} onPress="Choose" viewStyle={styles.button} textStyle={styles.buttonTxt} />
+              <QuibButton text={'Visit'} onPress="Choose" viewStyle={styles.button} textStyle={styles.buttonTxt} />
             </View>
           </View>
         </View>
@@ -85,7 +85,7 @@ export default function LoginScreen(props: props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Style.quibBackColor,
     // marginHorizontal: 16,
     // marginVertical: 20,
     // borderWidth: 1,

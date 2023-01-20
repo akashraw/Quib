@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import OnLandingButton from '../../components/OnLandingButton';
+import QuibButton from '../../components/QuibButton';
 import { StringData } from '../../constants/Constant';
 import { vh, vw } from 'rxn-units';
 import { ScalingDot } from 'react-native-animated-pagination-dots';
@@ -27,10 +27,15 @@ export default function OnLanding({ navigation }: props) {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   return (
     <SafeAreaView style={styles.container}>
+      {/* <View style={styles.headWrap}> */}
       <View style={styles.headWrap}>
-        <Text  style={styles.heading}>{StringData.onLandingHead}</Text>
+        <Image
+          style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center', marginBottom: vw(2) }}
+          resizeMode={'contain'}
+          source={require('../../assets/logo.png')}
+        />
+        <Text style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
-          style={{ marginHorizontal: vw(2)}}
           horizontal
           snapToAlignment='center'
           decelerationRate="fast"
@@ -52,7 +57,7 @@ export default function OnLanding({ navigation }: props) {
           )}
         />
         {/* Pagination */}
-        <View style={{marginTop:vw(5)}}>
+        <View style={{ marginTop: vw(8) }}>
           <ScalingDot
             data={Slides}
             // expandingDotWidth={30}
@@ -61,8 +66,8 @@ export default function OnLanding({ navigation }: props) {
             activeDotColor={Style.defaultTxtColor}
             inActiveDotColor={Style.defaultTxtColor}
             dotStyle={{
-              width: 10,
-              height: 10,
+              width: vw(2),
+              height: vw(2),
               backgroundColor: '#347af0',
               borderRadius: 5,
               marginHorizontal: 5
@@ -87,17 +92,17 @@ export default function OnLanding({ navigation }: props) {
             justifyContent: 'space-around',
             marginTop: 40,
           }}>
-          <OnLandingButton
+          <QuibButton
             text={'Join'}
-            onPress="Register" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
-          <OnLandingButton
+            onPress="Register" viewStyle={styles.button} textStyle={styles.buttonTxt} />
+          <QuibButton
             text={'Visit'}
-            onPress="Bottom" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
+            onPress="Bottom" viewStyle={styles.button} textStyle={styles.buttonTxt} />
         </View>
         <View style={{ marginTop: 20, alignItems: 'center' }}>
-          <OnLandingButton
+          <QuibButton
             text={'Log In'}
-            onPress="Login" viewStyle={styles.button} textStyle={styles.buttonTxt}          />
+            onPress="Login" viewStyle={styles.button} textStyle={styles.buttonTxt} />
         </View>
       </View>
     </SafeAreaView>
@@ -106,15 +111,15 @@ export default function OnLanding({ navigation }: props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-
+    backgroundColor: Style.quibBackColor,
+    paddingHorizontal:vw(2),
     flex: 1,
   },
   headWrap: {
-    marginTop: 30,
+    marginTop: vw(2),
   },
   heading: {
-    paddingHorizontal:vw(1),
+    paddingHorizontal: vw(1),
     color: '#990000',
     fontSize: 24,
     textAlign: 'center',
@@ -148,13 +153,13 @@ const styles = StyleSheet.create({
     height: vw(10),
     borderRadius: vw(2),
     marginBottom: 10,
-},
-buttonTxt: {
+  },
+  buttonTxt: {
     textAlign: 'center',
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold'
-},
+  },
 });
 
 const Slides = [
