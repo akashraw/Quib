@@ -15,7 +15,7 @@ import { vh, vw } from 'rxn-units';
 import { ScalingDot } from 'react-native-animated-pagination-dots';
 import { Style } from '../../constants/Styles';
 //for width
-const width = Dimensions.get('screen').width;
+// const width = Dimensions.get('screen').width;
 const DOT_SIZE = 8;
 const DOT_SPACING = 8;
 //for prop
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(2),
   },
   image: {
-    width: width,
+    width: vw(95),
     height: vh(35),
     resizeMode: 'contain',
   },

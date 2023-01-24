@@ -1,84 +1,93 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated } from 'react-native'
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import { vh, vw } from 'rxn-units';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Style } from '../../constants/Styles';
 import { quibPlayerStyles } from './QuibPlayerStyle';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useBottomSheetBackHandler } from '../../screens/visitScreens/useBottomSheetBack';
-import QuibComposeTabView from './QuibComposeTabView';
 import { SceneMap, TabView, NavigationState, SceneRendererProps } from 'react-native-tab-view';
+import getFormattedTime from '../GetFormattedTime';
+import FastImage from 'react-native-fast-image';
+import { DeleteBump, AddQuib, QuibByMovieAndUserId, DeleteQuib } from '../../services/QuibAPIs';
+import { API } from '../../constants/Api';
 
 type FD = {
   Quib: string;
-  hours: number;
-  min: number;
-  sec: number;
+  time: number;
 }
 interface props {
+  MovieId: number,
   hour: number,
   mins: number,
   secs: number,
+  time: number,
+}
+type PostQuibProp = {
+  MovieId: number,
+  body: string,
+  userId: string,
+  time: number,
 }
 
 type Route = {
   key: string;
   title: string;
-  // icon: React.ComponentProps<typeof Ionicons>['name'];
 };
 type State = NavigationState<Route>;
 
 
-function QuibCompose({ hour, mins, secs }: props) {
+function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
   const [QuibInput, setQuibInput] = useState<string>('');
-  const [FlatData, setFlatData] = useState<any>([]);
-  // const [isVisible, setIsVisible] = useState(true)
-  // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [FlatData, setFlatData] = useState<any[]>([]);
   const DataRef = useRef<FD[]>([]);
   const layout = useWindowDimensions();
-
+  const [Refresh, setRefresh] = useState(false);
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'first', title: 'My Stream' },
     { key: 'second', title: 'Saved Quib' },
-    // { key: 'thrid', title: 'Followers' },
 
   ]);
+  useEffect(() => {
+    QuibByMovieAndUserId({ MovieId, userId: '' })
+      .then((res: any) => setFlatData(res))
+
+  }, [])
+
   const MyStreamFlatlist = () => {
-    return(
-    <FlatList
-      showsHorizontalScrollIndicator={false}
-      style={{ alignSelf: 'center', marginHorizontal: vw(0),  }}
-      contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
-      data={FlatData}
-      extraData={FlatData}
-      renderItem={({ item, index }) => < Quibs item={item} index={index} />}
-      initialNumToRender={10}
-      windowSize={5}
-      maxToRenderPerBatch={10}
-      updateCellsBatchingPeriod={30}
-      showsVerticalScrollIndicator={false}
-      keyExtractor={(_, index) => index.toString()}
-      initialScrollIndex={0}
-    />)
-  }
-  const SavedQuib = ()  =>{
-    return(
+    return (
       <FlatList
-      showsHorizontalScrollIndicator={false}
-      style={{ alignSelf: 'center', marginHorizontal: vw(0) }}
-      contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
-      data={FlatData}
-      extraData={FlatData}
-      renderItem={({ item, index }) => < Quibs item={item} index={index} />}
-      initialNumToRender={10}
-      windowSize={5}
-      maxToRenderPerBatch={10}
-      updateCellsBatchingPeriod={30}
-      showsVerticalScrollIndicator={false}
-      keyExtractor={(_, index) => index.toString()}
-      initialScrollIndex={0}
-    />
+        showsHorizontalScrollIndicator={false}
+        style={{ alignSelf: 'center', marginHorizontal: vw(0), }}
+        contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
+        data={FlatData}
+        extraData={FlatData}
+        renderItem={({ item, index }) => < Quibs item={item} index={index} />}
+        initialNumToRender={10}
+        windowSize={5}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={30}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(_, index) => index.toString()}
+        initialScrollIndex={0}
+      />)
+  }
+  const SavedQuib = () => {
+    return (
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        style={{ alignSelf: 'center', marginHorizontal: vw(0) }}
+        contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
+        data={FlatData}
+        extraData={FlatData}
+        renderItem={({ item, index }) => < Quibs item={item} index={index} />}
+        initialNumToRender={10}
+        windowSize={5}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={30}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(_, index) => index.toString()}
+        initialScrollIndex={0}
+      />
     )
   }
   const renderScene = SceneMap({
@@ -147,63 +156,109 @@ function QuibCompose({ hour, mins, secs }: props) {
     </View>
   );
 
-  // return (
-      // <TabView
-      //     style={{ marginTop: StatusBar.currentHeight, }}
-      //     navigationState={{ index, routes }}
-      //     renderScene={renderScene}
-      //     renderTabBar={renderTabBar}
-      //     onIndexChange={setIndex}
-      //     initialLayout={{ width: layout.width }}
-      // />
-  // );
-
-
-
-  // useEffect(() => {
-  //   console.log('render');
-
-  //   bottomSheetModalRef.current?.present();
-
-  //   // return () => {
-  //   //   second
-  //   // }
-  // }, [])
-
-
   const setData = () => {
-    DataRef.current.push({
-      Quib: QuibInput,
-      hours: hour,
-      min: mins,
-      sec: secs
-    })
-    setFlatData([...DataRef.current]);
-    // console.log(DataRef.current)
-  }
-  const Quibs = ({ item, index }: any) => {
-    console.log(item);
+    AddQuib({ MovieId: MovieId, userId: '', time: time, body: QuibInput } as PostQuibProp).then(() => setRefresh(true));
 
-    return (
-      <View style={{ width: vw(100), }} key={index}>
-        <ScrollView style={{ width: vw(80), height: vh(26), alignSelf: 'center', borderRadius:vw(4),backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2) }}>
-          <View style={{ justifyContent: 'center', alignItems: 'center',  }}>
-            <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginVertical: vw(1) }]}>
-              <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(item.hours < 10) ? `0${item.hours}` : `${item.hours}`}:{(item.min < 10) ? (`0${item.min}`) : `${item.min}`}:{(item.sec < 10) ? (`0${item.sec}`) : `${item.sec}`}</Text>
+
+    // DataRef.current.push({
+    //   Quib: QuibInput,
+    //   time:time
+    // })
+    // setFlatData([...DataRef.current]);
+  }
+
+  const deletePost = ({ id, movieId }: any) => {
+    Promise.resolve(DeleteBump({ quibId: id, MovieId: movieId, userId: 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1' })
+      .then(() => handleRemoveItem(index)))
+  }
+
+  const handleRemoveItem = (idx: number) => {
+    // assigning the list to temp variable
+    const temp = [...FlatData];
+
+    // removing the element using splice
+    temp.splice(idx, 1);
+
+    // updating the list
+    setFlatData(temp);
+  }
+
+  const Quibs = ({ item, index }: any) => {
+    let { hours, mintues, seconds } = getFormattedTime(item.time)
+
+    if (item.isSeedQuib == true && item.isScreenshot == false)
+      return (
+        <View style={{ width: vw(100), }} key={index}>
+          <View style={{ width: vw(80), height: vh(26), alignSelf: 'center', borderRadius: vw(4), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2), paddingVertical: vw(2) }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: vw(2) }}>
+              <FastImage source={{ uri: `data:image/png;base64,${item.avatarBase32ImagePath}` }} style={{ width: vw(2), height: vw(2), }} resizeMode='contain' />
+              <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), }]}>
+                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+              </View>
+            </View>
+            <ScrollView style={{ width: vw(75), height: vh(17), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(3), padding: vw(2) }}>
+              <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
+            </ScrollView>
+            <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8), paddingTop: vw(1) }}>
+              <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
+                <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
+                  <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={{ width: vw(75), height: vh(17), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, padding: vw(2) }}>
-            <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.Quib}</Text>
+        </View>
+      )
+    if (item.isScreenshot == true)
+      return (
+        <View style={{ width: vw(100), }} key={index}>
+          <ScrollView style={{ width: vw(80), height: vh(26), alignSelf: 'center', borderRadius: vw(4), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2) }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+              <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginVertical: vw(1) }]}>
+                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+              </View>
+            </View>
+            <View style={{ width: vw(75), height: vh(17), alignSelf: 'center', justifyContent: 'center' }}>
+              <FastImage
+                source={{
+                  uri: API + item.body,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.normal
+                }}
+                resizeMode={FastImage.resizeMode.contain}
+                style={{ width: vw(75), height: vw(40) }}
+              />
+            </View>
+            <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingTop: vw(1), paddingLeft: vw(8) }}>
+              <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
+                <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
+                  <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+      )
+    else return (
+      <View style={{ width: vw(100), }} key={index}>
+        <ScrollView style={{ width: vw(80), height: vh(26), alignSelf: 'center', borderRadius: vw(4), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2) }}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+            <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginVertical: vw(1) }]}>
+              <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+            </View>
+          </View>
+          <View style={{ width: vw(75), height: vh(17), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(3), padding: vw(2) }}>
+            <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
           </View>
           <View style={{ justifyContent: 'space-around', flexDirection: 'row', }}>
-            <TouchableOpacity style={{ paddingTop: vw(2) }} activeOpacity={.4} disabled={false} >
+            <TouchableOpacity style={{ paddingTop: vw(2) }} activeOpacity={.4} disabled={false} onPress={() => DeleteQuib(item.id)} >
               <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
-                <Text style={styles.buttonTxt}>Delete</Text>
+                <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={{ paddingTop: vw(2) }} activeOpacity={.4} disabled={false} >
               <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
-                <Text style={styles.buttonTxt}>Post</Text>
+                <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Post</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -217,15 +272,17 @@ function QuibCompose({ hour, mins, secs }: props) {
     // <BottomSheetModalProvider>
 
     <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0) }}>
-      <View><Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2) }}>Write a Quib</Text></View>
-      <View style={{ backgroundColor: '#e2e2e2', borderWidth: 1, borderRadius: vw(4), borderColor: '#fff', width: vw(90), height: vw(35) }}>
+      <View><Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text></View>
+      <View style={{ backgroundColor: '#e2e2e2', borderWidth: 1, borderRadius: vw(4), borderColor: '#fff', width: vw(90), height: vw(30) }}>
         <TextInput placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
       </View>
-      <TouchableOpacity style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'flex-end', width: vw(80) }} activeOpacity={.4} disabled={false} onPress={setData}>
-        <View style={styles.button}>
-          <Text style={styles.buttonTxt}>Save</Text>
-        </View>
-      </TouchableOpacity>
+      <View style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'space-around', width: vw(80), marginBottom: vw(-4) }}>
+        <TouchableOpacity activeOpacity={.4} disabled={false} onPress={setData}>
+          <View style={styles.button}>
+            <Text style={styles.buttonTxt}>Save</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       <View style={{ alignItems: 'center', alignSelf: 'center', justifyContent: 'center', flex: 1, flexDirection: 'row' }}>
         {/* <QuibComposeTabView /> */}
         <TabView
@@ -235,7 +292,7 @@ function QuibCompose({ hour, mins, secs }: props) {
           renderTabBar={renderTabBar}
           onIndexChange={setIndex}
           initialLayout={{ width: layout.width }}
-      />
+        />
 
       </View>
     </View>
@@ -252,9 +309,8 @@ const styles = StyleSheet.create({
     // alignSelf:'flex-end',
     backgroundColor: Style.defaultRed,
     width: vw(18),
-    height: vw(7),
-    borderRadius: vw(2),
-    marginBottom: 10,
+    height: vw(6),
+    borderRadius: vw(1),
   },
   buttonTxt: {
     textAlign: 'center',
@@ -263,7 +319,7 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   tabbar: {
-    borderRadius:vw(1),
+    borderRadius: vw(1),
     marginHorizontal: vw(1),
     flexDirection: 'row',
     alignItems: 'center',

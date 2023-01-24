@@ -132,7 +132,7 @@ export default function ChooseMovies(props: props) {
                 }} />
               {/* </Shadow> */}
               <View>
-                <Text style={[styles.title, styles.txt]}>{item.title}</Text>
+                <Text style={[[styles.title, styles.txt], {width:vw(60), paddingRight:vw(1)}]} numberOfLines={1}>{item.title}</Text>
                 <Text style={[...[styles.txt], { fontSize: 12 }]}>{item.releaseYear}</Text>
                 <Text style={[...[styles.txt], { fontSize: 12 }]}>{item.director}</Text>
               </View>

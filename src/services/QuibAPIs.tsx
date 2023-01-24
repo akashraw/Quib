@@ -1,10 +1,24 @@
-import { GetAllMoviesAPI, getMovieLengthAPI, GetQuibsByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI } from "../constants/Api"
+import { addBumpAPI, addQuibAPI, deleteBumpAPI, deleteQuibAPI, GetAllMoviesAPI, getMovieLengthAPI, getQuibByMovieAndUserIdAPI, GetQuibsByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI } from "../constants/Api"
 
 interface props {
     user: string;
     pass: string;
 }
-
+type BumpProp = {
+    quibId: number,
+    MovieId: number,
+    userId: string,
+}
+type QuibProp = {
+    MovieId: number,
+    userId: string,
+}
+type PostQuibProp = {
+    MovieId: number,
+    body: string,
+    userId: string,
+    time: number,
+}
 export async function Login(props: props) {
 
 }
@@ -131,6 +145,120 @@ export async function getMovieLength(id: any) {
 }
 
 //get user profile
-export async function getUserProfile(id: any){
-    
+export async function getUserProfile(id: any) {
+
+}
+
+//add Bumb Quib
+export async function AddBump(Bump: BumpProp) {
+    console.log(Bump.MovieId, Bump.quibId, Bump.userId);
+
+    const headerOptions = {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    Bump.userId = 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1';
+    try {
+        await fetch(`${addBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
+        // json = await response.json();
+        // console.log(response)
+        return;
+    }
+    catch (error) {
+        console.log(error);
+
+    }
+
+}
+
+//Delete Bumb Quib
+export async function DeleteBump(Bump: BumpProp) {
+    console.log(Bump.MovieId, Bump.quibId, Bump.userId);
+
+    const headerOptions = {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    Bump.userId = 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1';
+    try {
+        await fetch(`${deleteBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
+        // json = await response.json();
+        return;
+    }
+    catch (error) {
+        console.log(error);
+
+    }
+}
+
+//Delete Quib by id
+export async function DeleteQuib(QuibId:number) {
+    const headerOptions = {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    try {
+        await fetch(`${deleteQuibAPI}?quibId=${QuibId}`, headerOptions);
+        // json = await response.json();
+        return;
+    }
+    catch (error) {
+        console.log(error);
+
+    }
+}
+
+//get Quib by user and movie ID
+export async function QuibByMovieAndUserId(Quib: QuibProp) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    Quib.userId = 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1';
+    try {
+        let json;
+        let response = await fetch(`${getQuibByMovieAndUserIdAPI}?MovieId=${Quib.MovieId}&UserId=fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        return json;
+    }
+    catch (error) {
+        console.log('my stream ' + error);
+
+    }
+
+}
+
+export async function AddQuib(Quib: PostQuibProp) {
+    const headerOptions = {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    try {
+        let json;
+        let response = await fetch(`${addQuibAPI}?body=${Quib.body}&UserId=fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1&ParentId=0&MovieId=${Quib.MovieId}&isSeedQuib=false&isSeedQuibType=null&isScreenShot=false&Time=${Quib.time}`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        // return json;
+    }
+    catch (error) {
+        console.log('my stream ' + error);
+
+    }
+
 }

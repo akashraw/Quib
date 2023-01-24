@@ -9,18 +9,16 @@ import { Slider } from '@miblanchard/react-native-slider'
 import DATA from '../../constants/Arrival.json'
 import { API } from '../../constants/Api';
 import FastImage from 'react-native-fast-image';
-import { getMovieLength, getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
-import { SvgUri } from 'react-native-svg';
+import { AddBump, getMovieLength, getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
 import { LocalSvg } from 'react-native-svg';
 import SyncButton from './SyncButton';
-import Carousel from 'react-native-reanimated-carousel';
 import QuibCarousel from './QuibCarousel';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import QuibCompose from './QuibCompose';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useBottomSheetBackHandler } from '../../screens/visitScreens/useBottomSheetBack';
-import QuibComposeTabView from './QuibComposeTabView';
 import LinearGradient from 'react-native-linear-gradient';
+import getFormattedTime from '../GetFormattedTime';
+import Toast from 'react-native-toast-message';
 
 
 interface props {
@@ -28,13 +26,6 @@ interface props {
     route: any,
 }
 
-
-const getFormattedTime = (time: number) => {
-    const hours = Math.floor(time / 3600);
-    const mintues = Math.floor((time - (hours * 3600)) / 60);
-    const seconds = time - (hours * 3600) - (mintues * 60);
-    return { hours, mintues, seconds }
-}
 const width = Dimensions.get('window').width;
 
 
@@ -52,16 +43,18 @@ export default function QuibPlayer({ navigation, route }: props) {
     const posterRef = useRef(String);
     const [isPoster, setIsPoster] = useState(Boolean);
     const MovieId = route.params;
-    const Movietitle = route.params.Movietitle;
+    // const Movietitle = route.params.Movietitle;
     const quibTimeRef = useRef<number[]>([]);
     const quibScrubIndexRef = useRef<number>(0);
     const quibPlayIndexRef = useRef<number>(0);
     const resMap = useRef<any[]>([]);
     const [isVisble, setIsVisble] = useState(false);
     // const [isVisbleModal, setIsVisbleModal] = useState(false);
+    const TimeRef = useRef(0);
     const [AllSync, setAllSync] = useState<boolean>(true);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const { handleSheetPositionChange } = useBottomSheetBackHandler(bottomSheetModalRef);
+    // const [MyStreamQuibs, setMyStreamQuibs] = useState<any[]>([]);
 
     //Api calls 
 
@@ -77,6 +70,7 @@ export default function QuibPlayer({ navigation, route }: props) {
             getMovieLength(MovieId)
                 .then((res: any) => MovieLen.current = (res.map((res: any) => res.length)))
         ]).then(() => setIsLoading(false));
+
     }, [])
 
 
@@ -152,31 +146,43 @@ export default function QuibPlayer({ navigation, route }: props) {
     }
 
     //Quib list quibs head in (profile image, name, timestamp and quib)
-    const QuibHead = ({ hours, mintues, seconds, image, name }: any) => {
+    const QuibHead = ({ hours, mintues, seconds, image, name, quibId, time }: any) => {
         return (
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
                     <View style={{ justifyContent: 'flex-start', }}>
                         <TouchableOpacity>
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(3) }}>
-                                <FastImage source={{ uri: API + image }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
+                                <FastImage source={{ uri: `data:image/png;base64,${image}` }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
                                 <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
                     <View style={{ justifyContent: 'center', position: 'absolute', left: vw(30) }}>
-                        <TouchableOpacity onPress={handlePresentModalPress}>
-                            <View style={[...[styles.timer], { width: vw(14), height: vw(4), marginBottom: vw(2) }]}>
-                                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                        <TouchableOpacity onPress={() => { TimeRef.current = time; handlePresentModalPress; }}>
+                            <View style={[...[styles.timer], { width: vw(16), height: vw(5), marginBottom: vw(2) }]}>
+                                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
+                    {/* Bump Api itegrated */}
                     <View style={{ right: vw(0), position: 'absolute' }}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => AddBump({
+                            quibId: quibId,
+                            MovieId: MovieId.MovieId,
+                            userId: 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1'
+                        }).then(() => Toast.show(
+                            {
+                                type: 'success',
+                                text1: 'Bumped!',
+                                text2: 'Quib has been add to your stream successfully.'
+                            }
+                        ))
+                        } >
                             <LocalSvg
                                 fill={'#00000000'}
-                                width={20}
-                                height={20}
+                                width={22}
+                                height={22}
                                 asset={require('../../assets/bump.svg')}
                             />
                         </TouchableOpacity>
@@ -193,7 +199,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         if (!item.isScreenshot) {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} />
+                    <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} quibId={item.id} />
                     <View style={styles.flatlistComps}>
                         <Text style={{ color: Style.defaultTxtColor, }}>{item.body}</Text>
                     </View>
@@ -203,7 +209,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         else {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} image={null} name={null} />
+                    <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} image={null} name={null} quibId={item.id} />
                     <View style={styles.flatlistComps}>
                         <FastImage
                             source={{
@@ -276,7 +282,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     }
 
     // variables
-    const snapPoints = useMemo(() => ['70 %', '90%'], []);
+    const snapPoints = useMemo(() => ['80 %', '95%'], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
@@ -306,259 +312,262 @@ export default function QuibPlayer({ navigation, route }: props) {
                 backdropComponent={renderBackdrop}
 
             >
-                <QuibCompose hour={hours} mins={mintues} secs={seconds} />
+                <QuibCompose MovieId={MovieId.MovieId} hour={hours} mins={mintues} secs={seconds} time={TimeRef.current} />
                 {/* <QuibComposeTabView/> */}
             </BottomSheetModal>
         )
     }
     return (
-        <BottomSheetModalProvider>
-            <QuibComposeModal />
-            <SafeAreaView style={{ flex: 1, alignItems: 'center', backgroundColor: '#fff' }}>
-                {/* Quibs flatlist */}
-                {/* Quibs flatlist */}
-                {/* Quibs flatlist */}
-                {/* Quibs flatlist */}
-                {/* Quibs flatlist */}
-                <View style={styles.container}>
-                    {/*modal*/}
-                    {/*modal*/}
-                    {/*modal*/}
-                    {/*modal*/}
-                    <QuibCarouselModal />
+        <>
+            <BottomSheetModalProvider>
+                <QuibComposeModal />
+                <SafeAreaView style={{ flex: 1, alignItems: 'center', backgroundColor: '#fff' }}>
+                    {/* Quibs flatlist */}
+                    {/* Quibs flatlist */}
+                    {/* Quibs flatlist */}
+                    {/* Quibs flatlist */}
+                    {/* Quibs flatlist */}
+                    <View style={styles.container}>
+                        {/*modal*/}
+                        {/*modal*/}
+                        {/*modal*/}
+                        {/*modal*/}
+                        <QuibCarouselModal />
 
 
-                    {/* Quib List */}
-                    {/* Quib List */}
-                    {/* Quib List */}
-                    {/* Quib List */}
-                    <FlatList
-                        data={movieQuib}
-                        initialNumToRender={10}
-                        windowSize={5}
-                        maxToRenderPerBatch={10}
-                        updateCellsBatchingPeriod={30}
-                        showsVerticalScrollIndicator={false}
-                        ListHeaderComponent={InitialQuib}
-                        keyExtractor={(_, index) => index.toString()}
-                        renderItem={QuibList}
-                        initialScrollIndex={0}
-                        ref={flatRef}
-                        onScrollToIndexFailed={(error) => {
-                            flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: true });
-                            setTimeout(() => {
-                                if (DATA.length !== 0 && flatRef !== null) {
-                                    flatRef.current?.scrollToIndex({ index: error.index, animated: true });
-                                }
-                            }, 100)
-                        }}
+                        {/* Quib List */}
+                        {/* Quib List */}
+                        {/* Quib List */}
+                        {/* Quib List */}
+                        <FlatList
+                            data={movieQuib}
+                            initialNumToRender={10}
+                            windowSize={5}
+                            maxToRenderPerBatch={10}
+                            updateCellsBatchingPeriod={30}
+                            showsVerticalScrollIndicator={false}
+                            ListHeaderComponent={InitialQuib}
+                            keyExtractor={(_, index) => index.toString()}
+                            renderItem={QuibList}
+                            initialScrollIndex={0}
+                            ref={flatRef}
+                            onScrollToIndexFailed={(error) => {
+                                flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: true });
+                                setTimeout(() => {
+                                    if (DATA.length !== 0 && flatRef !== null) {
+                                        flatRef.current?.scrollToIndex({ index: error.index, animated: true });
+                                    }
+                                }, 100)
+                            }}
 
-                    />
-                </View>
-                {/* Quib timeline */}
-                {/* Quib timeline */}
-                {/* Quib timeline */}
-                {/* Quib timeline */}
-                <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', height: vh(18), }}>
-                    <LinearGradient colors={[Style.quibHeaderGradFade, Style.quibHeaderGrad, '#000000']} style={{ flex: 1, width: vw(100), height: vw(36), justifyContent: 'flex-end', }} >
-                        <View style={styles.quibScrubber}>
+                        />
+                    </View>
+                    {/* Quib timeline */}
+                    {/* Quib timeline */}
+                    {/* Quib timeline */}
+                    {/* Quib timeline */}
+                    <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', height: vh(18), }}>
+                        <LinearGradient colors={[Style.quibHeaderGradFade, Style.quibHeaderGrad, '#000000']} style={{ flex: 1, width: vw(100), height: vw(36), justifyContent: 'flex-end', }} >
+                            <View style={styles.quibScrubber}>
 
-                            {/*quib Scrubber*/}
-                            <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center', flex: 1 }}>
-                                <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
-                                    <Slider
-                                        maximumValue={MovieLen.current}
-                                        minimumTrackTintColor='#00000000'
-                                        maximumTrackTintColor='#00000000'
-                                        // minimumTrackTintColor={Style.defaultRed}
-                                        // maximumTrackTintColor={Style.defaultTxtColor}
-                                        containerStyle={{ width: vw(90), }}
-                                        value={QuibTime}
-                                        trackClickable={false}
-                                        step={1}
-                                        onSlidingComplete={value => {
-                                            value = Array.isArray(value) ? value[0] : value;
-                                            setQuibTime(value);
-                                            const Reduce = DATA.reduce((accumulator, current) => {
-                                                const val = Array.isArray(value) ? value[0] : value;
-                                                return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
-                                            })
-                                            const ScurbIndex = DATA.findIndex((item, index) => {
-                                                if (item.Time == Reduce.Time) {
-                                                    quibScrubIndexRef.current = index;
-                                                    return index;
+                                {/*quib Scrubber*/}
+                                <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center', flex: 1 }}>
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
+                                        <Slider
+                                            maximumValue={MovieLen.current}
+                                            minimumTrackTintColor='#00000000'
+                                            maximumTrackTintColor='#00000000'
+                                            // minimumTrackTintColor={Style.defaultRed}
+                                            // maximumTrackTintColor={Style.defaultTxtColor}
+                                            containerStyle={{ width: vw(90), }}
+                                            value={QuibTime}
+                                            trackClickable={false}
+                                            step={1}
+                                            onSlidingComplete={value => {
+                                                value = Array.isArray(value) ? value[0] : value;
+                                                setQuibTime(value);
+                                                const Reduce = DATA.reduce((accumulator, current) => {
+                                                    const val = Array.isArray(value) ? value[0] : value;
+                                                    return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
+                                                })
+                                                const ScurbIndex = DATA.findIndex((item, index) => {
+                                                    if (item.Time == Reduce.Time) {
+                                                        quibScrubIndexRef.current = index;
+                                                        return index;
+                                                    }
+                                                })
+                                                if (ScurbIndex < 0) {
+                                                    flatRef.current?.scrollToOffset({
+                                                        animated: true,
+                                                        offset: 0
+                                                    })
                                                 }
-                                            })
-                                            if (ScurbIndex < 0) {
-                                                flatRef.current?.scrollToOffset({
-                                                    animated: true,
-                                                    offset: 0
-                                                })
-                                            }
-                                            else {
-                                                flatRef.current?.scrollToIndex({
-                                                    animated: true,
-                                                    index: ScurbIndex
-                                                })
-                                            }
-                                        }}
-                                        renderThumbComponent={() => {
-                                            if (!AllSync) {
+                                                else {
+                                                    flatRef.current?.scrollToIndex({
+                                                        animated: true,
+                                                        index: ScurbIndex
+                                                    })
+                                                }
+                                            }}
+                                            renderThumbComponent={() => {
+                                                if (!AllSync) {
 
-                                                if (QuibTime == MovieTime) {
-                                                    return <Image source={require('../../assets/bottom.png')}
+                                                    if (QuibTime == MovieTime) {
+                                                        return <Image source={require('../../assets/bottom.png')}
+                                                            style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(1.4), }}
+                                                        />
+                                                    } else return <Image source={require('../../assets/bottom_line.png')}
                                                         style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(1.4), }}
                                                     />
-                                                } else return <Image source={require('../../assets/bottom_line.png')}
-                                                    style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(1.4), }}
-                                                />
-                                            } else return null
-                                        }}
-                                        trackStyle={{ marginLeft: vw(1), }}
-                                        animateTransitions={true}
-                                    />
-                                </View>
+                                                } else return null
+                                            }}
+                                            trackStyle={{ marginLeft: vw(1), }}
+                                            animateTransitions={true}
+                                        />
+                                    </View>
 
-                                {/* Movie Scrubber  */}
-                                <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: vw(-13) }}>
-                                    <Slider
-                                        maximumValue={MovieLen.current}
-                                        minimumTrackTintColor={Style.defaultRed}
-                                        maximumTrackTintColor={Style.defaultTxtColor}
-                                        containerStyle={{ width: vw(90), }}
-                                        value={MovieTime}
-                                        trackClickable={true}
-                                        step={1}
-                                        // onValueChange={value => {
-                                        //     value = Array.isArray(value) ? value[0] : value;
-                                        //     setMovieTime(value);
-                                        // }}
-                                        onSlidingComplete={async (value) => {
-                                            value = Array.isArray(value) ? value[0] : value;
-                                            setQuibTime(value);
-                                            setMovieTime(value);
-                                            const Reduce = DATA.reduce((accumulator, current) => {
-                                                const val = Array.isArray(value) ? value[0] : value;
-                                                return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
-                                            })
-                                            const ScurbIndex = DATA.findIndex((item, index) => {
-                                                if (item.Time == Reduce.Time) {
-                                                    quibScrubIndexRef.current = index;
-                                                    return index;
+                                    {/* Movie Scrubber  */}
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: vw(-13) }}>
+                                        <Slider
+                                            maximumValue={MovieLen.current}
+                                            minimumTrackTintColor={Style.defaultRed}
+                                            maximumTrackTintColor={Style.defaultTxtColor}
+                                            containerStyle={{ width: vw(90), }}
+                                            value={MovieTime}
+                                            trackClickable={true}
+                                            step={1}
+                                            // onValueChange={value => {
+                                            //     value = Array.isArray(value) ? value[0] : value;
+                                            //     setMovieTime(value);
+                                            // }}
+                                            onSlidingComplete={async (value) => {
+                                                value = Array.isArray(value) ? value[0] : value;
+                                                setQuibTime(value);
+                                                setMovieTime(value);
+                                                const Reduce = DATA.reduce((accumulator, current) => {
+                                                    const val = Array.isArray(value) ? value[0] : value;
+                                                    return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
+                                                })
+                                                const ScurbIndex = DATA.findIndex((item, index) => {
+                                                    if (item.Time == Reduce.Time) {
+                                                        quibScrubIndexRef.current = index;
+                                                        return index;
+                                                    }
+                                                })
+                                                if (ScurbIndex < 0) {
+                                                    flatRef.current?.scrollToOffset({
+                                                        animated: true,
+                                                        offset: 0
+                                                    })
                                                 }
-                                            })
-                                            if (ScurbIndex < 0) {
-                                                flatRef.current?.scrollToOffset({
-                                                    animated: true,
-                                                    offset: 0
-                                                })
-                                            }
 
-                                            else {
-                                                flatRef.current?.scrollToIndex({
-                                                    animated: true,
-                                                    index: ScurbIndex
-                                                })
-                                            }
-                                        }}
-                                        renderThumbComponent={() => {
-                                            if (!AllSync) {
-                                                return <Image source={require('../../assets/top.png')}
-                                                    style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(2.4), }}
-                                                />
-                                            } else return (
-                                                <TouchableOpacity style={{ paddingRight: vw(.5), overflow: 'hidden' }}>
-                                                    <LocalSvg
-                                                        style={{ marginLeft: vw(-21.5), left: vw(11.5), bottom: vw(-1.1), }}
-                                                        width={vw(25)}
-                                                        height={vw(25)}
-                                                        asset={require('../../assets/all-sync-mode.svg')}
+                                                else {
+                                                    flatRef.current?.scrollToIndex({
+                                                        animated: true,
+                                                        index: ScurbIndex
+                                                    })
+                                                }
+                                            }}
+                                            renderThumbComponent={() => {
+                                                if (!AllSync) {
+                                                    return <Image source={require('../../assets/top.png')}
+                                                        style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(2.4), }}
                                                     />
-                                                </TouchableOpacity>
+                                                } else return (
+                                                    <TouchableOpacity style={{ paddingRight: vw(.5), overflow: 'hidden' }}>
+                                                        <LocalSvg
+                                                            style={{ marginLeft: vw(-21.5), left: vw(11.5), bottom: vw(-1.1), }}
+                                                            width={vw(25)}
+                                                            height={vw(25)}
+                                                            asset={require('../../assets/all-sync-mode.svg')}
+                                                        />
+                                                    </TouchableOpacity>
 
-                                            )
-                                        }}
-                                        trackStyle={{ marginLeft: vw(1), }}
-                                        animateTransitions={true}
-                                    // thumbTouchSize={}
-                                    />
+                                                )
+                                            }}
+                                            trackStyle={{ marginLeft: vw(1), }}
+                                            animateTransitions={true}
+                                        // thumbTouchSize={}
+                                        />
+                                    </View>
                                 </View>
                             </View>
-                        </View>
 
-                        {/* handles the title for the movie */}
-                        {/* <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'center' }}> */}
+                            {/* handles the title for the movie */}
+                            {/* <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'center' }}> */}
 
-                        {/* new */}
-                        {/* new */}
-                        {/* new */}
-                        {/* new */}
-                        {/* new */}
-                        {/* new */}
+                            {/* new */}
+                            {/* new */}
+                            {/* new */}
+                            {/* new */}
+                            {/* new */}
+                            {/* new */}
 
-                        <View style={{ width: vw(100), justifyContent: 'center', flex: 1, alignSelf: 'center', paddingHorizontal: vw(6), paddingBottom: vw(3) }}>
+                            <View style={{ width: vw(100), justifyContent: 'center', flex: 1, alignSelf: 'center', paddingHorizontal: vw(6), paddingBottom: vw(3) }}>
 
-                            <PageHeader
-                                leftNode={
-                                    <View>
-                                        <TouchableOpacity onPress={() => setIsVisble(!isVisble)}>
-                                            <LocalSvg
-                                                style={{}}
-                                                width={vw(15)}
-                                                height={vw(15)}
-                                                asset={require('../../assets/SVG/carousel-off.svg')}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                }
-                                headerNode={
-                                    //
-
-                                    <View style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center', }}>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: vw(1) }}>
-                                            <TouchableOpacity activeOpacity={.5} onPress={DecSecond}>
-                                                <Icon name='minus-circle-outline' size={32} color={Style.defaultRed} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity activeOpacity={.5} onPress={() => toggle()} >
-                                                <Icon name={PlayPause} style={{ paddingHorizontal: vw(1) }} size={50} color={Style.defaultRed} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity activeOpacity={.5} onPress={IncSecond}>
-                                                <Icon name='plus-circle-outline' size={32} color={Style.defaultRed} />
+                                <PageHeader
+                                    leftNode={
+                                        <View>
+                                            <TouchableOpacity onPress={() => setIsVisble(!isVisble)}>
+                                                <LocalSvg
+                                                    style={{}}
+                                                    width={vw(15)}
+                                                    height={vw(15)}
+                                                    asset={require('../../assets/SVG/carousel-off.svg')}
+                                                />
                                             </TouchableOpacity>
                                         </View>
-                                        <View style={{ paddingBottom: vw(2) }}>
-                                            <TouchableOpacity activeOpacity={.5} onPress={handlePresentModalPress}>
-                                                <View style={styles.timer}>
-                                                    <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
-                                                </View>
-                                            </TouchableOpacity>
+                                    }
+                                    headerNode={
+                                        //
 
+                                        <View style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center', }}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: vw(1) }}>
+                                                <TouchableOpacity activeOpacity={.5} onPress={DecSecond}>
+                                                    <Icon name='minus-circle-outline' size={32} color={Style.defaultRed} />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity activeOpacity={.5} onPress={() => toggle()} >
+                                                    <Icon name={PlayPause} style={{ paddingHorizontal: vw(1) }} size={50} color={Style.defaultRed} />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity activeOpacity={.5} onPress={IncSecond}>
+                                                    <Icon name='plus-circle-outline' size={32} color={Style.defaultRed} />
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={{ paddingBottom: vw(2) }}>
+                                                <TouchableOpacity activeOpacity={.5} onPress={handlePresentModalPress}>
+                                                    <View style={styles.timer}>
+                                                        <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+
+                                            </View>
                                         </View>
-                                    </View>
-                                }
-                                rightNode={
-                                    <View style={{ justifyContent: 'center', flex: 1, width: vw(15), height: vw(15) }} >
+                                    }
+                                    rightNode={
+                                        <View style={{ justifyContent: 'center', flex: 1, width: vw(15), height: vw(15) }} >
 
-                                        {/* quib sunc butttons*/}
-                                        <SyncButton isSync={AllSync} isMovieSync={false} onPress={SyncTime} onLongPress={() => setAllSync(!AllSync)} disableAllSync={() => setAllSync(!AllSync)} />
+                                            {/* quib sunc butttons*/}
+                                            <SyncButton isSync={AllSync} isMovieSync={false} onPress={SyncTime} onLongPress={() => setAllSync(!AllSync)} disableAllSync={() => setAllSync(!AllSync)} />
 
-                                        {/* <Icon name='sync' size={30} color={Style.defaultRed} style={{ textAlign: 'center', }} /> */}
-                                    </View>
+                                            {/* <Icon name='sync' size={30} color={Style.defaultRed} style={{ textAlign: 'center', }} /> */}
+                                        </View>
 
-                                }
-                            />
-                        </View>
+                                    }
+                                />
+                            </View>
 
-                        {/* new */}
-                        {/* new */}
-                        {/* new */}
-                        {/* new */}
+                            {/* new */}
+                            {/* new */}
+                            {/* new */}
+                            {/* new */}
 
-                        {/* </View> */}
-                    </LinearGradient>
-                </View>
-            </SafeAreaView>
-        </BottomSheetModalProvider>
+                            {/* </View> */}
+                        </LinearGradient>
+                    </View>
+                </SafeAreaView>
+            </BottomSheetModalProvider>
+            <Toast />
+        </>
     )
 }
 
