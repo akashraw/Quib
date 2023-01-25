@@ -30,6 +30,8 @@ const width = Dimensions.get('window').width;
 
 
 export default function QuibPlayer({ navigation, route }: props) {
+    const isMovieMove = useRef<boolean>();
+    const isQuibMove = useRef<boolean>();
     const MovieLen = useRef(0);
     const isActive = useRef(false);
     const timer = useRef(0);
@@ -70,6 +72,8 @@ export default function QuibPlayer({ navigation, route }: props) {
             getMovieLength(MovieId)
                 .then((res: any) => MovieLen.current = (res.map((res: any) => res.length)))
         ]).then(() => setIsLoading(false));
+        // console.log(movieQuib);
+
 
     }, [])
 
@@ -85,7 +89,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                     animated: true,
                     index: quibPlayIndexRef.current
                 })
-                console.log(quibTimeRef.current[quibPlayIndexRef.current]);
+                // console.log(quibTimeRef.current[quibPlayIndexRef.current]);
                 quibPlayIndexRef.current = quibPlayIndexRef.current + 1;
             }
 
@@ -141,9 +145,17 @@ export default function QuibPlayer({ navigation, route }: props) {
 
 
     // to sync the movie and quib scruber
-    const SyncTime = () => {
-        return setQuibTime(MovieTime)
+    const SyncQuibTime = () => {
+        isMovieMove.current = false;
+        isQuibMove.current = false;
+        setQuibTime(MovieTime);
     }
+    const SyncMovieTime = () => {
+        isMovieMove.current = false;
+        isQuibMove.current = false;
+        setMovieTime(QuibTime);
+    }
+
 
     //Quib list quibs head in (profile image, name, timestamp and quib)
     const QuibHead = ({ hours, mintues, seconds, image, name, quibId, time }: any) => {
@@ -232,8 +244,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderWidth: 1,
-                borderColor: Style.borderColor
-
+                borderColor: Style.borderColor,
+                marginVertical: vw(2),
             }}
             >
                 <View>
@@ -321,7 +333,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         <>
             <BottomSheetModalProvider>
                 <QuibComposeModal />
-                <SafeAreaView style={{ flex: 1, alignItems: 'center', backgroundColor: '#fff' }}>
+                <SafeAreaView style={{ flex: 1, alignItems: 'center', backgroundColor: Style.quibBackColor }}>
                     {/* Quibs flatlist */}
                     {/* Quibs flatlist */}
                     {/* Quibs flatlist */}
@@ -366,8 +378,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                     {/* Quib timeline */}
                     {/* Quib timeline */}
                     {/* Quib timeline */}
-                    <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', height: vh(18), }}>
-                        <LinearGradient colors={[Style.quibHeaderGradFade, Style.quibHeaderGrad, '#000000']} style={{ flex: 1, width: vw(100), height: vw(36), justifyContent: 'flex-end', }} >
+                    <View style={{ position: 'absolute', bottom: 0, width: vw(100), flexDirection: 'column', height: vh(22), }}>
+                        <LinearGradient colors={['#00000000', Style.quibHeaderGrad, '#000000']} style={{ flex: 1, width: vw(100), marginTop: vw(0), justifyContent: 'flex-end', }} >
                             <View style={styles.quibScrubber}>
 
                                 {/*quib Scrubber*/}
@@ -386,6 +398,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                             onSlidingComplete={value => {
                                                 value = Array.isArray(value) ? value[0] : value;
                                                 setQuibTime(value);
+                                                isQuibMove.current = true;
                                                 const Reduce = DATA.reduce((accumulator, current) => {
                                                     const val = Array.isArray(value) ? value[0] : value;
                                                     return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
@@ -414,10 +427,10 @@ export default function QuibPlayer({ navigation, route }: props) {
 
                                                     if (QuibTime == MovieTime) {
                                                         return <Image source={require('../../assets/bottom.png')}
-                                                            style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(1.4), }}
+                                                            style={{ width: vw(5), marginLeft: vw(-3), left: vw(2.5), height: vw(5), resizeMode: 'contain', bottom: vw(2), }}
                                                         />
                                                     } else return <Image source={require('../../assets/bottom_line.png')}
-                                                        style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(1.4), }}
+                                                        style={{ width: vw(5), marginLeft: vw(-3), left: vw(2.5), height: vw(5), resizeMode: 'contain', bottom: vw(2), }}
                                                     />
                                                 } else return null
                                             }}
@@ -427,12 +440,12 @@ export default function QuibPlayer({ navigation, route }: props) {
                                     </View>
 
                                     {/* Movie Scrubber  */}
-                                    <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: vw(-13) }}>
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: vw(-14) }}>
                                         <Slider
                                             maximumValue={MovieLen.current}
                                             minimumTrackTintColor={Style.defaultRed}
                                             maximumTrackTintColor={Style.defaultTxtColor}
-                                            containerStyle={{ width: vw(90), }}
+                                            containerStyle={{ width: vw(90) }}
                                             value={MovieTime}
                                             trackClickable={true}
                                             step={1}
@@ -442,7 +455,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                                             // }}
                                             onSlidingComplete={async (value) => {
                                                 value = Array.isArray(value) ? value[0] : value;
-                                                setQuibTime(value);
+                                                // setQuibTime(value);
+                                                isMovieMove.current = true;
                                                 setMovieTime(value);
                                                 const Reduce = DATA.reduce((accumulator, current) => {
                                                     const val = Array.isArray(value) ? value[0] : value;
@@ -471,15 +485,19 @@ export default function QuibPlayer({ navigation, route }: props) {
                                             renderThumbComponent={() => {
                                                 if (!AllSync) {
                                                     return <Image source={require('../../assets/top.png')}
-                                                        style={{ width: vw(4), marginLeft: vw(-3), left: vw(2.5), height: vw(4), resizeMode: 'contain', bottom: vw(2.4), }}
+                                                        style={{ width: vw(5), marginLeft: vw(-3), left: vw(2.5), height: vw(5), resizeMode: 'contain', bottom: vw(2.5), }}
                                                     />
                                                 } else return (
-                                                    <TouchableOpacity style={{ paddingRight: vw(.5), overflow: 'hidden' }}>
-                                                        <LocalSvg
-                                                            style={{ marginLeft: vw(-21.5), left: vw(11.5), bottom: vw(-1.1), }}
+                                                    <TouchableOpacity style={{ paddingHorizontal: 0, justifyContent: 'center', }}>
+                                                        {/* <LocalSvg
+                                                            
+                                                            style={{ marginLeft: vw(0), left: vw(0), bottom: vw(-1.1), }}
                                                             width={vw(25)}
                                                             height={vw(25)}
                                                             asset={require('../../assets/all-sync-mode.svg')}
+                                                        /> */}
+                                                        <Image source={require('../../assets/all-sync-mode.png')}
+                                                            style={{ width: vw(8.5), height: vw(8.5), resizeMode: 'contain', marginLeft: vw(-6), left: vw(3.5), }}
                                                         />
                                                     </TouchableOpacity>
 
@@ -511,8 +529,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                                             <TouchableOpacity onPress={() => setIsVisble(!isVisble)}>
                                                 <LocalSvg
                                                     style={{}}
-                                                    width={vw(15)}
-                                                    height={vw(15)}
+                                                    width={vw(18)}
+                                                    height={vw(18)}
                                                     asset={require('../../assets/SVG/carousel-off.svg')}
                                                 />
                                             </TouchableOpacity>
@@ -522,21 +540,21 @@ export default function QuibPlayer({ navigation, route }: props) {
                                         //
 
                                         <View style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center', }}>
-                                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: vw(1) }}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: vw(0) }}>
                                                 <TouchableOpacity activeOpacity={.5} onPress={DecSecond}>
                                                     <Icon name='minus-circle-outline' size={32} color={Style.defaultRed} />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity activeOpacity={.5} onPress={() => toggle()} >
-                                                    <Icon name={PlayPause} style={{ paddingHorizontal: vw(1) }} size={50} color={Style.defaultRed} />
+                                                    <Icon name={PlayPause} style={{ paddingHorizontal: vw(1) }} size={70} color={Style.defaultRed} />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity activeOpacity={.5} onPress={IncSecond}>
                                                     <Icon name='plus-circle-outline' size={32} color={Style.defaultRed} />
                                                 </TouchableOpacity>
                                             </View>
-                                            <View style={{ paddingBottom: vw(2) }}>
+                                            <View style={{ paddingBottom: vw(0) }}>
                                                 <TouchableOpacity activeOpacity={.5} onPress={handlePresentModalPress}>
-                                                    <View style={styles.timer}>
-                                                        <Text style={{ textAlign: 'center', color: '#fff' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                                                    <View style={[...[styles.timer], { height: vw(6) }]}>
+                                                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, fontWeight: '500' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                                                     </View>
                                                 </TouchableOpacity>
 
@@ -544,10 +562,10 @@ export default function QuibPlayer({ navigation, route }: props) {
                                         </View>
                                     }
                                     rightNode={
-                                        <View style={{ justifyContent: 'center', flex: 1, width: vw(15), height: vw(15) }} >
+                                        <View style={{ justifyContent: 'center', flex: 1, width: vw(18), height: vw(18) }} >
 
                                             {/* quib sunc butttons*/}
-                                            <SyncButton isSync={AllSync} isMovieSync={false} onPress={SyncTime} onLongPress={() => setAllSync(!AllSync)} disableAllSync={() => setAllSync(!AllSync)} />
+                                            <SyncButton isMovieMove={isMovieMove.current} isQuibMove={isQuibMove.current} movieTime={MovieTime} quibTime={QuibTime} isSync={AllSync} isMovieSync={false} syncMovie={SyncMovieTime} syncQuib={SyncQuibTime} toggleAllSync={() => { setAllSync(!AllSync); isMovieMove.current = false; isQuibMove.current = false; }} />
 
                                             {/* <Icon name='sync' size={30} color={Style.defaultRed} style={{ textAlign: 'center', }} /> */}
                                         </View>
@@ -575,9 +593,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        width: vw(95),
+        width: vw(96),
         // overflow: 'hidden',
-        padding: vw(3),
+        // padding: vw(3),
     },
     heading: {
         fontSize: 24,
@@ -595,7 +613,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginHorizontal: vw(3),
-        paddingTop: vw(7),
+        paddingTop: vw(10),
         paddingBottom: vw(1.5)
     },
     quibZero: {
@@ -622,6 +640,6 @@ const styles = StyleSheet.create({
         borderColor: Style.borderColor,
         paddingVertical: vw(1),
         paddingHorizontal: vw(3),
-        marginVertical: vw(3),
+        marginVertical: vw(2),
     }
 })

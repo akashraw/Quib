@@ -44,9 +44,10 @@ export default function ChooseMovies(props: props) {
 
   useEffect(() => {
     setTimeout(() => {
-      Promise.all([getRecentMovies().then(res => setRecentMovies(res)),
-      getAllMovies().then(res => setallMovieRes(res)),
-      getMostActiveMovies().then(res => setActiveMovies(res))
+      Promise.all([
+        getAllMovies().then(res => setallMovieRes(res)),
+        getRecentMovies().then(res => setRecentMovies(res)),
+        getMostActiveMovies().then(res => setActiveMovies(res))
       ]).then(() => setIsLoading(false))
     }, 1000);
   }, []);
@@ -116,7 +117,7 @@ export default function ChooseMovies(props: props) {
     let FS = check.split('.').pop();
     return (
 
-      <View style={{ margin: vw(2), flexDirection: 'row', justifyContent: 'center', }}>
+      <View style={{ flex: 1, margin: vw(2), flexDirection: 'row', justifyContent: 'center', }}>
         {/* bannner top */}
         <View key={index} style={styles.movieBanner}>
           <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
@@ -132,7 +133,7 @@ export default function ChooseMovies(props: props) {
                 }} />
               {/* </Shadow> */}
               <View>
-                <Text style={[[styles.title, styles.txt], {width:vw(60), paddingRight:vw(1)}]} numberOfLines={1}>{item.title}</Text>
+                <Text style={[[styles.title, styles.txt], { width: vw(60), paddingRight: vw(1) }]} numberOfLines={1}>{item.title}</Text>
                 <Text style={[...[styles.txt], { fontSize: 12 }]}>{item.releaseYear}</Text>
                 <Text style={[...[styles.txt], { fontSize: 12 }]}>{item.director}</Text>
               </View>
@@ -169,7 +170,7 @@ export default function ChooseMovies(props: props) {
             horizontal
             showsHorizontalScrollIndicator={false}
             data={section.data}
-            renderItem={({ item, index }: any) =>  <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}><MovieCards item={item} index={index} /></TouchableOpacity>}
+            renderItem={({ item, index }: any) => <MovieCards item={item} index={index} />}
           />
           <TouchableOpacity>
             <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
@@ -205,7 +206,7 @@ export default function ChooseMovies(props: props) {
   const Loaded = () => {
     if (isLoading) {
       return (
-        <View style={{ height: vh(100), justifyContent:'center', alignItems:'center', paddingBottom:vw(35),backgroundColor:Style.quibBackColor }}>
+        <View style={{ height: vh(100), justifyContent: 'center', alignItems: 'center', paddingBottom: vw(35), backgroundColor: Style.quibBackColor }}>
           <Wave size={65} color={Style.defaultRed} animating={isLoading} />
         </View>
       )
@@ -228,7 +229,7 @@ export default function ChooseMovies(props: props) {
   return (
     <BottomSheetModalProvider>
       {/* <SafeAreaView> */}
-      <View style={{ alignItems: 'center', backgroundColor: Style.quibBackColor }}>
+      <View style={{ alignItems: 'center', backgroundColor: Style.quibBackColor, height:vh(100) }}>
         <Loaded />
         <BottomSheet />
       </View>
