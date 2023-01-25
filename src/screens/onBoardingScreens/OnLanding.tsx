@@ -37,6 +37,7 @@ export default function OnLanding({ navigation }: props) {
         <Text style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
           horizontal
+          contentContainerStyle={{justifyContent:'center'}}
           snapToAlignment='center'
           decelerationRate="fast"
           pagingEnabled

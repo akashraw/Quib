@@ -169,7 +169,7 @@ export default function ChooseMovies(props: props) {
             horizontal
             showsHorizontalScrollIndicator={false}
             data={section.data}
-            renderItem={({ item, index }: any) => <MovieCards item={item} index={index} />}
+            renderItem={({ item, index }: any) =>  <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}><MovieCards item={item} index={index} /></TouchableOpacity>}
           />
           <TouchableOpacity>
             <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>

@@ -272,9 +272,9 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
     // <BottomSheetModalProvider>
 
     <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0) }}>
-      <View><Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text></View>
+      <View><Text style={{ color: Style.defaultTxtColor, fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text></View>
       <View style={{ backgroundColor: '#e2e2e2', borderWidth: 1, borderRadius: vw(4), borderColor: '#fff', width: vw(90), height: vw(30) }}>
-        <TextInput placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
+        <TextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
       </View>
       <View style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'space-around', width: vw(80), marginBottom: vw(-4) }}>
         <TouchableOpacity activeOpacity={.4} disabled={false} onPress={setData}>
