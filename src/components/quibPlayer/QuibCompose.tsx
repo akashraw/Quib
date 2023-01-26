@@ -189,14 +189,14 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
     if (item.isSeedQuib == true && item.isScreenshot == false)
       return (
         <View style={{ width: vw(100), }} key={index}>
-          <View style={{ width: vw(80), height: vh(26), alignSelf: 'center', borderRadius: vw(4), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2), paddingVertical: vw(2) }}>
+          <View style={{ width: vw(80), alignSelf: 'center', borderRadius: vw(1), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2), paddingVertical: vw(2) }}>
             <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: vw(2) }}>
               <FastImage source={{ uri: `data:image/png;base64,${item.avatarBase32ImagePath}` }} style={{ width: vw(2), height: vw(2), }} resizeMode='contain' />
               <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), }]}>
                 <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
               </View>
             </View>
-            <ScrollView style={{ width: vw(75), height: vh(17), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(3), padding: vw(2) }}>
+            <ScrollView style={{ width: vw(75), minHeight:vw(8), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(1), padding: vw(2) }}>
               <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
             </ScrollView>
             <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8), paddingTop: vw(1) }}>
@@ -212,13 +212,13 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
     if (item.isScreenshot == true)
       return (
         <View style={{ width: vw(100), }} key={index}>
-          <ScrollView style={{ width: vw(80), height: vh(26), alignSelf: 'center', borderRadius: vw(4), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2) }}>
+          <ScrollView style={{ width: vw(80), alignSelf: 'center', borderRadius: vw(1), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2) }}>
             <View style={{ justifyContent: 'center', alignItems: 'center', }}>
               <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginVertical: vw(1) }]}>
                 <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
               </View>
             </View>
-            <View style={{ width: vw(75), height: vh(17), alignSelf: 'center', justifyContent: 'center' }}>
+            <View style={{ width: vw(75), height: vh(8), alignSelf: 'center', justifyContent: 'center' }}>
               <FastImage
                 source={{
                   uri: API + item.body,
@@ -241,13 +241,13 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
       )
     else return (
       <View style={{ width: vw(100), }} key={index}>
-        <ScrollView style={{ width: vw(80), height: vh(26), alignSelf: 'center', borderRadius: vw(4), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2) }}>
+        <ScrollView style={{ width: vw(95), alignSelf: 'center', borderRadius: vw(1), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, paddingVertical:vw(2),marginVertical: vw(2) }}>
           <View style={{ justifyContent: 'center', alignItems: 'center', }}>
             <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginVertical: vw(1) }]}>
               <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
             </View>
           </View>
-          <View style={{ width: vw(75), height: vh(17), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(3), padding: vw(2) }}>
+          <View style={{ width: vw(90), height: vh(8), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(1), padding: vw(2) }}>
             <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
           </View>
           <View style={{ justifyContent: 'space-around', flexDirection: 'row', }}>
@@ -273,7 +273,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
 
     <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0) }}>
       <View><Text style={{ color: Style.defaultTxtColor, fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text></View>
-      <View style={{ backgroundColor: '#e2e2e2', borderWidth: 1, borderRadius: vw(4), borderColor: '#fff', width: vw(90), height: vw(30) }}>
+      <View style={{ backgroundColor: '#e2e2e2', borderWidth: 1, borderRadius: vw(1), borderColor: '#fff', width: vw(90), height: vw(30) }}>
         <TextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
       </View>
       <View style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'space-around', width: vw(80), marginBottom: vw(-4) }}>

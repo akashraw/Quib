@@ -30,27 +30,17 @@ export default function OnLanding({navigation}: props) {
       {/* <View style={styles.headWrap}> */}
       <View style={styles.headWrap}>
         <Image
-          style={{
-            width: vw(35),
-            height: vw(20),
-            justifyContent: 'center',
-            alignSelf: 'center',
-            marginBottom: vw(2),
-          }}
+          style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center', marginBottom: vw(2) }}
           resizeMode={'contain'}
           source={require('../../assets/logo.png')}
         />
         <Text style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
           horizontal
-          contentContainerStyle={{
-            justifyContent: 'center',
-            paddingHorizontal: vw(0),
-          }}
-          
-          snapToAlignment="center"
+          contentContainerStyle={{justifyContent:'center'}}
+          snapToAlignment='center'
           decelerationRate="fast"
-          pagingEnabled={true}
+          pagingEnabled
           keyExtractor={(_, index) => index.toString()}
           showsHorizontalScrollIndicator={false}
           bounces={false}
@@ -131,7 +121,7 @@ export default function OnLanding({navigation}: props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Style.quibBackColor,
-    // paddingHorizontal:vw(2),
+    paddingHorizontal:vw(2),
     flex: 1,
   },
   headWrap: {
@@ -150,12 +140,14 @@ const styles = StyleSheet.create({
     alignItems:'center',
     width:vw(100),
     marginTop: 25,
-    paddingHorizontal: vw(2),
+    width: vw(100),
+    paddingHorizontal: vw(1),
   },
   image: {
     width: vw(95),
     height: vh(35),
     resizeMode: 'contain',
+    // marginHorizontal:vw(1)
   },
   pagination: {
     bottom: 20,

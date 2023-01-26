@@ -9,6 +9,7 @@ import { Shadow } from 'react-native-shadow-2'
 export default function SetttingScreen() {
     return (
         <SafeAreaView style={{ flex: 1, width: vw(100), alignSelf: 'center', paddingVertical: vw(8), backgroundColor: '#E0DECA' }}>
+            {/* Header Starts */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: vw(90), marginBottom: vw(10), paddingHorizontal: vw(6) }}>
                 <View style={{ flexDirection: 'row', }}>
                     <Shadow distance={5}>
@@ -26,15 +27,18 @@ export default function SetttingScreen() {
                     <Icon style={{ paddingRight: vw(2) }} name='create-outline' size={16} color={Style.defaultRed} />
                 </TouchableOpacity>
             </View>
+            {/* Header ends */}
+
+            {/* Setting List Starts here */}
             <View style={{ justifyContent: 'center', alignItems: 'center', width: vw(90), marginHorizontal: vw(5) }}>
                 <View style={{
                     flexDirection: 'row', width: vw(85), borderBottomColor: '#B2B2B2',
                     borderBottomWidth: StyleSheet.hairlineWidth, height: vw(15), alignItems: 'center',
                 }}>
                     <TouchableOpacity style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={styles.settingTab}>
                             <Icon name='book-outline' size={vw(6)} color={Style.defaultRed} />
-                            <Text style={{ fontSize: 14, fontWeight: '500', paddingLeft: vw(6), paddingBottom: vw(.5), color: Style.defaultLightGrey }}>Terms and Conditions</Text>
+                            <Text style={styles.settingTxt}>Terms and Conditions</Text>
                         </View>
                         <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
                     </TouchableOpacity>
@@ -44,9 +48,9 @@ export default function SetttingScreen() {
                     borderBottomWidth: StyleSheet.hairlineWidth, height: vw(15), alignItems: 'center'
                 }}>
                     <TouchableOpacity style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={styles.settingTab}>
                             <Icon name='document-text-outline' size={vw(6)} color={Style.defaultRed} />
-                            <Text style={{ fontSize: 14, fontWeight: '500', paddingLeft: vw(6), paddingBottom: vw(.5), color: Style.defaultLightGrey }}>Privacy Policy</Text>
+                            <Text style={styles.settingTxt}>Privacy Policy</Text>
                         </View>
                         <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
                     </TouchableOpacity>
@@ -56,9 +60,9 @@ export default function SetttingScreen() {
                     borderBottomWidth: StyleSheet.hairlineWidth, height: vw(15), alignItems: 'center'
                 }}>
                     <TouchableOpacity style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={styles.settingTab}>
                             <Icon name='mail-outline' size={vw(6)} color={Style.defaultRed} />
-                            <Text style={{ fontSize: 14, fontWeight: '500', paddingLeft: vw(6), paddingBottom: vw(.5), color: Style.defaultLightGrey }}>Contact Us</Text>
+                            <Text style={styles.settingTxt}>Contact Us</Text>
                         </View>
                         <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
                     </TouchableOpacity>
@@ -68,9 +72,9 @@ export default function SetttingScreen() {
                     borderBottomWidth: StyleSheet.hairlineWidth,
                 }}>
                     <TouchableOpacity style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={styles.settingTab}>
                             <Icon name='information-circle-outline' size={vw(6)} color={Style.defaultRed} />
-                            <Text style={{ fontSize: 14, fontWeight: '500', paddingLeft: vw(6), paddingBottom: vw(.5), color: Style.defaultLightGrey }}>About</Text>
+                            <Text style={styles.settingTxt}>About</Text>
                         </View>
                         <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
                     </TouchableOpacity>
@@ -80,9 +84,9 @@ export default function SetttingScreen() {
                     borderBottomWidth: StyleSheet.hairlineWidth, height: vw(15), alignItems: 'center'
                 }}>
                     <TouchableOpacity style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Icon name='log-out-outline' size={vw(6)} color={Style.defaultRed} style={{}} />
-                            <Text style={{ fontSize: 14, fontWeight: '500', paddingLeft: vw(6), paddingBottom: vw(.5), color: Style.defaultLightGrey }}>Log Out</Text>
+                        <View style={styles.settingTab}>
+                            <Icon name='log-out-outline' size={vw(6)} color={Style.defaultRed} />
+                            <Text style={styles.settingTxt}>Log Out</Text>
                         </View>
                         <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
 
@@ -96,6 +100,7 @@ export default function SetttingScreen() {
                 <QuibButton text={'About'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} />
                 <QuibButton text={'Logout'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} /> */}
             </View>
+            {/* Settting list ends here */}
         </SafeAreaView>
     )
 }
@@ -115,5 +120,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         fontWeight: 'bold'
+    },
+    settingTxt: {
+        fontSize: 14,
+        fontWeight: '500',
+        paddingLeft: vw(6),
+        paddingBottom: vw(0),
+        color: Style.defaultLightGrey
+    },
+    settingTab: {
+        flexDirection: 'row',
+        alignItems: 'center',
     }
 })

@@ -6,9 +6,9 @@ export const Style={
     quibPlayColor:'#CCCC99',
     quibHeader:'#CCCC99',
     quibHeaderGrad:'#7D8F69',
-    quibHeaderGradFade:'#CCCC9915',
+    quibHeaderGradFade:'#CCCC9903',
     forgetPass: '#337ab7',
-    borderColor:'#E6E6E6',
+    borderColor:'#B2B2B2',
     defaultGrey:'#3C4048',
     defaultLightGrey:'#73777B',
     quibBackColor: '#E0DECA'

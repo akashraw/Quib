@@ -6,61 +6,112 @@ import { vw } from 'rxn-units'
 type Sync = {
     isSync: boolean,
     isMovieSync: boolean,
-    onPress?: (event: GestureResponderEvent) => void,
-    onLongPress?: (event: GestureResponderEvent) => void,
-    disableAllSync?: (event: GestureResponderEvent) => void,
+    syncMovie?: (event: GestureResponderEvent) => void,
+    syncQuib?: (event: GestureResponderEvent) => void,
+    // onLongPress?: (event: GestureResponderEvent) => void,
+    toggleAllSync?: (event: GestureResponderEvent) => void,
+    movieTime: number,
+    quibTime: number,
+    isMovieMove?: boolean,
+    isQuibMove?: boolean,
 }
 
 export default function SyncButton(props: Sync) {
+    const checkSync = () => {
+
+    }
     if (props.isSync) {
         return (
-            <TouchableOpacity onPress={props.disableAllSync} >
+            <TouchableOpacity onPress={props.toggleAllSync} >
                 <LocalSvg
                     style={{ marginTop: vw(-1), marginLeft: vw(0) }}
-                    width={vw(17)}
-                    height={vw(17)}
+                    width={vw(20)}
+                    height={vw(20)}
                     asset={require('../../assets/SVG/sync.svg')}
                 />
             </TouchableOpacity>
         )
-    } else if (props.isMovieSync == true) {
+    } else if (props.movieTime === props.quibTime) {
         return (
-            <View style={{ position: 'absolute', justifyContent: 'center', width: vw(16), height: vw(15) }}>
-                <TouchableOpacity onPress={props.onPress} onLongPress={props.onLongPress} activeOpacity={.5}>
+            <View style={{ position: 'absolute', justifyContent: 'center', width: vw(19), height: vw(19),  }}>
+                <TouchableOpacity onLongPress={props.toggleAllSync} >
                     <LocalSvg
-                        style={{ marginBottom: vw(-4) ,   }}
-                        width={vw(16)}
-                        height={vw(16)}
+                        style={{ marginBottom: vw(-4.5), }}
+                        width={vw(19)}
+                        height={vw(19)}
                         asset={require('../../assets/SVG/movie-sync-up.svg')}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onLongPress={props.onLongPress} onPress={props.onPress}>
+                <TouchableOpacity onLongPress={props.toggleAllSync}>
                     <LocalSvg
-                        style={{ marginBottom: vw(-4) , marginLeft:vw(1)  }}
-                        width={vw(16)}
-                        height={vw(16)}
-                        asset={require('../../assets/SVG/movie-sync-down.svg')}
+                        style={{ marginTop: vw(-4.5), marginLeft: vw(1) }}
+                        width={vw(19)}
+                        height={vw(19)}
+                        asset={require('../../assets/SVG/quib-sync-down.svg')}
+                    // asset={require('../../assets/SVG/movie-sync-down.svg')}
                     />
                 </TouchableOpacity>
             </View>
         )
     }
-    else return (
-        <View style={{ position: 'absolute', justifyContent: 'center', width: vw(16), height: vw(16) , paddingBottom:vw(1)}}>
-            <TouchableOpacity onLongPress={props.onLongPress} onPress={props.onPress} activeOpacity={.5}>
+    else if (props.isMovieMove == true && props.isQuibMove==false) return (
+        <View style={{ position: 'absolute', justifyContent: 'center', width: vw(19), height: vw(19) }}>
+            <TouchableOpacity onLongPress={props.toggleAllSync} onPress={props.syncQuib} >
                 <LocalSvg
-                    style={{ marginBottom: vw(-4) , }}
-                    width={vw(16)}
-                    height={vw(16)}
+                    style={{ marginBottom: vw(-4.5), }}
+                    width={vw(19)}
+                    height={vw(19)}
                     asset={require('../../assets/SVG/quib-sync-up.svg')}
                 />
             </TouchableOpacity>
-            <TouchableOpacity onLongPress={props.onLongPress} onPress={props.onPress}>
+            <TouchableOpacity onLongPress={props.toggleAllSync} onPress={props.syncMovie}>
                 <LocalSvg
-                    style={{ marginTop: vw(-4), marginLeft:vw(1)}}
-                    width={vw(16)}
-                    height={vw(16)}
+                    style={{ marginTop: vw(-4.5), marginLeft: vw(1) }}
+                    width={vw(19)}
+                    height={vw(19)}
                     asset={require('../../assets/SVG/quib-sync-down.svg')}
+                />
+            </TouchableOpacity>
+        </View>
+    )
+    else if (props.isMovieMove == false && props.isQuibMove==true) return (
+        <View style={{ position: 'absolute', justifyContent: 'center', width: vw(19), height: vw(19) }}>
+            <TouchableOpacity onPress={props.syncQuib} onLongPress={props.toggleAllSync} >
+                <LocalSvg
+                    style={{ marginBottom: vw(-4.5), }}
+                    width={vw(19)}
+                    height={vw(19)}
+                    asset={require('../../assets/SVG/movie-sync-up.svg')}
+                />
+            </TouchableOpacity>
+            <TouchableOpacity onLongPress={props.toggleAllSync} onPress={props.syncMovie}>
+                <LocalSvg
+                    style={{ marginTop: vw(-4.5), marginLeft: vw(1) }}
+                    width={vw(19)}
+                    height={vw(19)}
+                    //asset={require('../../assets/SVG/quib-sync-down.svg')}
+                    asset={require('../../assets/SVG/movie-sync-down.svg')}
+                />
+            </TouchableOpacity>
+        </View>
+    )
+    else return (
+        <View style={{ position: 'absolute', justifyContent: 'center', width: vw(19), height: vw(19) }}>
+            <TouchableOpacity onPress={props.syncQuib} onLongPress={props.toggleAllSync} >
+                <LocalSvg
+                    style={{ marginBottom: vw(-4.5), }}
+                    width={vw(19)}
+                    height={vw(19)}
+                    asset={require('../../assets/SVG/quib-sync-up.svg')}
+                />
+            </TouchableOpacity>
+            <TouchableOpacity onLongPress={props.toggleAllSync} onPress={props.syncMovie}>
+                <LocalSvg
+                    style={{ marginTop: vw(-4.5), marginLeft: vw(1) }}
+                    width={vw(19)}
+                    height={vw(19)}
+                    //asset={require('../../assets/SVG/quib-sync-down.svg')}
+                    asset={require('../../assets/SVG/movie-sync-down.svg')}
                 />
             </TouchableOpacity>
         </View>
