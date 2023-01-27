@@ -20,6 +20,7 @@
     "@react-navigation/material-top-tabs": "^6.5.1",
     "@react-navigation/native": "^6.0.14",
     "@react-navigation/native-stack": "^6.9.2",
+    "@shopify/flash-list": "^1.4.1",
     "lottie-ios": "^3.4.0",
     "lottie-react-native": "^5.1.4",
     "react": "18.1.0",
@@ -44,6 +45,7 @@
     "react-native-tab-view": "^3.3.4",
     "react-native-toast-message": "^2.1.5",
     "react-native-vector-icons": "^9.2.0",
+    "recyclerlistview": "^4.2.0",
     "rxn-units": "^0.1.6"
   },
   "devDependencies": {

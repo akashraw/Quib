@@ -19,7 +19,8 @@ import { useBottomSheetBackHandler } from '../../screens/visitScreens/useBottomS
 import LinearGradient from 'react-native-linear-gradient';
 import getFormattedTime from '../GetFormattedTime';
 import Toast from 'react-native-toast-message';
-import { FlashList } from '@shopify/flash-list';
+import { DataProvider, LayoutProvider } from 'recyclerlistview';
+// import { LayoutProvider } from 'recyclerlistview/dist/reactnative/core/dependencies/LayoutProvider';
 
 
 interface props {
@@ -27,22 +28,27 @@ interface props {
     route: any,
 }
 
-const width = Dimensions.get('window').width;
+const dimensionsForScreen = Dimensions.get('screen');
+
+const createDataProvider = () => {
+    return new DataProvider((r1, r2) => r1 != r2)
+}
 
 
-export default function QuibPlayer({ navigation, route }: props) {
+export default function QuibPlayerV2({ navigation, route }: props) {
     const isMovieMove = useRef<boolean>();
     const isQuibMove = useRef<boolean>();
     const MovieLen = useRef(0);
+    const [DataProvider, setDataProvider] = useState<any[]>([]);
     const isActive = useRef(false);
     const timer = useRef(0);
     const [MovieTime, setMovieTime] = useState(0);
     const [QuibTime, setQuibTime] = useState(0);
     const [PlayPause, setPlayPause] = useState('play-circle-outline');
     const { hours, mintues, seconds } = getFormattedTime(MovieTime);
-    const [movieQuib, setMovieQuib] = useState<any[]>([]);
+    const [movieQuib, setMovieQuib] = useState<any[]>();
     const [IsLoading, setIsLoading] = useState(true)
-    const flatRef = useRef<any>(null);
+    const flatRef = useRef<FlatList>(null);
     const posterRef = useRef(String);
     const [isPoster, setIsPoster] = useState(Boolean);
     const MovieId = route.params;
@@ -74,43 +80,34 @@ export default function QuibPlayer({ navigation, route }: props) {
                 .then((res: any) => MovieLen.current = (res.map((res: any) => res.length)))
         ]).then(() => setIsLoading(false));
         // console.log(movieQuib);
-
-
     }, [])
-
 
 
     // movie timer  stopwatch
     useEffect(() => {
-        console.log(quibTimeRef.current[quibPlayIndexRef.current]);
+        console.log(quibPlayIndexRef.current);
 
-        if (isActive.current && MovieTime < MovieLen.current) {
-            // console.log(MovieLen);
 
-            if (quibTimeRef.current[quibPlayIndexRef.current] <= MovieTime) {
-                console.log(quibPlayIndexRef.current);
-                // console.log(quibTimeRef.current[MovieTime]);
-                flatRef.current?.scrollToIndex({
-                    animated: true,
-                    index: quibPlayIndexRef.current
-                })
-                quibPlayIndexRef.current = quibPlayIndexRef.current + 1;
-            }
+        // console.log(quibTimeRef.current[MovieTime]);
+        if (quibTimeRef.current[quibPlayIndexRef.current] <= MovieTime) {
 
-            timer.current = setInterval(() => {
-                setQuibTime(MovieTime + 1)
-                setMovieTime(MovieTime => MovieTime + 1);
-                // quibPlayIndexRef.current = MovieTime;
-            }, 1000);
-        }
-        else {
-            clearInterval(timer.current);
-            setPlayPause('play-circle-outline');
-            isActive.current = false;
+            flatRef.current?.scrollToIndex({
+                animated: true,
+                index: quibPlayIndexRef.current
+            })
+            // console.log(quibTimeRef.current[quibPlayIndexRef.current]);
+            quibPlayIndexRef.current = quibPlayIndexRef.current + 1;
         }
 
-        return () => clearInterval(timer.current);
     }, [isActive.current, MovieTime]);
+
+    const _layoutProvider = new LayoutProvider(
+        index => 0,
+        (type, dim) => {
+            dim.width = dimensionsForScreen.width;
+            dim.height = dimensionsForScreen.height;
+        }
+    )
 
 
 
@@ -130,14 +127,27 @@ export default function QuibPlayer({ navigation, route }: props) {
     const toggle = () => {
         if (isActive.current == false) {
             isActive.current = true;
-            return setPlayPause('pause-circle-outline');
+            setPlayPause('pause-circle-outline');
+            if (MovieTime < MovieLen.current) {
+                timer.current = setInterval(() => {
+                    setQuibTime(MovieTime + 1)
+                    setMovieTime(MovieTime => MovieTime + 1);
+                }, 1000)
+            }
+            else {
+                clearInterval(timer.current);
+                setPlayPause('play-circle-outline');
+                isActive.current = false;
+            }
         }
         else {
+            clearInterval(timer.current)
             isActive.current = false;
             return setPlayPause('play-circle-outline');
         }
 
     }
+
 
     //Inc and dec on timer
     const IncSecond = () => {
@@ -249,76 +259,44 @@ export default function QuibPlayer({ navigation, route }: props) {
         index: any,
     }
     //Quib List
-    // class QuibList extends PureComponent<renderList> {
+    class QuibList extends PureComponent<renderList> {
 
 
-    //     render(): React.ReactNode {
-    //         console.log('render');
+        render(): React.ReactNode {
+            // console.log('render');
 
-    //         let { hours, mintues, seconds } = getFormattedTime(this.props.item.time);
+            let { hours, mintues, seconds } = getFormattedTime(this.props.item.time);
 
-    //         if (!this.props.item.isScreenshot) {
-    //             return (
-    //                 <View key={this.props.index} style={styles.flatlistContainer}>
-    //                     <QuibHead time={this.props.item.time} hours={hours} mintues={mintues} seconds={seconds} image={this.props.item.avatarBase32ImagePath} isSS={this.props.item.isScreenshot} name={this.props.item.displayName} quibId={this.props.item.id} />
-    //                     <View style={styles.flatlistComps}>
-    //                         <Text style={{ color: Style.defaultTxtColor, }}>{this.props.item.body}</Text>
-    //                     </View>
-    //                 </View>
-    //             )
-    //         }
-    //         else {
-    //             return (
-    //                 <View key={this.props.index} style={styles.flatlistContainer}>
-    //                     <QuibHead time={this.props.item.time} hours={hours} mintues={mintues} seconds={seconds} isSS={this.props.item.isScreenshot} image={null} name={null} quibId={this.props.item.id} />
-    //                     <View style={styles.flatlistComps}>
-    //                         <FastImage
-    //                             source={{
-    //                                 uri: API + this.props.item.body,
-    //                                 cache: FastImage.cacheControl.immutable,
-    //                                 priority: FastImage.priority.normal
-    //                             }}
-    //                             resizeMode={FastImage.resizeMode.contain}
-    //                             style={{ width: vw(80), height: vw(40) }}
-    //                         />
-    //                     </View>
-    //                 </View>
-    //             )
-    //         }
-    //     }
-    // }
-    const QuibList = useCallback(({ item, index }: any) => {
-        let { hours, mintues, seconds } = getFormattedTime(item.time);
-
-        if (!item.isScreenshot) {
-            return (
-                <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} quibId={item.id} />
-                    <View style={styles.flatlistComps}>
-                        <Text style={{ color: Style.defaultTxtColor, }}>{item.body}</Text>
+            if (!this.props.item.isScreenshot) {
+                return (
+                    <View key={this.props.index} style={styles.flatlistContainer}>
+                        <QuibHead time={this.props.item.time} hours={hours} mintues={mintues} seconds={seconds} image={this.props.item.avatarBase32ImagePath} isSS={this.props.item.isScreenshot} name={this.props.item.displayName} quibId={this.props.item.id} />
+                        <View style={styles.flatlistComps}>
+                            <Text style={{ color: Style.defaultTxtColor, }}>{this.props.item.body}</Text>
+                        </View>
                     </View>
-                </View>
-            )
-        }
-        else {
-            return (
-                <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} image={null} name={null} quibId={item.id} />
-                    <View style={styles.flatlistComps}>
-                        <FastImage
-                            source={{
-                                uri: API + item.body,
-                                cache: FastImage.cacheControl.immutable,
-                                priority: FastImage.priority.normal
-                            }}
-                            resizeMode={FastImage.resizeMode.contain}
-                            style={{ width: vw(80), height: vw(40) }}
-                        />
+                )
+            }
+            else {
+                return (
+                    <View key={this.props.index} style={styles.flatlistContainer}>
+                        <QuibHead time={this.props.item.time} hours={hours} mintues={mintues} seconds={seconds} isSS={this.props.item.isScreenshot} image={null} name={null} quibId={this.props.item.id} />
+                        <View style={styles.flatlistComps}>
+                            <FastImage
+                                source={{
+                                    uri: API + this.props.item.body,
+                                    cache: FastImage.cacheControl.immutable,
+                                    priority: FastImage.priority.normal
+                                }}
+                                resizeMode={FastImage.resizeMode.contain}
+                                style={{ width: vw(80), height: vw(40) }}
+                            />
+                        </View>
                     </View>
-                </View>
-            )
+                )
+            }
         }
-    }, [])
+    }
 
     // intial Quib 
     const InitialQuib = () => {
@@ -438,21 +416,9 @@ export default function QuibPlayer({ navigation, route }: props) {
 
 
                         {/* <Flat/> */}
-                        <View style={{ height: vh(100), width: vw(95) }}>
-                            <FlashList
-                                data={movieQuib}
-                                showsVerticalScrollIndicator={false}
-                                ListHeaderComponent={InitialQuib}
-                                keyExtractor={(_, index) => index.toString()}
-                                renderItem={QuibList}
-                                initialScrollIndex={0}
-                                ref={flatRef}
-                                estimatedItemSize={200}
-                            />
-                        </View>
 
 
-                        {/* <FlatList
+                        <FlatList
                             data={movieQuib}
                             initialNumToRender={10}
                             windowSize={5}
@@ -473,7 +439,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 }, 1)
                             }}
 
-                        /> */}
+                        />
                     </View>
                     {/* Quib timeline */}
                     {/* Quib timeline */}

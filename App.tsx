@@ -16,6 +16,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomTabNavigation from './src/components/BottomTabNavigation';
 import ProfileEditScreen from './src/screens/profileScreens/ProfileEditScreen';
 import RNBootSplash from "react-native-bootsplash";
+import QuibPlayerV3 from './src/components/quibPlayer/QuipPlayerV3';
 
 export type RootStackParamList = {
   Home: undefined;
