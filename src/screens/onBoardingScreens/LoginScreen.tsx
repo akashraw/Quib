@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     borderColor: '#3333',
   },
   headWrap: {
-    marginTop: vw(2),
+    marginTop: vw(10),
   },
   inputField: {
     marginVertical: vw(2),

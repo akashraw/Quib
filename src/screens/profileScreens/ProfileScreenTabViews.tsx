@@ -1,4 +1,6 @@
+import { FlashList } from '@shopify/flash-list';
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   View,
   useWindowDimensions,
@@ -25,35 +27,8 @@ import { vh, vw } from 'rxn-units';
 import QuibButton from '../../components/QuibButton';
 import { API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
+import { getMovieByUserId, getFollowersByUserId, getFolloweeByUserId } from '../../services/QuibAPIs';
 import MovieCard from '../visitScreens/MovieCard';
-
-const Dummy = [
-  { key: 1, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 2, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 3, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 4, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 5, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 6, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 7, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 8, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 9, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 10, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 11, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 12, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 13, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 14, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 15, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 16, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 17, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 18, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 19, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 20, title: 'Arrival', year: 2015, director: 'Test Testing' },
-  { key: 21, title: 'Arrival', year: 2015, director: 'Test Testing 1' },
-  { key: 22, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
-  { key: 23, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
-  { key: 24, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
-  { key: 25, title: 'Arrival', year: 2015, director: 'Test Testing asd' },
-];
 
 type Route = {
   key: string;
@@ -63,172 +38,221 @@ type Route = {
 
 type State = NavigationState<Route>;
 
-const Quibbed = () => {
-  return (
-    // <View style={{ backgroundColor: Style.quibHeader, width: vw(95), height: vw(10), flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: vw(3), alignSelf: 'center', alignItems: 'center', marginTop: vw(3), paddingLeft: vw(3) }}>
-    //     <Text style={{ color: Style.defaultRed, fontSize: 18, fontWeight: 'bold' }}>Quibbed</Text>
-    //     <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-    //         <Text style={{ color: Style.defaultTxtColor, fontSize: 18, fontWeight: 'normal' }}>0</Text>
-    //         <Icon name='chevron-right' color={Style.defaultTxtColor} size={18} style={{ paddingTop: vw(.6), paddingLeft: vw(4) }} />
-    //     </View>
-    // </View>
-    <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center' }}>
-      <FlatList
-        initialScrollIndex={0}
-        showsVerticalScrollIndicator={false}
-        data={Dummy}
-        numColumns={3}
-        ListFooterComponent={<View style={{ height: vw(22) }} />}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item, index }: any) => (
-          <View
-            style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <MovieCard
-              key={index}
-              title={item.title}
-              year={item.year}
-              director={item.director}
-              viewStyle={undefined}
-              textStyle={undefined}
-              linearGradStyle={undefined}
-            />
-          </View>
-        )}
-      />
-    </View>
-  );
-};
-const Following = () => {
-  return (
-    <TouchableOpacity>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          //   alignItems: 'center',
-          //   alignSelf: 'center',
-        }}>
-        {/* bannner top */}
-
-        {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
-        <View style={styles.followFollowers}>
-          <View
-            style={{
-              alignSelf: 'center',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            }}>
-            <Image
-              style={{
-                width: vw(14),
-                height: vw(14),
-                borderRadius: vw(8),
-                marginRight: vw(2),
-                resizeMode: 'contain',
-                alignSelf: 'center',
-              }}
-              //   resizeMode={FastImage.resizeMode.contain}
-              source={require('../../assets/Movie/arrival.jpeg')}
-            />
-            <View>
-              <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
-                @itzTimmy
-              </Text>
-              <Text
-                style={[
-                  styles.year,
-                  styles.txt,
-                  { fontSize: 12, textAlign: 'center' },
-                ]}>
-                Timithoe
-              </Text>
-            </View>
-          </View>
-          <QuibButton
-            text={'Unfollow'}
-            onPress={undefined}
-            viewStyle={styles.button}
-            textStyle={styles.buttonTxt}
-          />
-        </View>
-      </View>
-      {/* </View> */}
-    </TouchableOpacity>
-  );
-};
-const Followers = () => {
-  return (
-    <Shadow containerStyle={{ alignSelf:'center'}} distance={5}>
-      <TouchableOpacity>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            //   alignItems: 'center',
-            //   alignSelf: 'center',
-          }}>
-          {/* bannner top */}
-
-          {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
-          <View style={styles.followFollowers}>
-            <View
-              style={{
-                alignSelf: 'center',
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}>
-              <Image
-                style={{
-                  width: vw(14),
-                  height: vw(14),
-                  borderRadius: vw(8),
-                  marginRight: vw(2),
-                  resizeMode: 'contain',
-                  alignSelf: 'center',
-                }}
-                //   resizeMode={FastImage.resizeMode.contain}
-                source={require('../../assets/Movie/arrival.jpeg')}
-              />
-              <View>
-                <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
-                  @itzTimmy
-                </Text>
-                <Text
-                  style={[
-                    styles.year,
-                    styles.txt,
-                    { fontSize: 12, textAlign: 'center' },
-                  ]}>
-                  Timithoe
-                </Text>
-              </View>
-            </View>
-            <QuibButton
-              text={'Follow'}
-              onPress={undefined}
-              viewStyle={styles.button}
-              textStyle={styles.buttonTxt}
-            />
-          </View>
-        </View>
-        {/* </View> */}
-      </TouchableOpacity>
-    </Shadow>
-
-  );
-};
-
 export default function ProfileScreenTabViews() {
   const layout = useWindowDimensions();
-
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
     { key: 'first', title: 'Quibbed' },
     { key: 'second', title: 'Following' },
     { key: 'thrid', title: 'Followers' },
   ]);
+  const [QuibMovie, setQuibMovie] = useState<any[]>();
+  const [Follower, setFollower] = useState<any[]>();
+  const [Followee, setFollowee] = useState<any[]>();
+  const [isLoaded, setIsLoaded] = useState(false)
+  const Followings = useRef<any[]>([]);
+  const Follow = useRef<any[]>([]);
+  const QuibMovies = useRef<any[]>([]);
+
+  useEffect(() => {
+    Promise.all([
+      getMovieByUserId({ userId: '' }).then((res) => { setQuibMovie(res); QuibMovies.current = res }),
+      getFollowersByUserId({ userId: '' }).then((res) => { setFollower(res); Follow.current = res }),
+      getFolloweeByUserId({ userId: '' }).then((res) => { setFollowee(res); Followings.current = res }),
+    ]).then(() => setIsLoaded(true))
+  }, [])
+
+  const Quibbed = React.useCallback(() => {
+    console.log('render');
+
+    return (
+      <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100) }}>
+        <FlashList
+          initialScrollIndex={0}
+          showsVerticalScrollIndicator={false}
+          data={QuibMovies.current}
+          numColumns={3}
+          estimatedItemSize={40}
+          // ListFooterComponent={<View style={{ height: vw(22) }} />}
+          // keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }: any) => (
+            <View
+              style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <MovieCard
+                key={index}
+                title={item.title}
+                year={item.releaseYear}
+                director={item.director}
+                viewStyle={undefined}
+                textStyle={undefined}
+                linearGradStyle={undefined}
+                imgSrc={item.posterContentThumb}
+              />
+            </View>
+          )}
+        />
+      </View>
+    );
+  }, [QuibMovies.current]);
+
+  //Following  user list
+  const Following = () => {
+
+    const RenderItem = ({ item, index }: any) => {
+      return (
+        <Shadow containerStyle={{ alignSelf: 'center', borderRadius:vw(2), marginVertical:vw(1),  }} distance={5}>
+        <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius:vw(1) }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              //   alignItems: 'center',
+              //   alignSelf: 'center',
+              borderRadius: vw(2),
+              // marginVertical:vw(2),
+            }}>
+            {/* bannner top */}
+
+            {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
+            <View style={styles.followFollowers}>
+              <View
+                style={{
+                  alignSelf: 'center',
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  style={{
+                    width: vw(14),
+                    height: vw(14),
+                    borderRadius: vw(8),
+                    marginRight: vw(2),
+                    resizeMode: 'contain',
+                    alignSelf: 'center',
+                  }}
+                  //   resizeMode={FastImage.resizeMode.contain}
+                  source={require('../../assets/Movie/arrival.jpeg')}
+                />
+                <View>
+                  <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
+                    {item.userName}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.year,
+                      styles.txt,
+                      { fontSize: 12, textAlign: 'center' },
+                    ]}>
+                    {item.firstName} {item.lastName}
+                  </Text>
+                </View>
+              </View>
+              <QuibButton
+                text={'Unfollow'}
+                onPress={undefined}
+                viewStyle={styles.button}
+                textStyle={styles.buttonTxt}
+              />
+            </View>
+          </View>
+          {/* </View> */}
+        </TouchableOpacity>
+        </Shadow>
+      )
+    }
+    return (
+      <View style={{ width: vw(100), height: vh(100) }}>
+        <FlatList
+          data={Followings.current}
+          initialScrollIndex={0}
+          showsVerticalScrollIndicator={false}
+          // keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
+        // estimatedItemSize={20}
+        />
+      </View>
+    )
+  };
+
+
+  const Followers = React.useCallback(() => {
+    const RenderItem = ({ item, index }: any) => {
+      return (
+        <Shadow containerStyle={{ alignSelf: 'center', borderRadius:vw(2), marginVertical:vw(1),  }} distance={5}>
+          <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius:vw(1) }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                //   alignItems: 'center',
+                //   alignSelf: 'center',
+                borderRadius: vw(2),
+                // marginVertical:vw(2),
+              }}>
+              {/* bannner top */}
+
+              {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
+              <View style={styles.followFollowers}>
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                  }}>
+                  <Image
+                    style={{
+                      width: vw(14),
+                      height: vw(14),
+                      borderRadius: vw(8),
+                      marginRight: vw(2),
+                      resizeMode: 'contain',
+                      alignSelf: 'center',
+                    }}
+                    //   resizeMode={FastImage.resizeMode.contain}
+                    source={require('../../assets/Movie/arrival.jpeg')}
+                  />
+                  <View>
+                    <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
+                      {item.userName}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.year,
+                        styles.txt,
+                        { fontSize: 12, textAlign: 'center' },
+                      ]}>
+                      {item.firstName} {item.lastName}
+                    </Text>
+                  </View>
+                </View>
+                <QuibButton
+                  text={'Unfollow'}
+                  onPress={undefined}
+                  viewStyle={styles.button}
+                  textStyle={styles.buttonTxt}
+                />
+              </View>
+            </View>
+            {/* </View> */}
+          </TouchableOpacity>
+        </Shadow>
+      )
+    }
+    return (
+      <View style={{ width: vw(100), height: vh(100) }}>
+        <FlashList
+          data={Follow.current}
+          initialScrollIndex={0}
+          showsVerticalScrollIndicator={false}
+          // keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
+          estimatedItemSize={20}
+        />
+      </View>
+    );
+  }, [Follow.current]);
 
   const renderScene = SceneMap({
     first: Quibbed,
@@ -286,7 +310,7 @@ export default function ProfileScreenTabViews() {
 
   return (
     <TabView
-      swipeEnabled={false}
+      swipeEnabled={true}
       style={{ marginTop: StatusBar.currentHeight }}
       navigationState={{ index, routes }}
       renderScene={renderScene}
@@ -356,7 +380,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: vw(95),
     height: vw(18),
-    borderRadius: vw(2),
     flexDirection: 'row',
     paddingTop: vw(0.5),
     // justifyContent: 'flex-start',

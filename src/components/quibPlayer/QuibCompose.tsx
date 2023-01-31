@@ -9,6 +9,8 @@ import getFormattedTime from '../GetFormattedTime';
 import FastImage from 'react-native-fast-image';
 import { DeleteBump, AddQuib, QuibByMovieAndUserId, DeleteQuib } from '../../services/QuibAPIs';
 import { API } from '../../constants/Api';
+import { Shadow } from 'react-native-shadow-2';
+import DropShadow from 'react-native-drop-shadow';
 
 type FD = {
   Quib: string;
@@ -189,80 +191,130 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
     if (item.isSeedQuib == true && item.isScreenshot == false)
       return (
         <View style={{ width: vw(100), }} key={index}>
-          <View style={{ width: vw(80), alignSelf: 'center', borderRadius: vw(1), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2), paddingVertical: vw(2) }}>
-            <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: vw(2) }}>
-              <FastImage source={{ uri: `data:image/png;base64,${item.avatarBase32ImagePath}` }} style={{ width: vw(2), height: vw(2), }} resizeMode='contain' />
-              <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), }]}>
-                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+          <DropShadow
+            style={{
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 0,
+              },
+              shadowOpacity: .5,
+              shadowRadius: vw(.5),
+            }}
+          >
+            <View style={styles.quibCard}>
+              <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: vw(1) }}>
+                <FastImage source={{ uri: `data:image/png;base64,${item.avatarBase32ImagePath}` }} style={{ width: vw(2), height: vw(2), }} resizeMode='contain' />
+                <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4) }]}>
+                  <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                </View>
+              </View>
+              <View style={styles.quibTxtBody}>
+                <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}> {item.body}</Text>
+              </View>
+              <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8)}}>
+                <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
+                  <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
+                    <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
-            <ScrollView style={{ width: vw(75), minHeight:vw(8), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(1), padding: vw(2) }}>
-              <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
-            </ScrollView>
-            <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8), paddingTop: vw(1) }}>
-              <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
-                <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
-                  <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
+          </DropShadow>
         </View>
       )
     if (item.isScreenshot == true)
       return (
         <View style={{ width: vw(100), }} key={index}>
-          <ScrollView style={{ width: vw(80), alignSelf: 'center', borderRadius: vw(1), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, marginVertical: vw(2) }}>
-            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-              <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginVertical: vw(1) }]}>
-                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+          <DropShadow
+            style={{
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 0,
+              },
+              shadowOpacity: .5,
+              shadowRadius: vw(.5),
+            }}
+          >
+            <View style={styles.quibCard}>
+              <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginBottom: vw(1) }]}>
+                  <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+                </View>
+              </View>
+              <View style={{ width: vw(90), alignSelf: 'center', justifyContent: 'center', alignItems: 'center', }}>
+                {/* <Shadow distance={8} startColor='#00000020' endColor='#00000000' > */}
+                <DropShadow
+                  style={{
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 0,
+                    },
+                    shadowOpacity: 0,
+                    shadowRadius: vw(.5),
+                  }}
+                >
+                  <FastImage
+                    source={{
+                      uri: API + item.body,
+                      cache: FastImage.cacheControl.immutable,
+                      priority: FastImage.priority.normal
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                    style={{ width: vw(75), height: vw(32), marginVertical: vw(2) }}
+                  />
+                </DropShadow>
+                {/* </Shadow> */}
+              </View>
+              <View style={{ justifyContent: 'flex-start', flexDirection: 'row',  paddingLeft: vw(8) }}>
+                <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
+                  <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
+                    <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={{ width: vw(75), height: vh(8), alignSelf: 'center', justifyContent: 'center' }}>
-              <FastImage
-                source={{
-                  uri: API + item.body,
-                  cache: FastImage.cacheControl.immutable,
-                  priority: FastImage.priority.normal
-                }}
-                resizeMode={FastImage.resizeMode.contain}
-                style={{ width: vw(75), height: vw(40) }}
-              />
-            </View>
-            <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingTop: vw(1), paddingLeft: vw(8) }}>
-              <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
-                <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
-                  <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+          </DropShadow>
         </View>
       )
     else return (
       <View style={{ width: vw(100), }} key={index}>
-        <ScrollView style={{ width: vw(95), alignSelf: 'center', borderRadius: vw(1), backgroundColor: '#fff', borderWidth: 1, elevation: 4, shadowColor: 'black', borderColor: Style.borderColor, paddingVertical:vw(2),marginVertical: vw(2) }}>
-          <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-            <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginVertical: vw(1) }]}>
-              <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+        <DropShadow
+          style={{
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 0,
+            },
+            shadowOpacity: .5,
+            shadowRadius: vw(.5),
+          }}
+        >
+          <View style={styles.quibCard}>
+            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+              <View style={[...[quibPlayerStyles.timer], { width: vw(14), height: vw(4), marginBottom: vw(1) }]}>
+                <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(2.6), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+              </View>
+            </View>
+            <View style={styles.quibTxtBody}>
+              <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
+            </View>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal:vw(8) }}>
+              <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => DeleteQuib(item.id)} >
+                <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
+                  <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={.4} disabled={false} >
+                <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
+                  <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Post</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={{ width: vw(90), height: vh(8), alignSelf: 'center', borderWidth: 1, borderColor: Style.borderColor, borderRadius: vw(1), padding: vw(2) }}>
-            <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
-          </View>
-          <View style={{ justifyContent: 'space-around', flexDirection: 'row', }}>
-            <TouchableOpacity style={{ paddingTop: vw(2) }} activeOpacity={.4} disabled={false} onPress={() => DeleteQuib(item.id)} >
-              <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
-                <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ paddingTop: vw(2) }} activeOpacity={.4} disabled={false} >
-              <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
-                <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Post</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+        </DropShadow>
       </View>
     )
   }
@@ -371,6 +423,29 @@ const styles = StyleSheet.create({
     color: Style.defaultTxtColor,
     fontWeight: 'bold',
     // textAlign: 'center'
+  },
+  quibCard: {
+    width: vw(95),
+    alignSelf: 'center',
+    borderRadius: vw(1),
+    backgroundColor: '#fff',
+    borderWidth: 0,
+    // elevation: 4,
+    shadowColor: 'black',
+    borderColor: Style.borderColor,
+    paddingVertical: vw(2),
+    marginVertical: vw(4)
+  },
+  quibTxtBody: {
+    width: vw(90),
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: Style.borderColor,
+    borderRadius: vw(1),
+    paddingHorizontal: vw(2),
+    paddingVertical: vw(3),
+    marginVertical:vw(1),
+    marginBottom:vw(2)
   },
 })
 

@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
         // borderColor: '#3333',
     },
     headWrap: {
-        marginTop: vw(0),
+        marginTop: vw(10),
     },
     inputField: {
         marginVertical: vw(2),

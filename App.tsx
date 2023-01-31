@@ -16,7 +16,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomTabNavigation from './src/components/BottomTabNavigation';
 import ProfileEditScreen from './src/screens/profileScreens/ProfileEditScreen';
 import RNBootSplash from "react-native-bootsplash";
-import QuibPlayerV3 from './src/components/quibPlayer/QuipPlayerV3';
+// import QuibPlayerV3 from './src/components/quibPlayer/QuipPlayerV3';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -71,8 +71,12 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer onReady={() => RNBootSplash.hide({ fade: true })}>
-        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader }} initialRouteName="Home">
-          <Stack.Screen name='Home' component={OnLanding} options={{ headerShown:false, statusBarColor:Style.quibBackColor,header: () => <Logo />, }} />
+        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader, statusBarTranslucent:true, navigationBarColor:Style.quibBackColor, }} initialRouteName="Home">
+          <Stack.Screen name='Home' component={OnLanding} options={{
+             headerShown: false, 
+             statusBarColor: Style.quibBackColor, 
+             header: () => <Logo />, }} 
+             />
           <Stack.Screen name='Register' component={RegisterScreen} options={{
             header: () => <Logo />,
             headerBackVisible: false,
@@ -96,6 +100,8 @@ export default function App() {
           }} />
           <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
             gestureEnabled: false,
+            // statusBarHidden: true,
+            // statusBarColor:Style.quibBackColor,
             headerShown: false
           }} />
           <Stack.Screen name='Test' component={ProfileScreen} options={{

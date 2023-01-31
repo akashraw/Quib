@@ -1,4 +1,4 @@
-import { addBumpAPI, addQuibAPI, deleteBumpAPI, deleteQuibAPI, GetAllMoviesAPI, getMovieLengthAPI, getQuibByMovieAndUserIdAPI, GetQuibsByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI } from "../constants/Api"
+import { addBumpAPI, addQuibAPI, deleteBumpAPI, deleteQuibAPI, GetAllMoviesAPI, getFolloweeByUserIdAPI, getFollowersByUserIdAPI, getMovieByUserIdAPI, getMovieLengthAPI, getQuibByMovieAndUserIdAPI, GetQuibsByIdAPI, getUserByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI } from "../constants/Api"
 
 interface props {
     user: string;
@@ -11,6 +11,9 @@ type BumpProp = {
 }
 type QuibProp = {
     MovieId: number,
+    userId: string,
+}
+type QuibUserIdProp = {
     userId: string,
 }
 type PostQuibProp = {
@@ -160,7 +163,7 @@ export async function AddBump(Bump: BumpProp) {
             'Content-type': 'application/json'
         },
     }
-    Bump.userId = 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1';
+    Bump.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         await fetch(`${addBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
         // json = await response.json();
@@ -185,7 +188,7 @@ export async function DeleteBump(Bump: BumpProp) {
             'Content-type': 'application/json'
         },
     }
-    Bump.userId = 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1';
+    Bump.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         await fetch(`${deleteBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
         // json = await response.json();
@@ -226,10 +229,10 @@ export async function QuibByMovieAndUserId(Quib: QuibProp) {
             'Content-type': 'application/json'
         },
     }
-    Quib.userId = 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1';
+    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
-        let response = await fetch(`${getQuibByMovieAndUserIdAPI}?MovieId=${Quib.MovieId}&UserId=fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1`, headerOptions);
+        let response = await fetch(`${getQuibByMovieAndUserIdAPI}?MovieId=${Quib.MovieId}&UserId=${Quib.userId}`, headerOptions);
         json = await response.json();
         console.log(json)
         return json;
@@ -249,12 +252,105 @@ export async function AddQuib(Quib: PostQuibProp) {
             'Content-type': 'application/json'
         },
     }
+    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
-        let response = await fetch(`${addQuibAPI}?body=${Quib.body}&UserId=fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1&ParentId=0&MovieId=${Quib.MovieId}&isSeedQuib=false&isSeedQuibType=null&isScreenShot=false&Time=${Quib.time}`, headerOptions);
+        let response = await fetch(`${addQuibAPI}?body=${Quib.body}&UserId=${Quib.userId}=${Quib.MovieId}&isSeedQuib=false&isSeedQuibType=null&isScreenShot=false&Time=${Quib.time}`, headerOptions);
         json = await response.json();
         console.log(json)
         // return json;
+    }
+    catch (error) {
+        console.log('my stream ' + error);
+
+    }
+
+}
+
+//Get Movie by userid
+export async function getMovieByUserId(Quib: QuibUserIdProp) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    try {
+        let json;
+        let response = await fetch(`${getMovieByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        return json;
+    }
+    catch (error) {
+        console.log('my stream ' + error);
+
+    }
+
+}
+//get follower list by user id
+export async function getFollowersByUserId(Quib: QuibUserIdProp) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    try {
+        let json;
+        let response = await fetch(`${getFollowersByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        return json;
+    }
+    catch (error) {
+        console.log('my stream ' + error);
+
+    }
+
+}
+export async function getFolloweeByUserId(Quib: QuibUserIdProp) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    try {
+        let json;
+        let response = await fetch(`${getFolloweeByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        return json;
+    }
+    catch (error) {
+        console.log('my stream ' + error);
+
+    }
+
+}
+// Get user details 
+export async function getUserById(Quib: QuibUserIdProp) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    try {
+        let json;
+        let response = await fetch(`${getUserByIdAPI}?UserId=${Quib.userId}`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        return json;
     }
     catch (error) {
         console.log('my stream ' + error);

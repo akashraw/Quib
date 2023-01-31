@@ -1,16 +1,23 @@
 import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Style } from '../../constants/Styles'
 import { vh, vw } from 'rxn-units'
 import QuibButton from '../../components/QuibButton'
 import ProfileScreenTabViews from './ProfileScreenTabViews'
 import { Shadow } from 'react-native-shadow-2'
+import { getFolloweeByUserId, getFollowersByUserId, getMovieByUserId, getUserById } from '../../services/QuibAPIs'
 
 interface props {
     navigation: any,
 }
 
 export default function ProfileScreen({ navigation }: props) {
+    const [User, setUser] = useState<any>([])
+    useEffect(() => {
+        Promise.resolve(
+            getUserById({ userId: '' }).then((res) => setUser(res))
+        )
+    }, [])
     return (
         <SafeAreaView style={{}}>
             <View style={{ paddingVertical: vw(3), backgroundColor: Style.quibBackColor }}>
@@ -27,10 +34,10 @@ export default function ProfileScreen({ navigation }: props) {
                             </View>
                             <View style={{ alignSelf: 'center', justifyContent: 'center', paddingHorizontal: vw(2) }}>
                                 <View style={{ paddingBottom: vw(1) }}>
-                                    <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 16 }}>akashraw</Text>
+                                    <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 16 }}>{User.userName}</Text>
                                 </View>
                                 <View style={{ paddingBottom: vw(1) }}>
-                                    <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 14 }}>Akash Rawat</Text>
+                                    <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 14 }}>{User.firstName} {User.lastName}</Text>
                                 </View>
                                 <View style={{ paddingBottom: vw(0) }}>
                                     <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: 12, marginRight: vw(2), width: vw(60), }} numberOfLines={3} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Leo in vitae turpis massa sed elementum tempus.</Text>

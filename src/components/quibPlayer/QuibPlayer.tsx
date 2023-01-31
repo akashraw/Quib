@@ -48,7 +48,6 @@ export default function QuibPlayer({ navigation, route }: props) {
     const MovieId = route.params;
     // const Movietitle = route.params.Movietitle;
     const quibTimeRef = useRef<number[]>([]);
-    const quibScrubIndexRef = useRef<number>(0);
     const quibPlayIndexRef = useRef<number>(0);
     const resMap = useRef<any[]>([]);
     const [isVisble, setIsVisble] = useState(false);
@@ -73,7 +72,7 @@ export default function QuibPlayer({ navigation, route }: props) {
             getMovieLength(MovieId)
                 .then((res: any) => MovieLen.current = (res.map((res: any) => res.length)))
         ]).then(() => setIsLoading(false));
-        // console.log(movieQuib);
+        console.log('movieQuib');
 
 
     }, [])
@@ -82,8 +81,7 @@ export default function QuibPlayer({ navigation, route }: props) {
 
     // movie timer  stopwatch
     useEffect(() => {
-        console.log(quibTimeRef.current[quibPlayIndexRef.current]);
-
+    
         if (isActive.current && MovieTime < MovieLen.current) {
             // console.log(MovieLen);
 
@@ -161,38 +159,6 @@ export default function QuibPlayer({ navigation, route }: props) {
         isQuibMove.current = false;
         setMovieTime(QuibTime);
     }
-    // class Flat extends PureComponent{
-
-    //   render(): React.ReactNode {
-    //     return <FlatList
-    //       data={movieQuib}
-    //       initialNumToRender={10}
-    //       windowSize={5}
-    //       maxToRenderPerBatch={10}
-    //       updateCellsBatchingPeriod={30}
-    //       showsVerticalScrollIndicator={false}
-    //       ListHeaderComponent={InitialQuib}
-    //       keyExtractor={(_, index) => index.toString()}
-    //       renderItem={QuibList}
-    //       initialScrollIndex={0}
-    //       ref={flatRef}
-    //       onScrollToIndexFailed={error => {
-    //         flatRef.current?.scrollToOffset({
-    //           offset: error.averageItemLength * error.index,
-    //           animated: true,
-    //         });
-    //         setTimeout(() => {
-    //           if (DATA.length !== 0 && flatRef !== null) {
-    //             flatRef.current?.scrollToIndex({
-    //               index: error.index,
-    //               animated: true,
-    //             });
-    //           }
-    //         }, 100);
-    //       } } />;
-    //   }
-    // }
-
 
 
     //Quib list quibs head in (profile image, name, timestamp and quib)
@@ -242,51 +208,6 @@ export default function QuibPlayer({ navigation, route }: props) {
         )
     }
 
-    const memoRender = useMemo(() => QuibList, [movieQuib]);
-
-    type renderList = {
-        item: any,
-        index: any,
-    }
-    //Quib List
-    // class QuibList extends PureComponent<renderList> {
-
-
-    //     render(): React.ReactNode {
-    //         console.log('render');
-
-    //         let { hours, mintues, seconds } = getFormattedTime(this.props.item.time);
-
-    //         if (!this.props.item.isScreenshot) {
-    //             return (
-    //                 <View key={this.props.index} style={styles.flatlistContainer}>
-    //                     <QuibHead time={this.props.item.time} hours={hours} mintues={mintues} seconds={seconds} image={this.props.item.avatarBase32ImagePath} isSS={this.props.item.isScreenshot} name={this.props.item.displayName} quibId={this.props.item.id} />
-    //                     <View style={styles.flatlistComps}>
-    //                         <Text style={{ color: Style.defaultTxtColor, }}>{this.props.item.body}</Text>
-    //                     </View>
-    //                 </View>
-    //             )
-    //         }
-    //         else {
-    //             return (
-    //                 <View key={this.props.index} style={styles.flatlistContainer}>
-    //                     <QuibHead time={this.props.item.time} hours={hours} mintues={mintues} seconds={seconds} isSS={this.props.item.isScreenshot} image={null} name={null} quibId={this.props.item.id} />
-    //                     <View style={styles.flatlistComps}>
-    //                         <FastImage
-    //                             source={{
-    //                                 uri: API + this.props.item.body,
-    //                                 cache: FastImage.cacheControl.immutable,
-    //                                 priority: FastImage.priority.normal
-    //                             }}
-    //                             resizeMode={FastImage.resizeMode.contain}
-    //                             style={{ width: vw(80), height: vw(40) }}
-    //                         />
-    //                     </View>
-    //                 </View>
-    //             )
-    //         }
-    //     }
-    // }
     const QuibList = useCallback(({ item, index }: any) => {
         let { hours, mintues, seconds } = getFormattedTime(item.time);
 
@@ -378,7 +299,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     }
 
     // variables
-    const snapPoints = useMemo(() => ['80 %', '95%'], []);
+    const snapPoints = useMemo(() => ['100%'], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
@@ -401,7 +322,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         return (
             <BottomSheetModal
                 ref={bottomSheetModalRef}
-                index={1}
+                index={0}
                 snapPoints={snapPoints}
                 onChange={handleSheetPositionChange}
                 // containerStyle={{ width: vw(100), height: vh(100), backgroundColor: 'grey' }}
@@ -452,28 +373,6 @@ export default function QuibPlayer({ navigation, route }: props) {
                         </View>
 
 
-                        {/* <FlatList
-                            data={movieQuib}
-                            initialNumToRender={10}
-                            windowSize={5}
-                            maxToRenderPerBatch={10}
-                            updateCellsBatchingPeriod={30}
-                            showsVerticalScrollIndicator={false}
-                            ListHeaderComponent={InitialQuib}
-                            keyExtractor={(_, index) => index.toString()}
-                            renderItem={({ item, index }: any) => <QuibList item={item} index={index} />}
-                            initialScrollIndex={0}
-                            ref={flatRef}
-                            onScrollToIndexFailed={(error) => {
-                                flatRef.current?.scrollToOffset({ offset: error.averageItemLength * error.index, animated: true });
-                                setTimeout(() => {
-                                    if (DATA.length !== 0 && flatRef !== null) {
-                                        flatRef.current?.scrollToIndex({ index: error.index, animated: true });
-                                    }
-                                }, 1)
-                            }}
-
-                        /> */}
                     </View>
                     {/* Quib timeline */}
                     {/* Quib timeline */}
@@ -509,7 +408,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                 })
                                                 const ScurbIndex = DATA.findIndex((item, index) => {
                                                     if (item.Time == Reduce.Time) {
-                                                        quibScrubIndexRef.current = index;
+                                                        // quibScrubIndexRef.current = index;
                                                         return index;
                                                     }
                                                 })
@@ -571,7 +470,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                 })
                                                 const ScurbIndex = DATA.findIndex((item, index) => {
                                                     if (item.Time == Reduce.Time) {
-                                                        quibScrubIndexRef.current = index;
+                                                        // quibScrubIndexRef.current = index;
                                                         return index;
                                                     }
                                                 })

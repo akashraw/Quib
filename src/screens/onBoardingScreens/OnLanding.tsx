@@ -121,11 +121,11 @@ export default function OnLanding({navigation}: props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Style.quibBackColor,
-    paddingHorizontal:vw(2),
+    // paddingHorizontal:vw(1),
     flex: 1,
   },
   headWrap: {
-    marginTop: vw(2),
+    marginTop: vw(10),
   },
   heading: {
     paddingHorizontal: vw(1),
@@ -140,8 +140,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     width:vw(100),
     marginTop: 25,
-    width: vw(100),
-    paddingHorizontal: vw(1),
+    // paddingHorizontal: vw(1),
   },
   image: {
     width: vw(95),

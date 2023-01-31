@@ -8,9 +8,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { Shadow } from 'react-native-shadow-2'
 export default function SetttingScreen() {
     return (
-        <SafeAreaView style={{ flex: 1, width: vw(100), alignSelf: 'center', paddingVertical: vw(8), backgroundColor: '#E0DECA' }}>
+        <SafeAreaView style={{ flex: 1, width: vw(100), alignSelf: 'center', paddingVertical: vw(5), backgroundColor: '#E0DECA' }}>
             {/* Header Starts */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: vw(90), marginBottom: vw(10), paddingHorizontal: vw(6) }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: vw(90), marginBottom: vw(10), paddingHorizontal: vw(5) }}>
                 <View style={{ flexDirection: 'row', }}>
                     <Shadow distance={5}>
                         <Image
@@ -85,7 +85,7 @@ export default function SetttingScreen() {
                 }}>
                     <TouchableOpacity style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={styles.settingTab}>
-                            <Icon name='log-out-outline' size={vw(6)} color={Style.defaultRed} />
+                            <Icon name='log-out-outline' size={vw(6)} color={Style.defaultRed}  />
                             <Text style={styles.settingTxt}>Log Out</Text>
                         </View>
                         <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
@@ -126,10 +126,11 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         paddingLeft: vw(6),
         paddingBottom: vw(0),
-        color: Style.defaultLightGrey
+        color: Style.defaultLightGrey,
     },
     settingTab: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent:'center'
     }
 })
