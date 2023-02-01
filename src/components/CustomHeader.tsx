@@ -1,5 +1,6 @@
 import React from 'react';
 import { GestureResponderEvent, Pressable, StyleSheet, Text, View, ViewProps } from 'react-native';
+import { vw } from 'rxn-units';
 import { Style } from '../constants/Styles';
 
 type PageHeaderProps = {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     // backgroundColor:Style.quibHeader,
-    padding:5,
+    // padding:vw(1),
   },
   leftItem: {
     // flex:1

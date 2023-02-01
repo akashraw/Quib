@@ -71,7 +71,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer onReady={() => RNBootSplash.hide({ fade: true })}>
-        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader, statusBarTranslucent:true, navigationBarColor:Style.quibBackColor, }} initialRouteName="Home">
+        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader, statusBarTranslucent:true, navigationBarColor:'#00000000', }} initialRouteName="Home">
           <Stack.Screen name='Home' component={OnLanding} options={{
              headerShown: false, 
              statusBarColor: Style.quibBackColor, 
@@ -101,7 +101,8 @@ export default function App() {
           <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
             gestureEnabled: false,
             // statusBarHidden: true,
-            // statusBarColor:Style.quibBackColor,
+            statusBarColor:Style.quibBackColor,
+            navigationBarHidden:true,
             headerShown: false
           }} />
           <Stack.Screen name='Test' component={ProfileScreen} options={{

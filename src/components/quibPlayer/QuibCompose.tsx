@@ -252,8 +252,8 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
                       width: 0,
                       height: 0,
                     },
-                    shadowOpacity: 0,
-                    shadowRadius: vw(.5),
+                    shadowOpacity: 5,
+                    shadowRadius: vw(1),
                   }}
                 >
                   <FastImage
@@ -323,9 +323,9 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
   return (
     // <BottomSheetModalProvider>
 
-    <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0) }}>
+    <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0), backgroundColor:Style.quibBackColor }}>
       <View><Text style={{ color: Style.defaultTxtColor, fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text></View>
-      <View style={{ backgroundColor: '#e2e2e2', borderWidth: 1, borderRadius: vw(1), borderColor: '#fff', width: vw(90), height: vw(30) }}>
+      <View style={{ backgroundColor: Style.quibPlayerCardBack, borderWidth: 1, borderRadius: vw(1), borderColor: '#fff', width: vw(90), height: vw(30) }}>
         <TextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
       </View>
       <View style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'space-around', width: vw(80), marginBottom: vw(-4) }}>
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor:Style.quibPlayerCardBack,
     elevation: 5,
     shadowColor: 'black',
     shadowOpacity: 0.1,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     width: vw(95),
     alignSelf: 'center',
     borderRadius: vw(1),
-    backgroundColor: '#fff',
+    backgroundColor: Style.quibPlayerCardBack,
     borderWidth: 0,
     // elevation: 4,
     shadowColor: 'black',

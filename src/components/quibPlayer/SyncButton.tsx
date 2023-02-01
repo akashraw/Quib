@@ -17,9 +17,7 @@ type Sync = {
 }
 
 export default function SyncButton(props: Sync) {
-    const checkSync = () => {
-
-    }
+   
     if (props.isSync) {
         return (
             <TouchableOpacity onPress={props.toggleAllSync} >
