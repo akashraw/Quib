@@ -4,6 +4,7 @@ import { StringData } from '../../constants/Constant'
 import { Style } from '../../constants/Styles';
 import QuibButton from '../../components/QuibButton';
 import { vmax, vw } from 'rxn-units';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface props {
   navigation: any;
@@ -26,16 +27,8 @@ export default function LoginScreen(props: props) {
       })
   }
   return (
-    <View style={{
-      // height:vmax(),
-      flex: 1,
-      // backgroundColor: '#fff',
-      // marginHorizontal: 16,
-      // marginVertical: 20,
-      // borderWidth: 1,
-      // borderColor: '#3333',
-    }}>
-      <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAwareScrollView enableOnAndroid={true}>
         <View style={styles.headWrap}>
           <Image
             style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
@@ -76,9 +69,8 @@ export default function LoginScreen(props: props) {
             </View>
           </View>
         </View>
-      </SafeAreaView >
-    </View>
-
+      </KeyboardAwareScrollView>
+    </SafeAreaView >
   )
 }
 

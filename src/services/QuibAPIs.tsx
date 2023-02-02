@@ -37,13 +37,13 @@ export async function getRecentMovies() {
     try {
         let response = await fetch(RecentQuibMovieAPI, headerOptions);
         json = await response.json()
-
+        return json;
     } catch (error) {
         console.log(error);
 
     }
 
-    return json;
+
 }
 //get the list of Most Active Quib
 export async function getMostActiveMovies() {
@@ -57,10 +57,11 @@ export async function getMostActiveMovies() {
     try {
         let response = await fetch(MostActiveQuibAPI, headerOptions);
         json = await response.json()
+        return json;
+
     } catch (error) {
         console.log(error);
     }
-    return json;
 }
 //get list of all movies
 export async function getAllMovies() {
@@ -201,7 +202,7 @@ export async function DeleteBump(Bump: BumpProp) {
 }
 
 //Delete Quib by id
-export async function DeleteQuib(QuibId:number) {
+export async function DeleteQuib(QuibId: number) {
     const headerOptions = {
         method: 'DELETE',
         headers: {

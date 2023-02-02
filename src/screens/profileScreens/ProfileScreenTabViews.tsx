@@ -72,7 +72,7 @@ export default function ProfileScreenTabViews() {
           showsVerticalScrollIndicator={false}
           data={QuibMovies.current}
           numColumns={3}
-          estimatedItemSize={40}
+          estimatedItemSize={vw(40)}
           // ListFooterComponent={<View style={{ height: vw(22) }} />}
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => (

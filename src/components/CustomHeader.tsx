@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   headerItem: {
     // alignSelf:'center',
     // textAlign:'center',
-    // flex:2
+    // flex:1
   }
 });
 

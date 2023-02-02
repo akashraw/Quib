@@ -60,7 +60,7 @@ export default function ProfileEditScreen(props: props) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAwareScrollView>
+            <KeyboardAwareScrollView enableOnAndroid={true} >
                 <View style={styles.upPhotoWrap}>
                     <UserIcon />
                 </View>

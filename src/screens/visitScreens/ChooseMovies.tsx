@@ -14,6 +14,7 @@ import { RadioButton } from 'react-native-paper';
 import MovieCard from './MovieCard';
 import { FlatList } from 'react-native-gesture-handler';
 import { Shadow } from 'react-native-shadow-2';
+import { FlashList } from '@shopify/flash-list';
 // import BottomTabNavigation from '../../components/BottomTabNavigation';
 interface props {
   navigation: any;
@@ -37,7 +38,9 @@ export default function ChooseMovies(props: props) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { handleSheetPositionChange } = useBottomSheetBackHandler(bottomSheetModalRef);
   const [value, setValue] = React.useState('first');
-  // const isFav = useRef(false);
+  const isActiveMovieWorking = useRef<boolean>(true);
+  const isRecentMovieWorking = useRef<boolean>(true);
+
   // const [Star, setStar] = useState('star-o')
 
 
@@ -45,8 +48,8 @@ export default function ChooseMovies(props: props) {
   useEffect(() => {
     setTimeout(() => Promise.all([
       getAllMovies().then(res => setallMovieRes(res)),
-      getRecentMovies().then(res => setRecentMovies(res)),
-      getMostActiveMovies().then(res => setActiveMovies(res))
+      getRecentMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setRecentMovies(res) } }),
+      getMostActiveMovies().then(res => { if (res === undefined) { return isActiveMovieWorking.current = false } else { return setActiveMovies(res) } }),
     ]).then(() => setIsLoading(false)), 1000);
   }, []);
 
@@ -117,7 +120,7 @@ export default function ChooseMovies(props: props) {
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
               {/* <Shadow distance={1} style={{ borderRadius: vw(2) }} > */}
               <FastImage
-                style={{ width: vw(15), height: vw(20), marginRight:vw(2), borderRadius: vw(1) }}
+                style={{ width: vw(15), height: vw(20), marginRight: vw(2), borderRadius: vw(1) }}
                 // resizeMode={FastImage.resizeMode.contain}
                 source={{
                   uri: ((FS == 'jpeg' || FS == 'jpg') ? `${API}${item.posterContentThumb}` : `data:image/png;base64,${item.posterContentThumb}`),
@@ -133,7 +136,7 @@ export default function ChooseMovies(props: props) {
             </View>
           </TouchableOpacity>
           <View style={{ alignItems: 'center', marginRight: vw(0) }}>
-            <View style={{ alignItems: 'center', alignSelf: 'flex-end',}}>
+            <View style={{ alignItems: 'center', alignSelf: 'flex-end', }}>
               <View style={{ width: vw(16), height: vw(16), marginBottom: vw(1), }}>
                 <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Style.defaultRed, borderColor: Style.defaultRed, borderTopRightRadius: vw(4), borderTopLeftRadius: vw(4), borderBottomWidth: 0 }}>
                   <Text style={{ color: '#fff', fontWeight: '500', fontSize: 14, alignSelf: 'center' }}>4.2k</Text>
@@ -153,7 +156,7 @@ export default function ChooseMovies(props: props) {
     if (!section.sort) {
       return (
         <View style={{
-          justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2)
+          justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2), 
         }}>
           <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
           <FlatList
@@ -161,6 +164,7 @@ export default function ChooseMovies(props: props) {
             showsHorizontalScrollIndicator={false}
             data={section.data}
             renderItem={({ item, index }: any) => <MovieCards item={item} index={index} />}
+            // estimatedItemSize={vw(40)}
           />
           <TouchableOpacity>
             <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
@@ -219,7 +223,7 @@ export default function ChooseMovies(props: props) {
   return (
     <BottomSheetModalProvider>
       {/* <SafeAreaView> */}
-      <View style={{ alignItems: 'center', backgroundColor: Style.quibBackColor, height:vh(100) }}>
+      <View style={{ alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(100) }}>
         <Loaded />
         <BottomSheet />
       </View>
@@ -248,7 +252,7 @@ const styles = StyleSheet.create({
     height: vh(12),
     flexDirection: 'row',
     backgroundColor: '#EEEEEE',
-    paddingHorizontal:vw(2),
+    paddingHorizontal: vw(2),
     // backgroundColor: 'Style.quibColor',
     alignItems: 'center',
   },

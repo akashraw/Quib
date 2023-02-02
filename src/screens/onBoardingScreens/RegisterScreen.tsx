@@ -73,7 +73,7 @@ export default function RegisterScreen(props: props) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
+            <KeyboardAwareScrollView showsVerticalScrollIndicator={false} enableOnAndroid={true}  >
                 <View style={styles.headWrap}>
                     <Image
                         style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
