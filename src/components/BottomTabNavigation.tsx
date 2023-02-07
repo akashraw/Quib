@@ -17,7 +17,6 @@ import QuibButton from './QuibButton';
 const Tab = createBottomTabNavigator();
 
 const Heading = (props: any) => {
-    const navigation = useNavigation();
     return (
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
                 <Text style={{ fontSize: 22, fontWeight: '500', paddingLeft: vw(2), color: Style.defaultRed }}>{props.title}</Text>

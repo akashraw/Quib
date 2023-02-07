@@ -1,18 +1,16 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity, FlatList, ListRenderItemInfo, Modal, Alert, Dimensions } from 'react-native'
-import React, { useEffect, useState, useRef, useMemo, useCallback, PureComponent, version } from 'react'
+import { Image, StyleSheet, Text, View, TouchableOpacity, FlatList, Dimensions } from 'react-native'
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Style } from '../../constants/Styles'
-import { vmin, vmax, vw, vh, percentage } from 'rxn-units';
+import { vmax, vw, vh } from 'rxn-units';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import PageHeader from '../CustomHeader';
 import { Slider } from '@miblanchard/react-native-slider'
-import DATA from '../../constants/Arrival.json'
 import { API } from '../../constants/Api';
 import FastImage from 'react-native-fast-image';
 import { AddBump, getMovieLength, getMoviePoster, GetQuibsById } from '../../services/QuibAPIs';
 import { LocalSvg } from 'react-native-svg';
-import SyncButton from './SyncButton';
 import QuibCarousel from './QuibCarousel';
 import QuibCompose from './QuibCompose';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -23,6 +21,7 @@ import Toast from 'react-native-toast-message';
 import { FlashList } from '@shopify/flash-list';
 import DropShadow from 'react-native-drop-shadow';
 import { BlurView } from '@react-native-community/blur';
+// import { BlurView } from '@react-native-community/blur';
 
 
 interface props {
@@ -38,6 +37,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     // const isQuibMove = useRef<boolean>(); //used for dualSync
     const MovieLen = useRef(0);
     const isActive = useRef(false);
+    const isTapped = useRef(false);
     const timer = useRef(0);
     const [MovieTime, setMovieTime] = useState(0);
     const [QuibTime, setQuibTime] = useState(0);
@@ -49,13 +49,14 @@ export default function QuibPlayer({ navigation, route }: props) {
     const posterRef = useRef(String);
     const [isPoster, setIsPoster] = useState(Boolean);
     const MovieId = route.params;
-    // const Movietitle = route.params.Movietitle;
     const quibTimeRef = useRef<number[]>([]);
+    const [QuibTimeRef, setQuibTimeRef] = useState<number[]>([]);
     const quibPlayIndexRef = useRef<number>(0);
     const resMap = useRef<any[]>([]);
     const [isVisble, setIsVisble] = useState(false);
+    const [Time, setTime] = useState(0)
     // const [isVisbleModal, setIsVisbleModal] = useState(false);
-    const TimeRef = useRef(0);
+    const TimeRefer = useRef(0);
     // const [AllSync, setAllSync] = useState<boolean>(true); //used for dualSync
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const { handleSheetPositionChange } = useBottomSheetBackHandler(bottomSheetModalRef);
@@ -69,35 +70,17 @@ export default function QuibPlayer({ navigation, route }: props) {
                 .then((res: any) => posterRef.current = (res.map((res: any) => res.posterContent)))
                 .then(() => FileCheck()),
             GetQuibsById(MovieId)
-                .then((res: any) => { setMovieQuib(res); quibTimeRef.current = res.map((res: any) => res.time); resMap.current = res.filter((item: any) => item.isScreenshot == true || item.isSeedQuib); }),
-            // .then(() => setC(() => movieQuib.map((res, inde) => {quibScrubIndexRef.current[inde] = inde; return res.time }))),
-            // .then(() => console.log(quibTimeRef.current)),
+                .then((res: any) => { setMovieQuib(res); setQuibTimeRef(res.map((res: any) => res.time)); resMap.current = res.filter((item: any) => item.isScreenshot == true || item.isSeedQuib); }),
             getMovieLength(MovieId)
                 .then((res: any) => MovieLen.current = (res.map((res: any) => res.length)))
         ]).then(() => setIsLoading(false));
-        console.log('movieQuib');
 
 
     }, [])
 
-
-
-    // movie timer  stopwatch
+    //UseEffect use to scroll
     useEffect(() => {
-
         if (isActive.current && MovieTime < MovieLen.current) {
-            // console.log(MovieLen);
-
-            if (quibTimeRef.current[quibPlayIndexRef.current] <= MovieTime) {
-                console.log(quibPlayIndexRef.current);
-                // console.log(quibTimeRef.current[MovieTime]);
-                flatRef.current?.scrollToIndex({
-                    animated: true,
-                    index: quibPlayIndexRef.current
-                })
-                quibPlayIndexRef.current = quibPlayIndexRef.current + 1;
-            }
-
             timer.current = setInterval(() => {
                 setQuibTime(MovieTime + 1)
                 setMovieTime(MovieTime => MovieTime + 1);
@@ -111,7 +94,53 @@ export default function QuibPlayer({ navigation, route }: props) {
         }
 
         return () => clearInterval(timer.current);
+    }, [isActive.current, MovieTime])
+
+
+
+    // movie timer  stopwatch
+    useEffect(() => {
+        // console.log('index: ' + quibPlayIndexRef.current + ' Quib: ' + QuibTimeRef[quibPlayIndexRef.current] + ' movie: ' + MovieTime)
+        if (QuibTimeRef[quibPlayIndexRef.current] == MovieTime) {
+            // console.log('if')
+            flatRef.current?.scrollToIndex({
+                animated: true,
+                index: quibPlayIndexRef.current
+            })
+            quibPlayIndexRef.current = quibPlayIndexRef.current + 1;
+        } else if (QuibTimeRef[quibPlayIndexRef.current] == QuibTimeRef[quibPlayIndexRef.current - 1]) {
+            // console.log('else if')
+            flatRef.current?.scrollToIndex({
+                animated: true,
+                index: quibPlayIndexRef.current
+            })
+            quibPlayIndexRef.current = quibPlayIndexRef.current + 1;
+
+            // console.log('add ' + QuibTimeRef[quibPlayIndexRef.current] + 'movie' + MovieTime)
+        } else {
+            // console.log('else')
+            let a = QuibTimeRef.findIndex((item, index) => {
+                if (item == MovieTime) {
+                    quibPlayIndexRef.current = index;
+                    return index
+                } else return
+            })
+            flatRef.current?.scrollToIndex({
+                animated: true,
+                index: a
+            })
+
+        }
+        return () => { };
+
     }, [isActive.current, MovieTime]);
+
+    useEffect(() => {
+        if (isTapped.current == true) {
+            isTapped.current = false;
+            return bottomSheetModalRef.current?.present()
+        }
+    }, [isTapped.current, Time])
 
 
 
@@ -166,12 +195,13 @@ export default function QuibPlayer({ navigation, route }: props) {
 
 
     //Quib list quibs head in (profile image, name, timestamp and quib)
-    const QuibHead = ({ hours, mintues, seconds, image, name, quibId, time }: any) => {
+    const QuibHead = ({ hours, mintues, seconds, image, name, quibId, time, userId }: any) => {
+
         return (
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
                     <View style={{ justifyContent: 'flex-start', }}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("OtherProfile", { userId: userId })}>
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(3) }}>
                                 <FastImage source={{ uri: `data:image/png;base64,${image}` }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
                                 <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}</Text>
@@ -179,7 +209,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                         </TouchableOpacity>
                     </View>
                     <View style={{ justifyContent: 'center', position: 'absolute', left: vw(30) }}>
-                        <TouchableOpacity onPress={() => { TimeRef.current = time; handlePresentModalPress(); }}>
+                        <TouchableOpacity onPress={() => { handlePresentModalPress(time) }}>
                             <View style={[...[styles.timer], { width: vw(16), height: vw(5), marginBottom: vw(2) }]}>
                                 <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                             </View>
@@ -215,17 +245,26 @@ export default function QuibPlayer({ navigation, route }: props) {
     const QuibList = useCallback(({ item, index }: any) => {
         let { hours, mintues, seconds } = getFormattedTime(item.time);
 
-        if (!item.isScreenshot) {
+        if (!item.isSeedQuib && !item.isScreenshot) {
             return (
                 <View key={index} style={styles.flatlistContainer}>
-                    <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} quibId={item.id} />
-                    <View style={styles.flatlistComps}>
+                    <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} quibId={item.id} userId={item.newUserId} />
+                    <View style={[styles.flatlistComps,]}>
                         <Text style={{ color: Style.defaultTxtColor, }}>{item.body}</Text>
                     </View>
                 </View>
             )
         }
-        else {
+        else if (item.isSeedQuib == true && !item.isScreenshot) {
+            return (
+                <View key={index} style={styles.flatlistContainer}>
+                    <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={item.displayName} quibId={item.id} userId={item.newUserId} />
+                    <View style={[styles.flatlistComps, { backgroundColor: '#c1323250' }]}>
+                        <Text style={{ color: Style.defaultTxtColor, }}>{item.body}</Text>
+                    </View>
+                </View>
+            )
+        } else {
             return (
                 <View key={index} style={styles.flatlistContainer}>
                     <QuibHead time={item.time} hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} image={null} name={null} quibId={item.id} />
@@ -243,11 +282,10 @@ export default function QuibPlayer({ navigation, route }: props) {
                 </View>
             )
         }
-    }, [])
+    }, [movieQuib])
 
     // intial Quib 
     const InitialQuib = () => {
-        // console.log('render')
         return (
             <View style={{
                 alignItems: 'center',
@@ -305,18 +343,23 @@ export default function QuibPlayer({ navigation, route }: props) {
     }
 
     // variables
-    const snapPoints = useMemo(() => ['75%'], []);
+    const snapPoints = useMemo(() => ['80%', '90%'], []);
 
     // callbacks
-    const handlePresentModalPress = useCallback(() => {
-        bottomSheetModalRef.current?.present();
-    }, []);
+    const handlePresentModalPress = (time: number) => {
+        if (time == Time) {
+            bottomSheetModalRef.current?.present();
+        } else {
+            setTime(time);
+            isTapped.current = true;
+        }
+    }
 
     const renderBackdrop = useCallback(
         (props: any) => (
             <BottomSheetBackdrop
                 {...props}
-                opacity={.9}
+                opacity={.7}
                 onPress={() => bottomSheetModalRef.current?.dismiss}
                 pressBehavior='close'
             />
@@ -325,6 +368,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     );
 
     const QuibComposeModal = () => {
+        // console.log('modal');
         return (
             <BottomSheetModal
                 ref={bottomSheetModalRef}
@@ -335,7 +379,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                 backdropComponent={renderBackdrop}
                 backgroundStyle={{ backgroundColor: Style.quibBackColor }}
             >
-                <QuibCompose MovieId={MovieId.MovieId} hour={hours} mins={mintues} secs={seconds} time={TimeRef.current} />
+                <QuibCompose MovieId={MovieId.MovieId} hour={hours} mins={mintues} secs={seconds} time={Time} />
                 {/* <QuibComposeTabView/> */}
             </BottomSheetModal>
         )
@@ -391,11 +435,15 @@ export default function QuibPlayer({ navigation, route }: props) {
                                         shadowOpacity: .5,
                                         shadowRadius: vw(1),
                                     }}
-                                ><QuibList item={item} index={index} /></DropShadow>}
+                                >
+                                    <QuibList item={item} index={index} />
+                                </DropShadow>
+                                }
                                 initialScrollIndex={0}
                                 ref={flatRef}
                                 estimatedItemSize={200}
                                 contentContainerStyle={{ paddingHorizontal: vw(5) }}
+
                             />
                         </View>
 
@@ -428,10 +476,10 @@ export default function QuibPlayer({ navigation, route }: props) {
                             <LinearGradient colors={['#00000020', Style.quibHeaderGrad, '#000000']} style={{ flex: 1, width: vw(100), backgroundColor: '#00000000' }} >
                                 <View style={styles.quibScrubber}>
 
-                                    <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom:vw(-3) }}>
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: vw(-3) }}>
 
                                         {/* Movie Scrubber  */}
-                                        <View style={{ display:'flex', alignItems:'flex-start', justifyContent: 'center',  }}>
+                                        <View style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', }}>
                                             <Slider
                                                 maximumValue={MovieLen.current}
                                                 minimumTrackTintColor={Style.defaultRed}
@@ -444,19 +492,17 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                 //     value = Array.isArray(value) ? value[0] : value;
                                                 //     setMovieTime(value);
                                                 // }}
-                                                onSlidingComplete={async (value) => {
+                                                onSlidingComplete={value => {
                                                     value = Array.isArray(value) ? value[0] : value;
                                                     setQuibTime(value);
-                                                    // isMovieMove.current = true; //used for dualSync
+
                                                     setMovieTime(value);
-                                                    quibPlayIndexRef.current = value;
-                                                    const Reduce = DATA.reduce((accumulator, current) => {
+                                                    const Reduce = movieQuib.reduce((accumulator, current) => {
                                                         const val = Array.isArray(value) ? value[0] : value;
-                                                        return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
+                                                        return Math.abs(current.time - val) < Math.abs(accumulator.time - val) ? (current) : (accumulator);
                                                     })
-                                                    const ScurbIndex = DATA.findIndex((item, index) => {
-                                                        if (item.Time == Reduce.Time) {
-                                                            // quibScrubIndexRef.current = index;
+                                                    const ScurbIndex = movieQuib.findIndex((item, index) => {
+                                                        if (item.time == Reduce.time) {
                                                             return index;
                                                         }
                                                     })
@@ -474,6 +520,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                         })
                                                     }
                                                 }}
+
                                                 renderThumbComponent={() => {
                                                     // if (!AllSync) {
                                                     return <Image source={require('../../assets/top.png')}
@@ -504,7 +551,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                         </View>
 
                                         {/*quib Scrubber*/}
-                                        <View style={{ display:'flex', alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginTop:vw(-5.6) }}>
+                                        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginTop: vw(-5.6) }}>
                                             <Slider
                                                 maximumValue={MovieLen.current}
                                                 minimumTrackTintColor='#00000000'
@@ -519,15 +566,15 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                 onSlidingComplete={value => {
                                                     value = Array.isArray(value) ? value[0] : value;
                                                     setQuibTime(value);
-
-                                                    // quibPlayIndexRef.current = value;
-                                                    // isQuibMove.current = true; //used for dualSync
-                                                    const Reduce = DATA.reduce((accumulator, current) => {
+                                                    const Reduce = movieQuib.reduce((accumulator, current) => {
                                                         const val = Array.isArray(value) ? value[0] : value;
-                                                        return Math.abs(current.Time - val) < Math.abs(accumulator.Time - val) ? (current) : (accumulator);
+                                                        return Math.abs(current.time - val) < Math.abs(accumulator.time - val) ? (current) : (accumulator);
                                                     })
-                                                    const ScurbIndex = DATA.findIndex((item, index) => {
-                                                        if (item.Time == Reduce.Time) {
+                                                    const ScurbIndex = movieQuib.findIndex((item, index) => {
+                                                        if (item.time == Reduce.time) {
+
+                                                            console.log(Reduce.time)
+                                                            console.log(index)
                                                             // quibScrubIndexRef.current = index;
                                                             return index;
                                                         }
@@ -577,7 +624,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 {/* new */}
                                 {/* new */}
 
-                                <View style={{ width: vw(100), justifyContent: 'center', alignSelf: 'center', paddingHorizontal: vw(6), marginBottom:vw(2) }}>
+                                <View style={{ width: vw(100), justifyContent: 'center', alignSelf: 'center', paddingHorizontal: vw(6), marginBottom: vw(2) }}>
 
                                     <PageHeader
                                         leftNode={
@@ -608,7 +655,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                     </TouchableOpacity>
                                                 </View>
                                                 <View style={{ paddingBottom: vw(0) }}>
-                                                    <TouchableOpacity activeOpacity={.5} onPress={handlePresentModalPress}>
+                                                    <TouchableOpacity activeOpacity={.5} onPress={() => handlePresentModalPress(MovieTime)}>
                                                         <View style={[...[styles.timer], { height: vw(7) }]}>
                                                             <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, fontWeight: '500' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                                                         </View>

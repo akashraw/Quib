@@ -73,7 +73,7 @@ export default function RegisterScreen(props: props) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAwareScrollView showsVerticalScrollIndicator={false} enableOnAndroid={true}  >
+            <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
                 <View style={styles.headWrap}>
                     <Image
                         style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
         // borderColor: '#3333',
     },
     headWrap: {
-        marginTop: vw(10),
+        marginTop: vw(0),
     },
     inputField: {
         marginVertical: vw(2),

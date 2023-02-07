@@ -9,8 +9,9 @@ import getFormattedTime from '../GetFormattedTime';
 import FastImage from 'react-native-fast-image';
 import { DeleteBump, AddQuib, QuibByMovieAndUserId, DeleteQuib } from '../../services/QuibAPIs';
 import { API } from '../../constants/Api';
-import { Shadow } from 'react-native-shadow-2';
 import DropShadow from 'react-native-drop-shadow';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+
 
 type FD = {
   Quib: string;
@@ -38,6 +39,7 @@ type State = NavigationState<Route>;
 
 
 function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [QuibInput, setQuibInput] = useState<string>('');
   const [FlatData, setFlatData] = useState<any[]>([]);
   const DataRef = useRef<FD[]>([]);
@@ -50,10 +52,20 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
 
   ]);
   useEffect(() => {
+    console.log('doNE')
     QuibByMovieAndUserId({ MovieId, userId: '' })
       .then((res: any) => setFlatData(res))
 
   }, [])
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date: any) => {
+    console.warn("A date has been picked: ", date);
+    hideDatePicker();
+  };
 
   const MyStreamFlatlist = () => {
     return (
@@ -71,6 +83,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
         showsVerticalScrollIndicator={false}
         keyExtractor={(_, index) => index.toString()}
         initialScrollIndex={0}
+      // onRefresh={}
       />)
   }
   const SavedQuib = () => {
@@ -212,7 +225,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
               <View style={styles.quibTxtBody}>
                 <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}> {item.body}</Text>
               </View>
-              <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8)}}>
+              <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8) }}>
                 <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
                   <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                     <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
@@ -268,7 +281,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
                 </DropShadow>
                 {/* </Shadow> */}
               </View>
-              <View style={{ justifyContent: 'flex-start', flexDirection: 'row',  paddingLeft: vw(8) }}>
+              <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8) }}>
                 <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
                   <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                     <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
@@ -301,7 +314,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
             <View style={styles.quibTxtBody}>
               <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
             </View>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal:vw(8) }}>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: vw(8) }}>
               <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => DeleteQuib(item.id)} >
                 <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                   <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
@@ -319,13 +332,27 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
     )
   }
 
-
+  let { hours, mintues, seconds } = getFormattedTime(time);
   return (
     // <BottomSheetModalProvider>
 
-    <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0), backgroundColor:Style.quibBackColor }}>
-      <View><Text style={{ color: Style.defaultTxtColor, fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text></View>
+    <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0), backgroundColor: Style.quibBackColor }}>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="time"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: Style.defaultTxtColor, fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text>
+        <TouchableOpacity onPress={()=>setDatePickerVisibility(true)}>
+          <View style={[...[quibPlayerStyles.timer], { width: vw(16), height: vw(5), marginBottom: vw(2) }]}>
+            <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       <View style={{ backgroundColor: Style.quibPlayerCardBack, borderWidth: 1, borderRadius: vw(1), borderColor: '#fff', width: vw(90), height: vw(30) }}>
+        {/* <BottomSheetTextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} /> */}
         <TextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
       </View>
       <View style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'space-around', width: vw(80), marginBottom: vw(-4) }}>
@@ -376,7 +403,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:Style.quibPlayerCardBack,
+    backgroundColor: Style.quibPlayerCardBack,
     elevation: 5,
     shadowColor: 'black',
     shadowOpacity: 0.1,
@@ -444,8 +471,8 @@ const styles = StyleSheet.create({
     borderRadius: vw(1),
     paddingHorizontal: vw(2),
     paddingVertical: vw(3),
-    marginVertical:vw(1),
-    marginBottom:vw(2)
+    marginVertical: vw(1),
+    marginBottom: vw(2)
   },
 })
 
