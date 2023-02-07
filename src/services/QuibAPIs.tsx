@@ -235,7 +235,7 @@ export async function QuibByMovieAndUserId(Quib: QuibProp) {
         let json;
         let response = await fetch(`${getQuibByMovieAndUserIdAPI}?MovieId=${Quib.MovieId}&UserId=${Quib.userId}`, headerOptions);
         json = await response.json();
-        console.log(json)
+        // console.log(json)
         return json;
     }
     catch (error) {
@@ -350,11 +350,33 @@ export async function getUserById(Quib: QuibUserIdProp) {
         let json;
         let response = await fetch(`${getUserByIdAPI}?UserId=${Quib.userId}`, headerOptions);
         json = await response.json();
-        console.log(json)
         return json;
     }
     catch (error) {
         console.log('my stream ' + error);
+
+    }
+
+}
+
+// Get other user details 
+export async function getOtherUserById(Quib: QuibUserIdProp) {
+    const headerOptions = {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    try {
+        let json;
+        let response = await fetch(`${getUserByIdAPI}?UserId=${Quib.userId}`, headerOptions);
+        json = await response.json();
+        return json;
+    }
+    catch (error) {
+        console.log('my error getOtherUserById ' + error);
 
     }
 

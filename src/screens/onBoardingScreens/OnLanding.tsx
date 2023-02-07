@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headWrap: {
-    marginTop: vw(10),
+    // marginTop: vw(10),
   },
   heading: {
     paddingHorizontal: vw(1),

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { StringData } from '../../constants/Constant'
 import { Style } from '../../constants/Styles';
 import QuibButton from '../../components/QuibButton';
-import { vmax, vw } from 'rxn-units';
+import { vh, vmax, vw } from 'rxn-units';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface props {
@@ -28,7 +28,7 @@ export default function LoginScreen(props: props) {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAwareScrollView enableOnAndroid={true}>
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
         <View style={styles.headWrap}>
           <Image
             style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     borderColor: '#3333',
   },
   headWrap: {
-    marginTop: vw(10),
+    // marginTop: vw(10),
   },
   inputField: {
     marginVertical: vw(2),

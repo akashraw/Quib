@@ -16,7 +16,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomTabNavigation from './src/components/BottomTabNavigation';
 import ProfileEditScreen from './src/screens/profileScreens/ProfileEditScreen';
 import RNBootSplash from "react-native-bootsplash";
-// import QuibPlayerV3 from './src/components/quibPlayer/QuipPlayerV3';
+import OtherProfileScreen from './src/screens/otherProfileScreens/OtherProfileScreens';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -71,12 +71,8 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer onReady={() => RNBootSplash.hide({ fade: true })}>
-        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader, statusBarTranslucent:true, navigationBarColor:'#00000000', }} initialRouteName="Home">
-          <Stack.Screen name='Home' component={OnLanding} options={{
-             headerShown: false, 
-             statusBarColor: Style.quibBackColor, 
-             header: () => <Logo />, }} 
-             />
+        <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader }} initialRouteName="Home">
+          <Stack.Screen name='Home' component={OnLanding} options={{ headerShown:false, statusBarColor:Style.quibBackColor,header: () => <Logo />, }} />
           <Stack.Screen name='Register' component={RegisterScreen} options={{
             header: () => <Logo />,
             headerBackVisible: false,
@@ -100,13 +96,12 @@ export default function App() {
           }} />
           <Stack.Screen name='Qplayer' component={QuibPlayer} options={{
             gestureEnabled: false,
-            // statusBarHidden: true,
-            statusBarColor:Style.quibBackColor,
-            navigationBarHidden:true,
             headerShown: false
           }} />
-          <Stack.Screen name='Test' component={ProfileScreen} options={{
-            headerTitle: () => <Heading title={'Quib Community'} />,
+          <Stack.Screen name='OtherProfile' component={OtherProfileScreen} options={{
+            headerTitleAlign:'center',
+            headerTitle: () => <Heading title={`Profile`} />,
+            headerLeft: () => <BackIcon />,
             headerBackVisible: false,
           }} />
           <Stack.Screen name='Edit' component={ProfileEditScreen} options={{
