@@ -1,3 +1,5 @@
+// import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/core'
 import { FlashList } from '@shopify/flash-list';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
@@ -27,8 +29,9 @@ import { vh, vw } from 'rxn-units';
 import QuibButton from '../../components/QuibButton';
 import { API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
-import { getMovieByUserId, getFollowersByUserId, getFolloweeByUserId } from '../../services/QuibAPIs';
+import { getMovieByUserId, getFollowersByUserId, getFolloweeByUserId, UnFollowUser } from '../../services/QuibAPIs';
 import MovieCard from '../visitScreens/MovieCard';
+import ProfileStream from './ProfileStream';
 
 type Route = {
   key: string;
@@ -38,7 +41,8 @@ type Route = {
 
 type State = NavigationState<Route>;
 
-export default function ProfileScreenTabViews() {
+export default function ProfileScreenTabViews({navi, followerId }:any) {
+  const navigation = useNavigation();
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -46,9 +50,9 @@ export default function ProfileScreenTabViews() {
     { key: 'second', title: 'Following' },
     { key: 'thrid', title: 'Followers' },
   ]);
-  const [QuibMovie, setQuibMovie] = useState<any[]>();
-  const [Follower, setFollower] = useState<any[]>();
-  const [Followee, setFollowee] = useState<any[]>();
+  const [QuibMovie, setQuibMovie] = useState<any[]>([]);
+  const [Follower, setFollower] = useState<any[]>([]);
+  const [Followee, setFollowee] = useState<any[]>([]);
   const [isLoaded, setIsLoaded] = useState(false)
   const Followings = useRef<any[]>([]);
   const Follow = useRef<any[]>([]);
@@ -60,8 +64,22 @@ export default function ProfileScreenTabViews() {
       getFollowersByUserId({ userId: '' }).then((res) => { setFollower(res); Follow.current = res }),
       getFolloweeByUserId({ userId: '' }).then((res) => { setFollowee(res); Followings.current = res }),
     ]).then(() => setIsLoaded(true))
+    // console.log(followerId);
   }, [])
 
+
+  const unFollowUser = ({ followeeId, index }: any) => {
+    Promise.resolve(UnFollowUser({
+      FollowerId: followerId.followerId,
+      FolloweeId: followeeId
+    }).then(() => handleUnFollow(index)))
+  }
+
+  const handleUnFollow = (index: any) => {
+    let temp = [...Followee];
+    temp.splice(index, 1);
+    setFollowee(temp);
+  }
   const Quibbed = React.useCallback(() => {
     console.log('render');
 
@@ -78,16 +96,20 @@ export default function ProfileScreenTabViews() {
           renderItem={({ item, index }: any) => (
             <View
               style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <MovieCard
-                key={index}
-                title={item.title}
-                year={item.releaseYear}
-                director={item.director}
-                viewStyle={undefined}
-                textStyle={undefined}
-                linearGradStyle={undefined}
-                imgSrc={item.posterContentThumb}
-              />
+              <TouchableOpacity
+               onPress={() => {navigation.navigate('Stream' as never,  { id: followerId, movieId: item.id } as never)}}
+              >
+                <MovieCard
+                  key={index}
+                  title={item.title}
+                  year={item.releaseYear}
+                  director={item.director}
+                  viewStyle={undefined}
+                  textStyle={undefined}
+                  linearGradStyle={undefined}
+                  imgSrc={item.posterContentThumb}
+                />
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -99,9 +121,9 @@ export default function ProfileScreenTabViews() {
   const Following = () => {
 
     const RenderItem = ({ item, index }: any) => {
+      let followeeId = item.newFolloweeId;
       return (
-        <Shadow containerStyle={{ alignSelf: 'center', borderRadius:vw(2), marginVertical:vw(1),  }} distance={5}>
-        <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius:vw(1) }}>
+        <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
           <View
             style={{
               flexDirection: 'row',
@@ -115,56 +137,56 @@ export default function ProfileScreenTabViews() {
 
             {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
             <View style={styles.followFollowers}>
-              <View
-                style={{
-                  alignSelf: 'center',
-                  flexDirection: 'row',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                }}>
-                <Image
+              <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
+                <View
                   style={{
-                    width: vw(14),
-                    height: vw(14),
-                    borderRadius: vw(8),
-                    marginRight: vw(2),
-                    resizeMode: 'contain',
                     alignSelf: 'center',
-                  }}
-                  //   resizeMode={FastImage.resizeMode.contain}
-                  source={require('../../assets/Movie/arrival.jpeg')}
-                />
-                <View>
-                  <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
-                    {item.userName}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.year,
-                      styles.txt,
-                      { fontSize: 12, textAlign: 'center' },
-                    ]}>
-                    {item.firstName} {item.lastName}
-                  </Text>
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                  }}>
+                  <Image
+                    style={{
+                      width: vw(14),
+                      height: vw(14),
+                      borderRadius: vw(8),
+                      marginRight: vw(2),
+                      resizeMode: 'contain',
+                      alignSelf: 'center',
+                    }}
+                    //   resizeMode={FastImage.resizeMode.contain}
+                    source={require('../../assets/Movie/arrival.jpeg')}
+                  />
+                  <View>
+                    <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
+                      {item.userName}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.year,
+                        styles.txt,
+                        { fontSize: 12, textAlign: 'center' },
+                      ]}>
+                      {item.firstName} {item.lastName}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              <QuibButton
-                text={'Unfollow'}
-                onPress={undefined}
-                viewStyle={styles.button}
-                textStyle={styles.buttonTxt}
-              />
+              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={.4} onPress={() => unFollowUser({ followeeId, index })}>
+                <View style={styles.button}>
+                  <Text style={styles.buttonTxt}>Unfollow</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
           {/* </View> */}
-        </TouchableOpacity>
         </Shadow>
       )
     }
     return (
       <View style={{ width: vw(100), height: vh(100) }}>
         <FlatList
-          data={Followings.current}
+          data={Followee}
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
           // keyExtractor={(_, index) => index.toString()}
@@ -179,8 +201,8 @@ export default function ProfileScreenTabViews() {
   const Followers = React.useCallback(() => {
     const RenderItem = ({ item, index }: any) => {
       return (
-        <Shadow containerStyle={{ alignSelf: 'center', borderRadius:vw(2), marginVertical:vw(1),  }} distance={5}>
-          <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius:vw(1) }}>
+        <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
+          <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -227,12 +249,12 @@ export default function ProfileScreenTabViews() {
                     </Text>
                   </View>
                 </View>
-                <QuibButton
+                {/* <QuibButton
                   text={'Unfollow'}
                   onPress={undefined}
                   viewStyle={styles.button}
                   textStyle={styles.buttonTxt}
-                />
+                /> */}
               </View>
             </View>
             {/* </View> */}

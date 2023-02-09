@@ -17,6 +17,7 @@ import BottomTabNavigation from './src/components/BottomTabNavigation';
 import ProfileEditScreen from './src/screens/profileScreens/ProfileEditScreen';
 import RNBootSplash from "react-native-bootsplash";
 import OtherProfileScreen from './src/screens/otherProfileScreens/OtherProfileScreens';
+import ProfileStream from './src/screens/profileScreens/ProfileStream';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -62,17 +63,23 @@ const BackIcon = () => {
     </View>
   )
 }
+const EditIcon = () => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity onPress={() => navigation.navigate("Edit" as never)}>
+      <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} />
+    </TouchableOpacity>
+  )
+}
 
 
 export default function App() {
-
-
-
+  // const navigation = useNavigation();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer onReady={() => RNBootSplash.hide({ fade: true })}>
         <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: Style.quibHeader }, statusBarColor: Style.quibHeader }} initialRouteName="Home">
-          <Stack.Screen name='Home' component={OnLanding} options={{ headerShown:false, statusBarColor:Style.quibBackColor,header: () => <Logo />, }} />
+          <Stack.Screen name='Home' component={OnLanding} options={{ headerShown: false, statusBarColor: Style.quibBackColor, header: () => <Logo />, }} />
           <Stack.Screen name='Register' component={RegisterScreen} options={{
             header: () => <Logo />,
             headerBackVisible: false,
@@ -99,14 +106,27 @@ export default function App() {
             headerShown: false
           }} />
           <Stack.Screen name='OtherProfile' component={OtherProfileScreen} options={{
-            headerTitleAlign:'center',
+            headerTitleAlign: 'center',
             headerTitle: () => <Heading title={`Profile`} />,
             headerLeft: () => <BackIcon />,
+            headerBackVisible: false,
+          }} />
+          <Stack.Screen name='Profile' component={ProfileScreen} options={{
+            headerTitleAlign: 'center',
+            headerTitle: () => <Heading title={`Profile`} />,
+            headerLeft: () => <BackIcon />,
+            headerRight: () => <EditIcon />,
             headerBackVisible: false,
           }} />
           <Stack.Screen name='Edit' component={ProfileEditScreen} options={{
             headerTitleAlign: 'center',
             headerTitle: () => <Heading title={'Edit Profile'} />,
+            headerLeft: () => <BackIcon />,
+            headerBackVisible: false,
+          }} />
+          <Stack.Screen name='Stream' component={ProfileStream} options={{
+            headerTitleAlign: 'center',
+            headerTitle: () => <Heading title={'Stream'} />,
             headerLeft: () => <BackIcon />,
             headerBackVisible: false,
           }} />

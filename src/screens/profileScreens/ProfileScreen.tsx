@@ -5,13 +5,15 @@ import { vh, vw } from 'rxn-units'
 import QuibButton from '../../components/QuibButton'
 import ProfileScreenTabViews from './ProfileScreenTabViews'
 import { Shadow } from 'react-native-shadow-2'
-import { getFolloweeByUserId, getFollowersByUserId, getMovieByUserId, getUserById } from '../../services/QuibAPIs'
+import { getUserById } from '../../services/QuibAPIs'
+import { useNavigation } from '@react-navigation/core'
 
 interface props {
     navigation: any,
 }
 
 export default function ProfileScreen({ navigation }: props) {
+    const navig = useNavigation();
     const [User, setUser] = useState<any>([])
     useEffect(() => {
         Promise.resolve(
@@ -55,7 +57,7 @@ export default function ProfileScreen({ navigation }: props) {
                     </View>
                 </View>
                 <View style={{ height: vh(100), }}>
-                    <ProfileScreenTabViews />
+                    <ProfileScreenTabViews navi={navigation} followerId={User.id}/>
                 </View>
             </View>
         </SafeAreaView>

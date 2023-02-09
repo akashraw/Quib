@@ -4,3 +4,7 @@ export default function getFormattedTime(time: number) {
     const seconds = time - (hours * 3600) - (mintues * 60);
     return { hours, mintues, seconds }
 }
+export function getTotalTime(time: any) {
+    let total = (time.hours * 3600) + (time.minutes * 60) + time.seconds;
+    return total;
+}

@@ -193,6 +193,11 @@ export default function QuibPlayer({ navigation, route }: props) {
     //     setMovieTime(QuibTime);
     // }
 
+    const Profile = (userId: string) => {
+        if (userId != 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c') {
+            return navigation.navigate("OtherProfile", { userId: userId })
+        } else return navigation.navigate('Profile')
+    }
 
     //Quib list quibs head in (profile image, name, timestamp and quib)
     const QuibHead = ({ hours, mintues, seconds, image, name, quibId, time, userId }: any) => {
@@ -201,7 +206,7 @@ export default function QuibPlayer({ navigation, route }: props) {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
                     <View style={{ justifyContent: 'flex-start', }}>
-                        <TouchableOpacity onPress={() => navigation.navigate("OtherProfile", { userId: userId })}>
+                        <TouchableOpacity onPress={() => Profile(userId)}>
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(3) }}>
                                 <FastImage source={{ uri: `data:image/png;base64,${image}` }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
                                 <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}</Text>
@@ -216,25 +221,28 @@ export default function QuibPlayer({ navigation, route }: props) {
                         </TouchableOpacity>
                     </View>
                     {/* Bump Api itegrated */}
-                    <View style={{ right: vw(0), position: 'absolute' }}>
+                    <View style={{ right: vw(0), position: 'absolute', justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity onPress={() => AddBump({
                             quibId: quibId,
                             MovieId: MovieId.MovieId,
-                            userId: 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1'
+                            userId: ''
                         }).then(() => Toast.show(
-                            {
+                            {   
+                                visibilityTime: 5000,
+                                autoHide: true,
                                 type: 'success',
                                 text1: 'Bumped!',
                                 text2: 'Quib has been add to your stream successfully.'
                             }
                         ))
                         } >
-                            <LocalSvg
+                            {/* <LocalSvg
                                 fill={'#00000000'}
                                 width={22}
                                 height={22}
                                 asset={require('../../assets/bump.svg')}
-                            />
+                            /> */}
+                            <Icon name='heart-outline' size={vw(5)} color={Style.defaultRed} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -343,7 +351,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     }
 
     // variables
-    const snapPoints = useMemo(() => ['80%', '90%'], []);
+    const snapPoints = useMemo(() => ['70%', '90%'], []);
 
     // callbacks
     const handlePresentModalPress = (time: number) => {
@@ -379,7 +387,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                 backdropComponent={renderBackdrop}
                 backgroundStyle={{ backgroundColor: Style.quibBackColor }}
             >
-                <QuibCompose MovieId={MovieId.MovieId} hour={hours} mins={mintues} secs={seconds} time={Time} />
+                <QuibCompose MovieId={MovieId.MovieId} hour={hours} mins={mintues} secs={seconds} time={Time} movieLength={MovieLen.current}/>
                 {/* <QuibComposeTabView/> */}
             </BottomSheetModal>
         )

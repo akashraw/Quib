@@ -15,6 +15,9 @@ export const getMovieByUserIdAPI = `${API}api/Community/GetMovieByUserId`;
 export const getFollowersByUserIdAPI = `${API}api/Community/GetFollowerId`;
 export const getFolloweeByUserIdAPI = `${API}api/Community/GetFolloweeIdByUserId`;
 export const getUserByIdAPI = `${API}api/Community/GetUserById`;
+export const FollowUserAPI = `${API}api/Community/FollowUser`;
+export const UnFollowUserAPI = `${API}api/Community/UnFollowUser`;
+export const getMovieByIdAPI = `${API}GetMovieById`;
 
 
 

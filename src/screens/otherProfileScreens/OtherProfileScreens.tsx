@@ -1,11 +1,10 @@
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Style } from '../../constants/Styles'
 import { vh, vw } from 'rxn-units'
 import OtherProfileScreenTabViews from './OtherProfileScreensTabViews'
 import { Shadow } from 'react-native-shadow-2'
-import { getOtherUserById, getUserById } from '../../services/QuibAPIs'
-import QuibButton from '../../components/QuibButton'
+import { FollowUser, getOtherUserById } from '../../services/QuibAPIs'
 
 interface props {
     navigation: any,
@@ -14,12 +13,19 @@ interface props {
 
 export default function OtherProfileScreen({ navigation, route }: props) {
     const [User, setUser] = useState<any>([]);
+    const [IsFollow, setIsFollow] = useState('Follow')
     const userId = route.params;
     useEffect(() => {
         Promise.resolve(
             getOtherUserById({ userId: userId.userId }).then((res) => setUser(res))
+
         )
     }, [])
+    const followUser = () => {
+        Promise.resolve(
+            FollowUser({FolloweeId:User.id, FollowerId:'a5a17ac9-d977-41b7-811c-05c4a6f62c4c'})
+        ).then(()=>setIsFollow('Following'))
+    }
     return (
         <SafeAreaView style={{}}>
             <View style={{ paddingVertical: vw(3), backgroundColor: Style.quibBackColor }}>
@@ -46,9 +52,13 @@ export default function OtherProfileScreen({ navigation, route }: props) {
                                 </View>
                             </View>
                         </View>
-                        <View style={{ flex: 1, flexDirection: 'row', paddingBottom: vw(5),  alignSelf:'center' }}>
+                        <View style={{ flex: 1, flexDirection: 'row', paddingBottom: vw(5), alignSelf: 'center' }}>
                             <View style={{ padding: vw(2) }}>
-                                <QuibButton text='Follow' onPress={'Join'} viewStyle={styles.button} textStyle={styles.buttonTxt as any} />
+                                <TouchableOpacity activeOpacity={.4} onPress={followUser}>
+                                    <View style={styles.button}>
+                                        <Text style={styles.buttonTxt}>{IsFollow}</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                             {/* <View style={{ padding: vw(2) }}>
                                 <QuibButton text='Log Out' onPress={'Join'} viewStyle={styles.button} textStyle={styles.buttonTxt as any} />

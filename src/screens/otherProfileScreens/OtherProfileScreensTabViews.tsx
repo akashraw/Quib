@@ -227,12 +227,12 @@ export default function OtherProfileScreenTabViews() {
                     </Text>
                   </View>
                 </View>
-                <QuibButton
+                {/* <QuibButton
                   text={'Unfollow'}
                   onPress={undefined}
                   viewStyle={styles.button}
                   textStyle={styles.buttonTxt}
-                />
+                /> */}
               </View>
             </View>
             {/* </View> */}

@@ -1,16 +1,19 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated, Alert } from 'react-native'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { vh, vw } from 'rxn-units';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Style } from '../../constants/Styles';
 import { quibPlayerStyles } from './QuibPlayerStyle';
 import { SceneMap, TabView, NavigationState, SceneRendererProps } from 'react-native-tab-view';
-import getFormattedTime from '../GetFormattedTime';
+import getFormattedTime, { getTotalTime } from '../GetFormattedTime';
 import FastImage from 'react-native-fast-image';
 import { DeleteBump, AddQuib, QuibByMovieAndUserId, DeleteQuib } from '../../services/QuibAPIs';
 import { API } from '../../constants/Api';
 import DropShadow from 'react-native-drop-shadow';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Modal from "react-native-modal";
+import { Button } from 'react-native-paper';
+import NumberPlease from 'digicard-react-native-number-please';
 
 
 type FD = {
@@ -18,6 +21,7 @@ type FD = {
   time: number;
 }
 interface props {
+  movieLength: number,
   MovieId: number,
   hour: number,
   mins: number,
@@ -38,7 +42,7 @@ type Route = {
 type State = NavigationState<Route>;
 
 
-function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
+function QuibCompose({ MovieId, hour, mins, secs, time, movieLength }: props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [QuibInput, setQuibInput] = useState<string>('');
   const [FlatData, setFlatData] = useState<any[]>([]);
@@ -46,26 +50,88 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
   const layout = useWindowDimensions();
   const [Refresh, setRefresh] = useState(false);
   const [index, setIndex] = React.useState(0);
+  const initialQuibTime = { hours: 0, minutes: 0, seconds: 0 };
+
   const [routes] = React.useState([
     { key: 'first', title: 'My Stream' },
     { key: 'second', title: 'Saved Quib' },
 
   ]);
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const CountDown = [
+    { id: "hours", label: "hr", min: 0, max: 24 },
+    { id: "minutes", label: "min", min: 0, max: 60 },
+    { id: "seconds", label: "sec", min: 0, max: 60 },
+  ]
+
   useEffect(() => {
-    console.log('doNE')
     QuibByMovieAndUserId({ MovieId, userId: '' })
       .then((res: any) => setFlatData(res))
+  }, []);
 
-  }, [])
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
 
+
   const handleConfirm = (date: any) => {
     console.warn("A date has been picked: ", date);
     hideDatePicker();
   };
+
+
+  function Timer() {
+    const [Time, setTime] = useState(time);
+    let { hours, mintues, seconds } = getFormattedTime(Time);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = (QT: any) => {
+      const a = getTotalTime(QT);
+      if (a > movieLength) {
+        Alert.alert('Error', 'Time entered does not exist', [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+        return
+      }
+      else {
+        setTime(a)
+        return setModalVisible(!isModalVisible);
+      }
+    };
+    function TimeModal() {
+      const [quibTime, setQuibTime] = useState(initialQuibTime);
+
+      return (
+        <Modal isVisible={isModalVisible} coverScreen={true} deviceHeight={vh(100)}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(20) }}>
+            <Text>Select the time(HH:MM:SS)</Text>
+            <NumberPlease
+              pickers={CountDown}
+              values={quibTime}
+              onChange={(values) => setQuibTime(values)}
+            />
+            <Button mode="contained" onPress={() => toggleModal(quibTime)} buttonColor={Style.defaultRed}>
+              Submit
+            </Button>
+          </View>
+        </Modal>
+      );
+    }
+    return (
+      <View>
+        <TimeModal />
+        <TouchableOpacity onPress={toggleModal}>
+          <View style={styles.button}>
+            <Text style={styles.buttonTxt}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+    )
+  }
+
+
 
   const MyStreamFlatlist = () => {
     return (
@@ -182,9 +248,9 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
     // setFlatData([...DataRef.current]);
   }
 
-  const deletePost = ({ id, movieId }: any) => {
-    Promise.resolve(DeleteBump({ quibId: id, MovieId: movieId, userId: 'fe8288eb-5cfe-4b26-b676-9ce3bbb9e1c1' })
-      .then(() => handleRemoveItem(index)))
+  const deletePost = ({ id, movieId, index }: any) => {
+    Promise.resolve(DeleteBump({ quibId: id, MovieId: movieId, userId: '' }))
+      .then(() => handleRemoveItem(index)).then(() => console.log('deleted'))
   }
 
   const handleRemoveItem = (idx: number) => {
@@ -226,7 +292,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
                 <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}> {item.body}</Text>
               </View>
               <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8) }}>
-                <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
+                <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId, index: index })}>
                   <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                     <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
                   </View>
@@ -282,7 +348,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
                 {/* </Shadow> */}
               </View>
               <View style={{ justifyContent: 'flex-start', flexDirection: 'row', paddingLeft: vw(8) }}>
-                <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId })}>
+                <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId, index })}>
                   <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                     <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
                   </View>
@@ -315,7 +381,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
               <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
             </View>
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: vw(8) }}>
-              <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => DeleteQuib(item.id)} >
+              <TouchableOpacity activeOpacity={.4} disabled={false} onPress={() => deletePost({ id: item.id, movieId: item.movieId, index })} >
                 <View style={[...[styles.button], { width: vw(16), height: vw(6) }]}>
                   <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>Delete</Text>
                 </View>
@@ -332,30 +398,19 @@ function QuibCompose({ MovieId, hour, mins, secs, time }: props) {
     )
   }
 
-  let { hours, mintues, seconds } = getFormattedTime(time);
   return (
     // <BottomSheetModalProvider>
 
     <View style={{ flex: 1, alignItems: 'center', paddingTop: vw(0), backgroundColor: Style.quibBackColor }}>
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="time"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-      />
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ color: Style.defaultTxtColor, fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text>
-        <TouchableOpacity onPress={()=>setDatePickerVisibility(true)}>
-          <View style={[...[quibPlayerStyles.timer], { width: vw(16), height: vw(5), marginBottom: vw(2) }]}>
-            <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
-          </View>
-        </TouchableOpacity>
       </View>
       <View style={{ backgroundColor: Style.quibPlayerCardBack, borderWidth: 1, borderRadius: vw(1), borderColor: '#fff', width: vw(90), height: vw(30) }}>
         {/* <BottomSheetTextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} /> */}
         <TextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
       </View>
       <View style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'space-around', width: vw(80), marginBottom: vw(-4) }}>
+        <Timer />
         <TouchableOpacity activeOpacity={.4} disabled={false} onPress={setData}>
           <View style={styles.button}>
             <Text style={styles.buttonTxt}>Save</Text>
