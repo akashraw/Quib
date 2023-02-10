@@ -5,26 +5,54 @@ import { Style } from '../../constants/Styles';
 import QuibButton from '../../components/QuibButton';
 import { vh, vmax, vw } from 'rxn-units';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useForm, Controller } from 'react-hook-form';
+import { Button } from 'react-native-paper';
+import { LoginAPI } from '../../constants/Api';
 
 interface props {
   navigation: any;
 }
 
 export default function LoginScreen(props: props) {
-
+  const Color = "#5555";
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
 
-  const Color = "#5555";
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    getValues
+  } = useForm({ mode: 'onBlur' })
 
-  const Login = () => {
-    // if (!Email && !Password && !ConfirmPassword && !Name && !Img && toggleCheckBox)
-    //     return console.log('please fill the form');
-    // else console.log('correct')
-    fetch('http://www.quibs.com/ChooseMovie/GetAllMovies')
-      .then((res) => {
-        console.log(res)
-      })
+  const onSubmit = (data: any) => {
+    if (isValid == true) {
+      console.log(data)
+      return Login(data);
+
+    }
+    else return console.log(data)
+
+  }
+  const Login = async (data: any) => {
+    // console.log(encodeURI(data.Email)+' '+data.Password);
+    const headerOption = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    try {
+      let response = await fetch(`${LoginAPI}?Email=${encodeURIComponent(data.Email)}&Password=${encodeURIComponent(data.Password)}`, headerOption);
+      let json = await response.json();
+      if (response.status == 200) {
+        console.log(json);
+        return props.navigation.navigate('Login')
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <SafeAreaView style={styles.container}>
@@ -39,23 +67,67 @@ export default function LoginScreen(props: props) {
         </View>
         <View style={{ marginTop: vw(5) }}>
           <View style={styles.inputField}>
-            <TextInput placeholder='Email'
-              value={Email}
-              placeholderTextColor={Color}
-              onChangeText={(text) => setEmail(text)} style={styles.inputTxt} />
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  placeholder='Email'
+                  value={value}
+                  placeholderTextColor={Color}
+                  onBlur={onBlur}
+                  onChangeText={value => onChange(value)}
+                  // onChangeText={(text) => setEmail(text)}
+                  style={styles.inputTxt}
+                />
+              )}
+              name={'Email'}
+              rules={{
+                required: {
+                  value: true,
+                  message: 'Field is required!'
+                },
+                pattern: {
+                  value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                  message: 'Enter correct emails'
+                }
+              }}
+            />
           </View>
+          {errors?.Email && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.Email.message?.toString()}</Text>)}
+
+          {/* {errors?.Email && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>Enter correct email</Text>)} */}
           <View style={styles.inputField}>
-            <TextInput placeholder='Password'
-              value={Password}
-              placeholderTextColor={Color}
-              onChangeText={(text) => setPassword(text)} style={styles.inputTxt} />
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  placeholder='Password'
+                  value={value}
+                  placeholderTextColor={Color}
+                  onBlur={onBlur}
+                  onChangeText={value => onChange(value)}
+                  // onChangeText={(text) => setEmail(text)}
+                  style={styles.inputTxt}
+                />
+              )}
+              name={'Password'}
+              rules={{
+                required: {
+                  value: true,
+                  message: 'Field is required!'
+                },
+              }}
+            />
           </View>
           <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: vw(15), marginBottom: vw(2), }}>
-            <TouchableOpacity activeOpacity={.4} onPress={Login}>
+            <TouchableOpacity activeOpacity={.4} onPress={handleSubmit(onSubmit)}>
               <View style={styles.button}>
                 <Text style={styles.buttonTxt}>Submit</Text>
               </View>
             </TouchableOpacity>
+            {/* <Button mode="contained" onPress={handleSubmit(onSubmit)} disabled={!isValid} buttonColor={Style.defaultRed} >
+              <Text style={styles.buttonTxt}>Submit</Text>
+            </Button> */}
             <TouchableOpacity activeOpacity={.2}>
               <Text style={{ paddingTop: vw(4), color: Style.forgetPass }}>Forgot the password?</Text>
             </TouchableOpacity>
@@ -87,7 +159,8 @@ const styles = StyleSheet.create({
     // marginTop: vw(10),
   },
   inputField: {
-    marginVertical: vw(2),
+    marginTop: vw(3),
+    marginBottom: vw(0),
     borderWidth: 1,
     borderColor: '#5555',
     marginHorizontal: vw(5),

@@ -28,6 +28,7 @@
     "lottie-ios": "^3.4.0",
     "lottie-react-native": "^5.1.4",
     "react": "^18.1.0",
+    "react-hook-form": "^7.43.1",
     "react-native": "0.70.6",
     "react-native-animated-pagination-dots": "^0.1.73",
     "react-native-animated-spinkit": "^1.5.2",

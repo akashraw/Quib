@@ -9,6 +9,9 @@ import { vw } from 'rxn-units'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
 import MatComIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Controller, useForm } from 'react-hook-form'
+import DropShadow from 'react-native-drop-shadow'
+import { API, RegisterAPI } from '../../constants/Api'
 
 interface props {
     navigation: any;
@@ -17,27 +20,40 @@ interface props {
 export default function RegisterScreen(props: props) {
 
     const [Email, setEmail] = useState('');
-    const [Password, setPassword] = useState('');
-    const [ConfirmPassword, setConfirmPassword] = useState('');
-    const [Name, setName] = useState('');
+    const [Password, setPassword] = useState(true);
+    const [ConfirmPassword, setConfirmPassword] = useState(true);
+    const [Name, setName] = useState('eye-off');
+    const [CName, setCName] = useState('eye-off');
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [Img, setImg] = useState('');
     const [selectImg, setSelectImg] = useState(false);
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isValid },
+        getValues
+    } = useForm({ mode: 'onBlur' })
 
+    const onSubmit = (data: any) => {
+        if (isValid == true)
+            return Register(data);
+        else return console.log(data)
+
+    };
     const Color = "#5555";
 
     const UserIcon = () => {
         if (!Img)
             return (
                 <TouchableOpacity onPress={lunchImgLib}>
-                    <View style={{ borderRadius: vw(20), borderWidth: 5, borderColor: Style.defaultRed, marginBottom: vw(1) }}>
+                    <View style={{ borderColor: Style.defaultRed, marginBottom: vw(1) }}>
                         {/* <MatComIcon name='account-edit' size={72} color={Style.defaultRed}/> */}
-                        <ImageBackground source={require('../../assets/man.png')} imageStyle={{ width: vw(30), height: vw(30) }} style={{ justifyContent: 'center', width: vw(30), height: vw(30), alignItems: 'center', }} >
-                            <View style={{ paddingTop: vw(0), backgroundColor: '#00000060', width: vw(30), height: vw(30), borderRadius: vw(20), justifyContent: 'center', alignItems: 'center' }}>
+                        <Image source={require('../../assets/profile.png')} style={{ width: vw(25), height: vw(25), alignSelf: 'center', }} />
+                        {/* <View style={{ paddingTop: vw(0), backgroundColor: '#00000060', width: vw(25), height: vw(25), borderRadius: vw(20), justifyContent: 'center', alignItems: 'center' }}>
                                 <Icon name='pencil-sharp' size={vw(10)} color={Style.defaultTxtColor} />
-                            </View>
-                            {/* <MatComIcon name='upload-outline' size={vw(10)} color={Style.defaultRed}/>     */}
-                        </ImageBackground>
+                            </View> */}
+                        {/* <MatComIcon name='upload-outline' size={vw(10)} color={Style.defaultRed}/>     */}
+                        {/* </ImageBackground> */}
                         {/* <Icon name='user-circle-o' size={64} color={Style.defaultRed} >
                             <MatIcon name='edit' size={24} color='black' style={{zIndex:2}} />
                         </Icon> */}
@@ -47,23 +63,54 @@ export default function RegisterScreen(props: props) {
             )
         else return (
             <TouchableOpacity onPress={lunchImgLib}>
-                <Image style={{ width: 100, height: 100, resizeMode: 'contain', borderWidth: 3, borderColor: Style.defaultRed, borderRadius: 64, }} source={{ uri: Img }} />
+                <DropShadow
+                    style={{
+                        shadowColor: "#000",
+                        shadowOffset: {
+                            width: 0,
+                            height: 0,
+                        },
+                        shadowOpacity: .5,
+                        shadowRadius: vw(1.5),
+                    }}
+                >
+                    <Image style={{ width: vw(25), height: vw(25), resizeMode: 'contain', borderWidth: vw(.5), borderColor: Style.defaultRed, borderRadius: vw(13), }} source={{ uri: Img }} />
+                </DropShadow>
             </TouchableOpacity>
         )
     }
 
-    const Register = () => {
-        // if (!Email && !Password && !ConfirmPassword && !Name && !Img && toggleCheckBox)
-        //     return console.log('please fill the form');
-        // else console.log('correct')
-        return null
+    const Register = async (formData: any) => {
+        var data = new FormData();
+        data.append('Email', formData.Email);
+        data.append('FirstName', formData.FirstName);
+        data.append('LastName', formData.LastName);
+        data.append('Password', formData.Password);
+        data.append('AvatarBase256ImagePath', Img);
+        data.append('Username', formData.DisplayName);
+        const headerOption = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            },
+            body: data,
+        }
+        try {
+            let response = await fetch(`${RegisterAPI}`, headerOption);
+            if(response.status==200){
+                return props.navigation.navigate('Login')
+            }
+        } catch (error) {
+            console.log(error);
+        }
 
     }
 
     const lunchImgLib = () => {
         ImagePicker.openPicker({
-            width: 200,
-            height: 200,
+            width: 256,
+            height: 256,
             cropping: true,
             includeBase64: true,
         }).then(image => setImg(image.path))
@@ -71,6 +118,24 @@ export default function RegisterScreen(props: props) {
         setSelectImg(true);
     }
 
+    const togglePass = () => {
+        if (!Password) {
+            setName('eye-off');
+            return setPassword(!Password);
+        } else {
+            setName('eye');
+            return setPassword(!Password);
+        }
+    }
+    const toggleConfirmPass = () => {
+        if (!ConfirmPassword) {
+            setCName('eye-off');
+            return setConfirmPassword(!ConfirmPassword)
+        } else {
+            setCName('eye');
+            return setConfirmPassword(!ConfirmPassword)
+        }
+    }
     return (
         <SafeAreaView style={styles.container}>
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
@@ -88,42 +153,231 @@ export default function RegisterScreen(props: props) {
                     {/* <SelImg /> */}
                 </View>
                 <View >
+
+                    {/* Email Field */}
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Email'
-                            value={Email}
-                            placeholderTextColor={Color}
-                            onChangeText={(text) => setEmail(text)} style={styles.inputTxt} />
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    placeholder='Email'
+                                    value={value}
+                                    placeholderTextColor={Color}
+                                    onBlur={onBlur}
+                                    onChangeText={value => onChange(value)}
+                                    // onChangeText={(text) => setEmail(text)}
+                                    style={styles.inputTxt}
+                                />
+                            )}
+                            name={'Email'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'Email is required!'
+                                },
+                                pattern: {
+                                    value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                                    message: 'Enter correct email'
+                                }
+                            }}
+                        />
                     </View>
+                    {errors?.Email && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.Email?.message?.toString()}</Text>)}
+
+
+                    {/* Display name field */}
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Display name'
-                            value={Name}
-                            placeholderTextColor={Color}
-                            onChangeText={(text) => setName(text)} style={styles.inputTxt} />
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    placeholder='User name'
+                                    value={value}
+                                    placeholderTextColor={Color}
+                                    onBlur={onBlur}
+                                    onChangeText={value => onChange(value)}
+                                    // onChangeText={(text) => setEmail(text)}
+                                    style={styles.inputTxt}
+                                />
+                            )}
+                            name={'DisplayName'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'User name is required!'
+                                },
+                                // pattern:{
+                                //     value:,
+                                //     message:,
+                                // },
+                                // minLength: {
+                                //     value: 8,
+                                //     message: ' Password is too short ',
+                                // }
+                            }}
+                        />
                     </View>
+                    {errors?.DisplayName && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.DisplayName?.message?.toString()}</Text>)}
+
+
+
+                    {/* First name Field */}
                     <View style={styles.inputField}>
-                        <TextInput placeholder='First name'
-                            value={Name}
-                            placeholderTextColor={Color}
-                            onChangeText={(text) => setName(text)} style={styles.inputTxt} />
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    placeholder='First name'
+                                    value={value}
+                                    placeholderTextColor={Color}
+                                    onBlur={onBlur}
+                                    onChangeText={value => onChange(value)}
+                                    // onChangeText={(text) => setEmail(text)}
+                                    style={styles.inputTxt}
+                                />
+                            )}
+                            name={'FirstName'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'First name is required!'
+                                },
+                                // pattern:{
+                                //     value:,
+                                //     message:,
+                                // },
+                                // minLength: {
+                                //     value: 8,
+                                //     message: ' Password is too short ',
+                                // }
+                            }}
+                        />
                     </View>
+                    {errors?.FirstName && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.FirstName?.message?.toString()}</Text>)}
+
+
+
+                    {/* Last Name Field */}
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Last name'
-                            value={Name}
-                            placeholderTextColor={Color}
-                            onChangeText={(text) => setName(text)} style={styles.inputTxt} />
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    placeholder='Last name'
+                                    value={value}
+                                    placeholderTextColor={Color}
+                                    onBlur={onBlur}
+                                    onChangeText={value => onChange(value)}
+                                    // onChangeText={(text) => setEmail(text)}
+                                    style={styles.inputTxt}
+                                />
+                            )}
+                            name={'LastName'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'Last Name is required!'
+                                },
+                                // pattern:{
+                                //     value:,
+                                //     message:,
+                                // },
+                                // minLength: {
+                                //     value: 8,
+                                //     message: ' Password is too short ',
+                                // }
+                            }}
+                        />
                     </View>
+                    {errors?.LastName && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.LastName?.message?.toString()}</Text>)}
+
+
+                    {/* Password Field */}
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Password'
-                            value={Password}
-                            placeholderTextColor={Color}
-                            onChangeText={(text) => setPassword(text)} style={styles.inputTxt} />
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                                    <TextInput
+                                        placeholder='Password'
+                                        value={value}
+                                        secureTextEntry={Password}
+                                        placeholderTextColor={Color}
+                                        onBlur={onBlur}
+                                        onChangeText={value => onChange(value)}
+                                        // onChangeText={(text) => setEmail(text)}
+                                        style={styles.inputTxt}
+                                    />
+                                    <TouchableOpacity onPress={togglePass} >
+                                        <Icon name={Name} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            name={'Password'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'Password is required!'
+                                },
+                                minLength: {
+                                    value: 8,
+                                    message: ' Password is too short ',
+                                },
+                                pattern: {
+                                    value: /^\w+(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                                    message: 'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
+                                    // /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+                                }
+                            }}
+                        />
                     </View>
+                    {errors?.Password && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.Password?.message?.toString()}</Text>)}
+
+
+                    {/* Confirm Password Field */}
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Confirm password'
-                            value={ConfirmPassword}
-                            placeholderTextColor={Color}
-                            onChangeText={(text) => setConfirmPassword(text)} style={styles.inputTxt} />
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                                    <TextInput
+                                        placeholder='Confirm Password'
+                                        value={value}
+                                        secureTextEntry={ConfirmPassword}
+                                        placeholderTextColor={Color}
+                                        onBlur={onBlur}
+                                        onChangeText={value => onChange(value)}
+                                        // onChangeText={(text) => setEmail(text)}
+                                        style={styles.inputTxt}
+                                    />
+                                    <TouchableOpacity onPress={toggleConfirmPass} >
+                                        <Icon name={CName} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            name={'ConfirmPassword'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'Confirm password is required!'
+                                },
+                                // pattern:{
+                                //     value:,
+                                //     message:,
+                                // },
+                                minLength: {
+                                    value: 8,
+                                    message: ' Password is too short ',
+                                },
+                                validate: {
+                                    value: value => value === getValues('Password') || 'Password does not match',
+                                }
+
+
+                            }}
+                        />
                     </View>
+                    {errors?.ConfirmPassword && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.ConfirmPassword?.message?.toString()}</Text>)}
                     {/* <View style={styles.scrollWrap}>
                     <ScrollView>
                         <Text style={{ color: '#333333' }}>
@@ -141,7 +395,7 @@ export default function RegisterScreen(props: props) {
                         <Text style={{ color: '#333333', marginLeft: vw(2), fontWeight: '500' }}>{StringData.agreeEula}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: vw(2) }}>
-                        <TouchableOpacity activeOpacity={.4} onPress={Register}>
+                        <TouchableOpacity activeOpacity={.4} onPress={handleSubmit(onSubmit)}>
                             <View style={styles.button}>
                                 <Text style={styles.buttonTxt}>Register</Text>
                             </View>

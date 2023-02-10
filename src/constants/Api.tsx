@@ -1,6 +1,6 @@
 export const API = 'http://3.88.43.237/';
 export const GetAllMoviesAPI = `${API}Movies`;
-export const LoginAPI = `${API}Login/GetUserByEmail`;
+export const LoginAPI = `${API}api/Community/Login`;
 export const RecentQuibMovieAPI = `${API}RecentMovies`;
 export const MostActiveQuibAPI = `${API}ActiveMovies`;
 export const GetQuibsByIdAPI = `${API}GetQuibsById`;
@@ -18,6 +18,7 @@ export const getUserByIdAPI = `${API}api/Community/GetUserById`;
 export const FollowUserAPI = `${API}api/Community/FollowUser`;
 export const UnFollowUserAPI = `${API}api/Community/UnFollowUser`;
 export const getMovieByIdAPI = `${API}GetMovieById`;
+export const RegisterAPI = `${API}api/Community/Register`
 
 
 
