@@ -18,8 +18,6 @@ export default function ProfileEditScreen(props: props) {
     const [userName, setUserName] = useState('akashraw');
     const [firstName, setFirstName] = useState('Akash');
     const [lastName, setLastName] = useState('Rawat');
-
-    // const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [Img, setImg] = useState('');
     const [Bio, setBio] = useState('Hello World. Get ready for Quibs!');
 
