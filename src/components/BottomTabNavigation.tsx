@@ -1,41 +1,60 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcon from 'react-native-vector-icons/Ionicons';
-import ChooseMovies from '../screens/visitScreens/ChooseMovies';
+import ChooseMovies from '../screens/chooseMovieScreen/ChooseMovies';
 import ProfileScreen from '../screens/profileScreens/ProfileScreen';
 import SetttingScreen from '../screens/settingScreen/SetttingScreen';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import OnLandingButton from './QuibButton';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Style } from '../constants/Styles';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { vw } from 'rxn-units';
 import NotificationScreen from '../screens/notificationScreen/NotificationScreen';
 import QuibButton from './QuibButton';
+import { AuthContext } from '../Auth';
+import LoginScreen from '../screens/onBoardingScreens/LoginScreen';
 
 
 const Tab = createBottomTabNavigator();
 
 const Heading = (props: any) => {
     return (
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
-                <Text style={{ fontSize: 22, fontWeight: '500', paddingLeft: vw(2), color: Style.defaultRed }}>{props.title}</Text>
-            </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
+            <Text style={{ fontSize: 22, fontWeight: '500', paddingLeft: vw(2), color: Style.defaultRed }}>{props.title}</Text>
+        </View>
     )
 }
-const BackIcon = () =>{
+const BackIcon = () => {
     const navigation = useNavigation();
-    return(
+    return (
         <View >
-            <TouchableOpacity style={{ flexDirection: 'row', paddingLeft:vw(4),justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={{ flexDirection: 'row', paddingLeft: vw(4), justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.goBack()}>
                 <IonIcon name='arrow-back' size={26} color={Style.defaultRed} />
             </TouchableOpacity>
         </View>
     )
 }
-
-export default function BottomTabNavigation() {
+const PleaseLogin = () => {
     const navigation = useNavigation();
+    React.useEffect(() => {
+        Alert.alert('Error', 'You need to login first to access profile', [
+            {
+                text: 'Cancel',
+                onPress: () => navigation.goBack(),
+                style: 'cancel',
+            },
+            { text: 'OK', onPress: () => navigation.navigate('Login' as never) },
+        ])
+    }, [])
+
+    return (
+        <LoginScreen navigation={navigation} />
+    )
+}
+
+export default function BottomTabNavigation(navigation: any) {
+    const Auth = React.useContext(AuthContext)
     return (
 
         <Tab.Navigator
@@ -54,11 +73,11 @@ export default function BottomTabNavigation() {
                 options={{
                     tabBarLabel: 'Movies',
                     tabBarShowLabel: false,
-                    headerTitleAlign:'center',
+                    headerTitleAlign: 'center',
                     // headerTitleStyle:{marginLeft:vw(2)},
                     headerTitle: () => <Heading title={`What we're quibbing`} />,
                     headerLeft: () => <BackIcon />,
-                    headerRight: () => <QuibButton text="Log In" onPress="Login" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
+                    headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPress="Login" viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
                     tabBarIcon: ({ focused }) => {
                         if (focused) return < IonIcon name='home' color={Style.defaultRed} size={24} />
                         else return < IonIcon name='home-outline' size={24} color={Style.defaultRed} />
@@ -67,7 +86,7 @@ export default function BottomTabNavigation() {
 
             />
 
-            <Tab.Screen
+            {/* <Tab.Screen
                 name='Notification'
                 component={NotificationScreen}
                 options={{
@@ -82,20 +101,39 @@ export default function BottomTabNavigation() {
                         else return <IonIcon name='notifications-outline' size={24} color={Style.defaultRed} />
                     }
                 }}
-            />
+            /> */}
             <Tab.Screen
                 name='Profile'
+                listeners={({ navigation }) => ({
+                    tabPress: (e) => {
+                        if (Auth.isGuest == true) {
+                            // Prevent default action
+                            e.preventDefault();
+                            return (
+                                Alert.alert('Error', 'You need to login first to access profile', [
+                                    {
+                                        text: 'Cancel',
+                                        onPress:()=>(console.log('dismiss')),
+                                        style: 'cancel',
+                                    },
+                                    { text: 'OK', onPress: () => navigation.navigate('Login' as never) },
+                                ])
+                            )
+                        } 
+                    },
+                })}
                 component={ProfileScreen}
                 options={{
+                    // tabBarButton: props => (Auth.isGuest == false ? ProfileScreen : PleaseLogin),
                     tabBarLabel: 'Profile',
                     tabBarShowLabel: false,
-                    headerTitleAlign:'center',
+                    headerTitleAlign: 'center',
                     headerTitle: () => <Heading title={`Profile`} />,
                     headerLeft: () => <BackIcon />,
-                    headerRight: () => (<TouchableOpacity onPress={()=>navigation.navigate("Edit" as never)}><IonIcon style={{paddingRight:vw(6)}} name='create-outline' size={24} color={Style.defaultRed}/></TouchableOpacity>),
+                    headerRight: () => (<TouchableOpacity onPress={() => navigation.navigate("Edit" as never)}><IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} /></TouchableOpacity>),
                     tabBarIcon: ({ focused }) => {
                         if (focused) return < IonIcon name='person' color={Style.defaultRed} size={24} />
-                        else return < IonIcon name='person-outline' size={24}  color={Style.defaultRed}/>
+                        else return < IonIcon name='person-outline' size={24} color={Style.defaultRed} />
                     }
                 }}
             />
@@ -105,13 +143,13 @@ export default function BottomTabNavigation() {
                 options={{
                     tabBarLabel: 'Setting',
                     tabBarShowLabel: false,
-                    headerTitleAlign:'center',
+                    headerTitleAlign: 'center',
                     headerTitle: () => <Heading title={`Settings`} />,
                     headerLeft: () => <BackIcon />,
                     // headerRight: () => <QuibButton text="Log In" onPress="Test" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
                     tabBarIcon: ({ focused }) => {
                         if (focused) return <IonIcon name='settings' color={Style.defaultRed} size={24} />
-                        else return <IonIcon name='settings-outline' size={24}  color={Style.defaultRed} />
+                        else return <IonIcon name='settings-outline' size={24} color={Style.defaultRed} />
                     }
                 }}
             />

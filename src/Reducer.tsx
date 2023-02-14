@@ -24,32 +24,30 @@ export const REGISTER = 'authReducer/REGISTER';
 //     }
 // };
 const authReducer = (prevState: any, action: any) => {
-  console.log('hola')
-  // const a = {"$$typeof": Symbol(react.context), "Consumer": {"$$typeof": Symbol(react.context), "_context": [Circular]}, "Provider": {"$$typeof": Symbol(react.provider), "_context": [Circular]}, "_currentRenderer": {}, "_currentRenderer2": null, "_currentValue": {"dispatch": [Function bound dispatchReducerAction], "getAuthState": [Function getAuthState], "handleLogin": [Function handleLogin], "handleLogout": [Function handleLogout], "isLoading": true, "userName": null}, "_currentValue2": {}, "_defaultValue": null, "_globalName": null, "_threadCount": 0}
   switch (action.type) {
     case 'RETRIEVE_TOKEN':
       return {
         ...prevState,
         userName: action.name,
-        isLoading: false,
+        isGuest: false,
       };
     case 'LOGIN':
       return {
         ...prevState,
         userName: action.name,
-        isLoading: false,
+        isGuest: action.isGuest,
       };
     case 'LOGOUT':
       return {
         ...prevState,
-        userName: null,
-        isLoading: false,
+        userName: action.name,
+        isGuest: action.isGuest,
       };
     case 'REGISTER':
       return {
         ...prevState,
         userName: action.name,
-        isLoading: false,
+        isGuest: action.isGuest,
       };
   }
 };

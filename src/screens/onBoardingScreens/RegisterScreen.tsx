@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import { Eula, StringData } from '../../constants/Constant'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -26,6 +26,7 @@ export default function RegisterScreen(props: props) {
     const [CName, setCName] = useState('eye-off');
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [Img, setImg] = useState('');
+    const [Activity, setActivity] = useState(false);
     const [selectImg, setSelectImg] = useState(false);
     const {
         control,
@@ -35,9 +36,16 @@ export default function RegisterScreen(props: props) {
     } = useForm({ mode: 'onBlur' })
 
     const onSubmit = (data: any) => {
-        if (isValid == true)
+        setActivity(true);
+        if (isValid == true) {
+            console.log(data)
             return Register(data);
-        else return console.log(data)
+
+        }
+        else return (
+            setActivity(false)
+        )
+
 
     };
     const Color = "#5555";
@@ -98,7 +106,7 @@ export default function RegisterScreen(props: props) {
         }
         try {
             let response = await fetch(`${RegisterAPI}`, headerOption);
-            if(response.status==200){
+            if (response.status == 200) {
                 return props.navigation.navigate('Login')
             }
         } catch (error) {
@@ -177,7 +185,7 @@ export default function RegisterScreen(props: props) {
                                 },
                                 pattern: {
                                     value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                                    message: 'Enter correct email'
+                                    message: 'Enter your correct email'
                                 }
                             }}
                         />
@@ -403,6 +411,12 @@ export default function RegisterScreen(props: props) {
                     </View>
                 </View>
             </KeyboardAwareScrollView >
+            {
+                Activity == true &&
+                <View style={styles.loadingActivity} >
+                    <ActivityIndicator size={vw(20)} color="#fff" />
+                </View>
+            }
         </SafeAreaView >
     )
 }
@@ -475,4 +489,16 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold'
     },
+    loadingActivity: {
+        zIndex: 2,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        // opacity: 0.5,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 })

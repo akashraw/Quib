@@ -28,7 +28,7 @@ import QuibButton from '../../components/QuibButton';
 import { API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
 import { getMovieByUserId, getFollowersByUserId, getFolloweeByUserId } from '../../services/QuibAPIs';
-import MovieCard from '../visitScreens/MovieCard';
+import MovieCard from '../chooseMovieScreen/MovieCard';
 
 type Route = {
   key: string;

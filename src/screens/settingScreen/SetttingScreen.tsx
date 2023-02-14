@@ -1,12 +1,16 @@
 import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import QuibButton from '../../components/QuibButton'
 import { vw } from 'rxn-units'
 import { Style } from '../../constants/Styles'
 import FastImage from 'react-native-fast-image'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Shadow } from 'react-native-shadow-2'
+import { AuthContext } from '../../Auth'
+import { useNavigation } from '@react-navigation/native'
 export default function SetttingScreen() {
+    const navigation = useNavigation();
+    const Auth = useContext(AuthContext);
     return (
         <SafeAreaView style={{ flex: 1, width: vw(100), alignSelf: 'center', paddingVertical: vw(5), backgroundColor: '#E0DECA' }}>
             {/* Header Starts */}
@@ -18,14 +22,19 @@ export default function SetttingScreen() {
                             source={require('../../assets/Movie/arrival.jpeg')}
                         />
                     </Shadow>
-                    <View style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(3), justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>@akashraw</Text>
-                        <Text style={{ fontSize: 14, fontWeight: '500', color: Style.defaultLightGrey }}>Akash Rawat</Text>
-                    </View>
+                    {
+                        Auth.isGuest == false ?
+                            <View style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(4), justifyContent: 'center' }}>
+                                <Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>@akashraw</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '500', color: Style.defaultLightGrey }}>Akash Rawat</Text>
+                            </View>
+                            :
+                            <View style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(4), justifyContent: 'center' }}>
+                                <Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>@guestuser</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '500', color: Style.defaultLightGrey }}>Guest User</Text>
+                            </View>
+                    }
                 </View>
-                <TouchableOpacity onPress={undefined} style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(0), paddingTop: vw(4) }}>
-                    <Icon style={{ paddingRight: vw(2) }} name='create-outline' size={16} color={Style.defaultRed} />
-                </TouchableOpacity>
             </View>
             {/* Header ends */}
 
@@ -83,14 +92,26 @@ export default function SetttingScreen() {
                     flexDirection: 'row', width: vw(85), borderBottomColor: '#B2B2B2',
                     borderBottomWidth: StyleSheet.hairlineWidth, height: vw(15), alignItems: 'center'
                 }}>
-                    <TouchableOpacity style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={styles.settingTab}>
-                            <Icon name='log-out-outline' size={vw(6)} color={Style.defaultRed}  />
-                            <Text style={styles.settingTxt}>Log Out</Text>
-                        </View>
-                        <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
+                    {
+                        Auth.isGuest == false ?
+                            <TouchableOpacity onPress={() => Auth.handleLogout()} style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
+                                <View style={styles.settingTab}>
+                                    <Icon name='log-out-outline' size={vw(6)} color={Style.defaultRed} />
+                                    <Text style={styles.settingTxt}>Log Out</Text>
+                                </View>
+                                <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
 
-                    </TouchableOpacity>
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity onPress={() => navigation.navigate('Login' as never)} style={{ flexDirection: 'row', width: vw(85), height: vw(15), alignItems: 'center', justifyContent: 'space-between' }}>
+                                <View style={styles.settingTab}>
+                                    <Icon name='log-out-outline' size={vw(6)} color={Style.defaultRed} />
+                                    <Text style={styles.settingTxt}>Sign in</Text>
+                                </View>
+                                <Icon name='chevron-forward-outline' size={vw(6)} color={Style.defaultRed} />
+
+                            </TouchableOpacity>
+                    }
                 </View>
 
                 {/* <QuibButton text={'Notifications Settings'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} />
@@ -131,6 +152,6 @@ const styles = StyleSheet.create({
     settingTab: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'center'
+        justifyContent: 'center'
     }
 })

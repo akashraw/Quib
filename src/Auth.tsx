@@ -1,30 +1,30 @@
 import React, { createContext, useContext, useReducer, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authReducer from './Reducer';
+import { useNavigation } from '@react-navigation/native';
 
 // import {AuthData, authService} from '../services/authService';
 type AuthData = {
     userName: string;
-    isLoading: boolean;
+    isGuest: boolean;
 };
 type AuthContextData = {
     userName: string;
-    isLoading: boolean;
-    handleLogin(): Promise<void>;
-    getAuthState(): Promise<void>;
-    handleLogout(): void;
+    isGuest: boolean;
+    handleLogin: (p: object) => {};
+    getAuthState: () => {};
+    handleLogout: () => {};
 };
 
 const initialState = {
     userName: null,
-    isLoading: true,
+    isGuest: true,
 };
 
 
 // CONFIG KEYS [Storage Keys]===================================
 // export const TOKEN_KEY = 'token';
 export const USER_KEY = 'user';
-export const keys = [USER_KEY];
 
 //Create the Auth Context with the data type specified
 //and a empty object
@@ -34,19 +34,27 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     // useREDUCER =================================================
     const [state, dispatch] = useReducer(authReducer, initialState);
-    console.log(AuthContext)
+    
+    //=======================useEffect FOR GETTING THE LAST USER STATE=========================\\
+    React.useEffect(()=>{
+        getAuthState();
+    }, [])
+
+
     // Get Auth state
     const getAuthState = async () => {
         try {
             //GET TOKEN && USER
             // let token = await AsyncStorage.getItem(TOKEN_KEY);
-            let user = await AsyncStorage.getItem(USER_KEY) || '{}';
-            user = JSON.parse(user);
+            let user = await AsyncStorage.getItem(USER_KEY);
+            user != null ? JSON.parse(user) : null;
 
-            if (user !== null) await handleLogin(user);
-            else await handleLogout();
-
-            return { user };
+            if (user != null) {
+                return await handleLogin(user);
+            } else {
+                return await handleLogout();
+                
+            }
         } catch (error) {
             console.log(error)
         }
@@ -64,7 +72,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             //DISPATCH TO REDUCER
             dispatch({
                 type: 'LOGIN',
-                // token: undefined,
+                isGuest: false,
                 name: data
             });
         } catch (error) {
@@ -79,12 +87,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         try {
 
             //REMOVE DATA
-            await AsyncStorage.multiRemove(keys);
+            await AsyncStorage.removeItem(USER_KEY)
 
             //DISPATCH TO REDUCER
             dispatch({
                 type: 'LOGOUT',
-                // token: undefined,
+                isGuest: true,
                 name: null
             });
         } catch (error) {

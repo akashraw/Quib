@@ -15,6 +15,7 @@ import MovieCard from './MovieCard';
 import { FlatList } from 'react-native-gesture-handler';
 import { Shadow } from 'react-native-shadow-2';
 import { FlashList } from '@shopify/flash-list';
+import { AuthContext } from '../../Auth';
 // import BottomTabNavigation from '../../components/BottomTabNavigation';
 interface props {
   navigation: any;
@@ -40,12 +41,13 @@ export default function ChooseMovies(props: props) {
   const [value, setValue] = React.useState('first');
   const isActiveMovieWorking = useRef<boolean>(true);
   const isRecentMovieWorking = useRef<boolean>(true);
-
+  const Auth = React.useContext(AuthContext);
   // const [Star, setStar] = useState('star-o')
 
 
 
   useEffect(() => {
+    console.log(Auth.isGuest)
     setTimeout(() => Promise.all([
       getAllMovies().then(res => setallMovieRes(res)),
       getRecentMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setRecentMovies(res) } }),
@@ -156,7 +158,7 @@ export default function ChooseMovies(props: props) {
     if (!section.sort) {
       return (
         <View style={{
-          justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2), 
+          justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2),
         }}>
           <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
           <FlatList
@@ -164,7 +166,7 @@ export default function ChooseMovies(props: props) {
             showsHorizontalScrollIndicator={false}
             data={section.data}
             renderItem={({ item, index }: any) => <MovieCards item={item} index={index} />}
-            // estimatedItemSize={vw(40)}
+          // estimatedItemSize={vw(40)}
           />
           <TouchableOpacity>
             <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
@@ -173,20 +175,30 @@ export default function ChooseMovies(props: props) {
       )
     } else return (
       <View style={{
-        // backgroundColor: Style.quibHeader, 
-        // width: vw(95), 
-        justifyContent: 'space-between', alignItems: 'center', marginTop: vw(2),
-        paddingLeft: vw(2), flex: 1, flexDirection: 'row',
+        justifyContent: 'center', marginTop: vw(2),
       }}>
-        <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
-        {/* <View style={{ }}>
+        <View style={{
+          justifyContent: 'space-between', alignItems: 'center',
+          paddingLeft: vw(2), flex: 1, flexDirection: 'row',
+        }}>
+          <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
+          <TouchableOpacity activeOpacity={.4} onPress={handlePresentModalPress} >
+            <View style={styles.button}>
+              {/* <Text style={styles.buttonTxt}>Sort </Text> */}
+              <Icon name='sort' size={22} color={Style.defaultRed} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        {/* <View style={{height:vh(87.6), width:vw(100)}}>
+          <FlashList
+            bounces={false}
+            keyExtractor={(_, index) => index.toString()}
+            showsVerticalScrollIndicator={false}
+            data={section.data}
+            renderItem={({ item, index }: any) => <MovieBanner item={item} index={index} />}
+            estimatedItemSize={vh(12)}
+          />
         </View> */}
-        <TouchableOpacity activeOpacity={.4} onPress={handlePresentModalPress} >
-          <View style={styles.button}>
-            {/* <Text style={styles.buttonTxt}>Sort </Text> */}
-            <Icon name='sort' size={22} color={Style.defaultRed} />
-          </View>
-        </TouchableOpacity>
       </View>
     )
   }
@@ -198,6 +210,22 @@ export default function ChooseMovies(props: props) {
   }
 
   const Loaded = () => {
+    const Sections = () => {
+      if (Auth.isGuest == true) {
+        const sect = [
+          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }: any) => <MovieBanner item={item} index={index} /> },
+        ]
+        return sect;
+      }
+      else {
+        const sect = [
+          { title: 'Recent Quib', sort: false, data: RecentMovies, renderItem: () => { return null } },
+          { title: 'Most Active Quib', sort: false, data: ActiveMovies, renderItem: () => { return null } },
+          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }: any) => <MovieBanner item={item} index={index} /> },
+        ]
+        return sect
+      }
+    }
     if (isLoading) {
       return (
         <View style={{ height: vh(100), justifyContent: 'center', alignItems: 'center', paddingBottom: vw(35), backgroundColor: Style.quibBackColor }}>
@@ -207,14 +235,19 @@ export default function ChooseMovies(props: props) {
 
     } else return (
       <SectionList
+        contentContainerStyle={{paddingBottom:vh(8.5)}}
+        getItemLayout={(data, index) => (
+          {length: vh(12), offset: vh(12) * index, index}
+        )}
         bounces={false}
         keyExtractor={(_, index) => index.toString()}
         showsVerticalScrollIndicator={false}
-        sections={[
-          { title: 'Recent Quib', sort: false, data: RecentMovies, renderItem: ({ item, index }) => { return null } },
-          { title: 'Most Active Quib', sort: false, data: ActiveMovies, renderItem: ({ item, index }) => { return null } },
-          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }) => MovieBanner({ item, index }) }
-        ]}
+        // sections={[
+        //   { title: 'Recent Quib', sort: false, data: RecentMovies, renderItem: ({ item, index }) => { return null } },
+        //   { title: 'Most Active Quib', sort: false, data: ActiveMovies, renderItem: ({ item, index }) => { return null } },
+        //   { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }) => MovieBanner({ item, index }) }
+        // ]}
+        sections={Sections()}
         renderSectionHeader={({ section }) => SectionHeading(section)}
       />
     )

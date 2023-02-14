@@ -14,13 +14,14 @@ import { LocalSvg } from 'react-native-svg';
 import QuibCarousel from './QuibCarousel';
 import QuibCompose from './QuibCompose';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useBottomSheetBackHandler } from '../../screens/visitScreens/useBottomSheetBack';
+import { useBottomSheetBackHandler } from '../../screens/chooseMovieScreen/useBottomSheetBack';
 import LinearGradient from 'react-native-linear-gradient';
 import getFormattedTime from '../GetFormattedTime';
 import Toast from 'react-native-toast-message';
 import { FlashList } from '@shopify/flash-list';
 import DropShadow from 'react-native-drop-shadow';
 import { BlurView } from '@react-native-community/blur';
+import { AuthContext } from '../../Auth';
 // import { BlurView } from '@react-native-community/blur';
 
 
@@ -61,6 +62,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const { handleSheetPositionChange } = useBottomSheetBackHandler(bottomSheetModalRef);
     // const [MyStreamQuibs, setMyStreamQuibs] = useState<any[]>([]);
+    const Auth = React.useContext(AuthContext)
 
     //Api calls 
 
@@ -206,7 +208,7 @@ export default function QuibPlayer({ navigation, route }: props) {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
                     <View style={{ justifyContent: 'flex-start', }}>
-                        <TouchableOpacity onPress={() => Profile(userId)}>
+                        <TouchableOpacity onPress={() => Auth.isGuest == true ? <LoginModal /> : Profile(userId)}>
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(3) }}>
                                 <FastImage source={{ uri: `data:image/png;base64,${image}` }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
                                 <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}</Text>
@@ -214,7 +216,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                         </TouchableOpacity>
                     </View>
                     <View style={{ justifyContent: 'center', position: 'absolute', left: vw(30) }}>
-                        <TouchableOpacity onPress={() => { handlePresentModalPress(time) }}>
+                        <TouchableOpacity onPress={() => Auth.isGuest == true ? <LoginModal /> : handlePresentModalPress(time)}>
                             <View style={[...[styles.timer], { width: vw(16), height: vw(5), marginBottom: vw(2) }]}>
                                 <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                             </View>
@@ -222,12 +224,12 @@ export default function QuibPlayer({ navigation, route }: props) {
                     </View>
                     {/* Bump Api itegrated */}
                     <View style={{ right: vw(0), position: 'absolute', justifyContent: 'center', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={() => AddBump({
+                        <TouchableOpacity onPress={() => Auth.isGuest == true ? <LoginModal /> : AddBump({
                             quibId: quibId,
                             MovieId: MovieId.MovieId,
                             userId: ''
                         }).then(() => Toast.show(
-                            {   
+                            {
                                 visibilityTime: 5000,
                                 autoHide: true,
                                 type: 'success',
@@ -375,6 +377,17 @@ export default function QuibPlayer({ navigation, route }: props) {
         []
     );
 
+    const LoginModal = () => {
+        const [Active, setActive] = useState(false)
+        return (
+            <View style={styles.loadingActivity} >
+                <View>
+                    <Text>Please log in to use this feature</Text>
+                </View>
+            </View>
+        )
+    }
+
     const QuibComposeModal = () => {
         // console.log('modal');
         return (
@@ -387,7 +400,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                 backdropComponent={renderBackdrop}
                 backgroundStyle={{ backgroundColor: Style.quibBackColor }}
             >
-                <QuibCompose MovieId={MovieId.MovieId} hour={hours} mins={mintues} secs={seconds} time={Time} movieLength={MovieLen.current}/>
+                <QuibCompose MovieId={MovieId.MovieId} hour={hours} mins={mintues} secs={seconds} time={Time} movieLength={MovieLen.current} />
                 {/* <QuibComposeTabView/> */}
             </BottomSheetModal>
         )
@@ -663,7 +676,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                     </TouchableOpacity>
                                                 </View>
                                                 <View style={{ paddingBottom: vw(0) }}>
-                                                    <TouchableOpacity activeOpacity={.5} onPress={() => handlePresentModalPress(MovieTime)}>
+                                                    <TouchableOpacity activeOpacity={.5} onPress={() => Auth.isGuest == true ? <LoginModal /> : handlePresentModalPress(MovieTime)}>
                                                         <View style={[...[styles.timer], { height: vw(7) }]}>
                                                             <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, fontWeight: '500' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                                                         </View>
@@ -697,6 +710,15 @@ export default function QuibPlayer({ navigation, route }: props) {
                     </View>
                     {/* </BlurView> */}
                     {/* </View> */}
+                    <LoginModal/>
+                    {
+                        Activity == true &&
+                        <View style={styles.loadingActivity} >
+                            <View>
+                                <Text>Please log in to use this feature</Text>
+                            </View>
+                        </View>
+                    }
                 </SafeAreaView>
             </BottomSheetModalProvider>
             <Toast />
@@ -763,7 +785,18 @@ const styles = StyleSheet.create({
         paddingVertical: vw(1),
         paddingHorizontal: vw(3),
         marginVertical: vw(4),
-
+    },
+    loadingActivity: {
+        zIndex: 2,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        // opacity: 0.5,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 

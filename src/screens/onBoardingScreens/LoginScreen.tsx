@@ -1,13 +1,15 @@
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, Image, ActivityIndicator, Alert } from 'react-native'
+import React, { useContext, useState } from 'react'
 import { StringData } from '../../constants/Constant'
 import { Style } from '../../constants/Styles';
 import QuibButton from '../../components/QuibButton';
-import { vh, vmax, vw } from 'rxn-units';
+import { vh, vw } from 'rxn-units';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useForm, Controller } from 'react-hook-form';
-import { Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons'
 import { LoginAPI } from '../../constants/Api';
+import { AuthContext, useAuth } from '../../Auth';
+import { Modal } from 'react-native-paper';
 
 interface props {
   navigation: any;
@@ -15,23 +17,29 @@ interface props {
 
 export default function LoginScreen(props: props) {
   const Color = "#5555";
-  const [Email, setEmail] = useState('');
-  const [Password, setPassword] = useState('');
-
+  const [Fail, setFail] = useState<boolean>(false);
+  const [Password, setPassword] = useState(true);
+  const [Name, setName] = useState('eye-off');
+  const [Activity, setActivity] = useState(false);
+  const auth = useContext(AuthContext);
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    getValues
+    getValues,
+    reset
   } = useForm({ mode: 'onBlur' })
 
   const onSubmit = (data: any) => {
+    setActivity(true);
     if (isValid == true) {
       console.log(data)
       return Login(data);
 
     }
-    else return console.log(data)
+    else return (
+      setActivity(false)
+    )
 
   }
   const Login = async (data: any) => {
@@ -47,13 +55,29 @@ export default function LoginScreen(props: props) {
       let response = await fetch(`${LoginAPI}?Email=${encodeURIComponent(data.Email)}&Password=${encodeURIComponent(data.Password)}`, headerOption);
       let json = await response.json();
       if (response.status == 200) {
-        console.log(json);
-        return props.navigation.navigate('Login')
+        auth.handleLogin(json.id);
+        return setActivity(false)
+        // return props.navigation.navigate('Login')
+      } else {
+        setFail(true)
+        setActivity(false)
+        return reset();
       }
     } catch (error) {
       console.log(error);
     }
   }
+
+  const togglePass = () => {
+    if (!Password) {
+      setName('eye-off');
+      return setPassword(!Password);
+    } else {
+      setName('eye');
+      return setPassword(!Password);
+    }
+  }
+ 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
@@ -64,8 +88,9 @@ export default function LoginScreen(props: props) {
             source={require('../../assets/logo.png')}
           />
           <Text style={{ fontSize: 24, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>{StringData.loginHead}</Text>
+          {Fail ? <Text style={{ fontSize: 14, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter correct email and password</Text> : null}
         </View>
-        <View style={{ marginTop: vw(5) }}>
+        <View style={{ marginTop: vw(1) }}>
           <View style={styles.inputField}>
             <Controller
               control={control}
@@ -84,11 +109,11 @@ export default function LoginScreen(props: props) {
               rules={{
                 required: {
                   value: true,
-                  message: 'Field is required!'
+                  message: 'email is required!'
                 },
                 pattern: {
                   value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                  message: 'Enter correct emails'
+                  message: 'Enter your correct email'
                 }
               }}
             />
@@ -96,29 +121,37 @@ export default function LoginScreen(props: props) {
           {errors?.Email && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.Email.message?.toString()}</Text>)}
 
           {/* {errors?.Email && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>Enter correct email</Text>)} */}
+          {/* ========================================= PASSWORD FIELD ================================= */}
           <View style={styles.inputField}>
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  placeholder='Password'
-                  value={value}
-                  placeholderTextColor={Color}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  // onChangeText={(text) => setEmail(text)}
-                  style={styles.inputTxt}
-                />
+                <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                  <TextInput
+                    placeholder='Password'
+                    value={value}
+                    secureTextEntry={Password}
+                    placeholderTextColor={Color}
+                    onBlur={onBlur}
+                    onChangeText={value => onChange(value)}
+                    // onChangeText={(text) => setEmail(text)}
+                    style={styles.inputTxt}
+                  />
+                  <TouchableOpacity onPress={togglePass} >
+                    <Icon name={Name} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                  </TouchableOpacity>
+                </View>
               )}
               name={'Password'}
               rules={{
                 required: {
                   value: true,
-                  message: 'Field is required!'
-                },
+                  message: 'Password is required!'
+                }
               }}
             />
           </View>
+          {errors?.Password && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.Password?.message?.toString()}</Text>)}
           <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: vw(15), marginBottom: vw(2), }}>
             <TouchableOpacity activeOpacity={.4} onPress={handleSubmit(onSubmit)}>
               <View style={styles.button}>
@@ -126,8 +159,8 @@ export default function LoginScreen(props: props) {
               </View>
             </TouchableOpacity>
             {/* <Button mode="contained" onPress={handleSubmit(onSubmit)} disabled={!isValid} buttonColor={Style.defaultRed} >
-              <Text style={styles.buttonTxt}>Submit</Text>
-            </Button> */}
+          <Text style={styles.buttonTxt}>Submit</Text>
+        </Button> */}
             <TouchableOpacity activeOpacity={.2}>
               <Text style={{ paddingTop: vw(4), color: Style.forgetPass }}>Forgot the password?</Text>
             </TouchableOpacity>
@@ -142,6 +175,12 @@ export default function LoginScreen(props: props) {
           </View>
         </View>
       </KeyboardAwareScrollView>
+      {
+        Activity == true &&
+        <View style={styles.loadingActivity} >
+          <ActivityIndicator size={vw(20)} color="#fff" />
+        </View>
+      }
     </SafeAreaView >
   )
 }
@@ -150,13 +189,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Style.quibBackColor,
-    // marginHorizontal: 16,
-    // marginVertical: 20,
-    // borderWidth: 1,
     borderColor: '#3333',
   },
   headWrap: {
-    // marginTop: vw(10),
   },
   inputField: {
     marginTop: vw(3),
@@ -215,4 +250,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold'
   },
+  loadingActivity: {
+    zIndex:2,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    // opacity: 0.5,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 })

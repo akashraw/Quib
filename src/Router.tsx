@@ -11,7 +11,7 @@ export default function Router() {
 
     return (
         <NavigationContainer onReady={() => RNBootSplash.hide({ fade: true })}>
-            {(auth.userName !== null) ? <AppStack /> : <AuthStack />}
+            {(auth.userName != null) ? <AppStack /> : <AuthStack />}
         </NavigationContainer>
     );
 };
