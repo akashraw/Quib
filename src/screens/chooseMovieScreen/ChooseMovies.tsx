@@ -235,7 +235,7 @@ export default function ChooseMovies(props: props) {
 
     } else return (
       <SectionList
-        contentContainerStyle={{paddingBottom:vh(8.5)}}
+        contentContainerStyle={{paddingBottom:vh(10)}}
         getItemLayout={(data, index) => (
           {length: vh(12), offset: vh(12) * index, index}
         )}

@@ -208,7 +208,7 @@ export default function QuibPlayer({ navigation, route }: props) {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
                     <View style={{ justifyContent: 'flex-start', }}>
-                        <TouchableOpacity onPress={() => Auth.isGuest == true ? <LoginModal /> : Profile(userId)}>
+                        <TouchableOpacity onPress={() => Auth.isGuest == true ? null : Profile(userId)}>
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(3) }}>
                                 <FastImage source={{ uri: `data:image/png;base64,${image}` }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
                                 <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}</Text>
@@ -216,7 +216,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                         </TouchableOpacity>
                     </View>
                     <View style={{ justifyContent: 'center', position: 'absolute', left: vw(30) }}>
-                        <TouchableOpacity onPress={() => Auth.isGuest == true ? <LoginModal /> : handlePresentModalPress(time)}>
+                        <TouchableOpacity onPress={() => Auth.isGuest == true ? null : handlePresentModalPress(time)}>
                             <View style={[...[styles.timer], { width: vw(16), height: vw(5), marginBottom: vw(2) }]}>
                                 <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                             </View>
@@ -224,7 +224,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                     </View>
                     {/* Bump Api itegrated */}
                     <View style={{ right: vw(0), position: 'absolute', justifyContent: 'center', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={() => Auth.isGuest == true ? <LoginModal /> : AddBump({
+                        <TouchableOpacity onPress={() => Auth.isGuest == true ? null : AddBump({
                             quibId: quibId,
                             MovieId: MovieId.MovieId,
                             userId: ''
@@ -676,7 +676,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                                     </TouchableOpacity>
                                                 </View>
                                                 <View style={{ paddingBottom: vw(0) }}>
-                                                    <TouchableOpacity activeOpacity={.5} onPress={() => Auth.isGuest == true ? <LoginModal /> : handlePresentModalPress(MovieTime)}>
+                                                    <TouchableOpacity activeOpacity={.5} onPress={() => Auth.isGuest == true ? null : handlePresentModalPress(MovieTime)}>
                                                         <View style={[...[styles.timer], { height: vw(7) }]}>
                                                             <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, fontWeight: '500' }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                                                         </View>
@@ -710,15 +710,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                     </View>
                     {/* </BlurView> */}
                     {/* </View> */}
-                    <LoginModal/>
-                    {
-                        Activity == true &&
-                        <View style={styles.loadingActivity} >
-                            <View>
-                                <Text>Please log in to use this feature</Text>
-                            </View>
-                        </View>
-                    }
+                    {/* <LoginModal/> */}
+                   
                 </SafeAreaView>
             </BottomSheetModalProvider>
             <Toast />
