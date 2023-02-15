@@ -1,16 +1,52 @@
-import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useContext } from 'react'
 import QuibButton from '../../components/QuibButton'
-import { vw } from 'rxn-units'
+import { vh, vw } from 'rxn-units'
 import { Style } from '../../constants/Styles'
 import FastImage from 'react-native-fast-image'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Shadow } from 'react-native-shadow-2'
 import { AuthContext } from '../../Auth'
 import { useNavigation } from '@react-navigation/native'
+import Modal from 'react-native-modal';
+const deviceHeight = Dimensions.get('screen').height;
+
 export default function SetttingScreen() {
     const navigation = useNavigation();
     const Auth = useContext(AuthContext);
+    const LoginModal = React.useCallback(() => {
+
+        const modalToggle = () => {
+            Auth.dispatch({
+                type: 'MODAL',
+                name: null,
+                isGuest: true,
+                modal: false,
+            })
+        }
+
+        return (
+            <Modal isVisible={Auth.Modal} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.6}
+                onBackdropPress={() => modalToggle()} onBackButtonPress={() => modalToggle()} useNativeDriver={true}
+                useNativeDriverForBackdrop={true} statusBarTranslucent={true} style={{ height: vh(100), }} deviceHeight={deviceHeight} >
+                <View style={{
+                    flex: 1, justifyContent: 'center',
+                    alignItems: 'center', flexDirection: 'column',
+                }}>
+                    <Text style={{ color: '#fff', fontSize: vw(5), fontWeight: '400' }}>Please login to access this feature</Text>
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center', flexDirection: 'row'
+                    }}>
+                        <QuibButton text={'Do it later'} onPressed={() => { modalToggle() }} viewStyle={[[styles.buttonModal], { backgroundColor: Style.defaultGrey }]} textStyle={styles.buttonTxtModal} />
+                        <QuibButton text={'Ok, let dot it'} onPressed={() => { navigation.navigate('Login' as never) }} viewStyle={styles.buttonModal} textStyle={styles.buttonTxtModal} />
+                    </View>
+                </View>
+            </Modal>
+        )
+    }, [Auth.Modal])
+    //=================================login modal ends=================================================\\
+
     return (
         <SafeAreaView style={{ flex: 1, width: vw(100), alignSelf: 'center', paddingVertical: vw(5), backgroundColor: '#E0DECA' }}>
             {/* Header Starts */}
@@ -122,6 +158,7 @@ export default function SetttingScreen() {
                 <QuibButton text={'Logout'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} /> */}
             </View>
             {/* Settting list ends here */}
+            <LoginModal />
         </SafeAreaView>
     )
 }
@@ -153,5 +190,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
-    }
+    },
+    buttonModal: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Style.defaultRed,
+        width: vw(30),
+        height: vw(8),
+        borderRadius: vw(2),
+        marginVertical: vw(4),
+        marginHorizontal: vw(2)
+    },
+    buttonTxtModal: {
+        textAlign: 'center',
+        fontSize: 14,
+        color: '#fff',
+        fontWeight: 'bold'
+    },
 })

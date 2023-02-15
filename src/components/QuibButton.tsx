@@ -1,28 +1,25 @@
-import { StyleSheet, Text, TextProps, TouchableOpacity, View, ViewProps } from 'react-native'
+import { GestureResponderEvent, StyleSheet, Text, TextProps, TouchableOpacity, View, ViewProps } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native';
 // import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 import { Style } from '../constants/Styles';
 import { vw } from 'rxn-units';
-interface props {
+type props = {
     text: string;
-    onPress: any|null;
-    viewStyle: ViewProps['style'] | null;
+    onPressed: (event: GestureResponderEvent) => void;
+    // handleOnPressHeadNode?:  (event: GestureResponderEvent) => void;
+    viewStyle?: ViewProps['style'] | null;
     textStyle: TextProps['style'] | null;
 
 }
 
-
-export default function QuibButton({ text, onPress, viewStyle, textStyle }: props) {
-    const navigation = useNavigation();
+const QuibButton: React.FC<props> = ({ text, onPressed, viewStyle = null, textStyle = null }) => {
     return (
-
-        <TouchableOpacity activeOpacity={.4} onPress={()=>{navigation.navigate(onPress as never)}}>
+        <TouchableOpacity activeOpacity={.4} onPress={onPressed}>
             <View style={viewStyle || styles.button}>
                 <Text style={textStyle || styles.buttonTxt}>{text}</Text>
             </View>
         </TouchableOpacity>
-
     )
 }
 
@@ -43,3 +40,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
 })
+
+export default QuibButton;

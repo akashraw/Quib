@@ -6,14 +6,17 @@ import ProfileScreen from '../screens/profileScreens/ProfileScreen';
 import SetttingScreen from '../screens/settingScreen/SetttingScreen';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import OnLandingButton from './QuibButton';
-import { Alert, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Style } from '../constants/Styles';
 // import Icon from 'react-native-vector-icons/FontAwesome';
-import { vw } from 'rxn-units';
+import { vh, vw } from 'rxn-units';
 import NotificationScreen from '../screens/notificationScreen/NotificationScreen';
 import QuibButton from './QuibButton';
 import { AuthContext } from '../Auth';
-import LoginScreen from '../screens/onBoardingScreens/LoginScreen';
+import Modal from "react-native-modal";
+import GuestProfileScreen from '../screens/profileScreens/GuestProfileScreen';
+
+const deviceHeight = Dimensions.get('screen').height;
 
 
 const Tab = createBottomTabNavigator();
@@ -35,23 +38,7 @@ const BackIcon = () => {
         </View>
     )
 }
-const PleaseLogin = () => {
-    const navigation = useNavigation();
-    React.useEffect(() => {
-        Alert.alert('Error', 'You need to login first to access profile', [
-            {
-                text: 'Cancel',
-                onPress: () => navigation.goBack(),
-                style: 'cancel',
-            },
-            { text: 'OK', onPress: () => navigation.navigate('Login' as never) },
-        ])
-    }, [])
 
-    return (
-        <LoginScreen navigation={navigation} />
-    )
-}
 
 export default function BottomTabNavigation(navigation: any) {
     const Auth = React.useContext(AuthContext)
@@ -76,8 +63,8 @@ export default function BottomTabNavigation(navigation: any) {
                     headerTitleAlign: 'center',
                     // headerTitleStyle:{marginLeft:vw(2)},
                     headerTitle: () => <Heading title={`What we're quibbing`} />,
-                    headerLeft: () => <BackIcon />,
-                    headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPress="Login" viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
+                    headerLeft: () => Auth.isGuest == true ? <BackIcon /> : null,
+                    headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPressed={() => { navigation.navigate('Login') }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
                     tabBarIcon: ({ focused }) => {
                         if (focused) return < IonIcon name='home' color={Style.defaultRed} size={24} />
                         else return < IonIcon name='home-outline' size={24} color={Style.defaultRed} />
@@ -109,17 +96,13 @@ export default function BottomTabNavigation(navigation: any) {
                         if (Auth.isGuest == true) {
                             // Prevent default action
                             e.preventDefault();
-                            return (
-                                Alert.alert('Error', 'You need to login first to access profile', [
-                                    {
-                                        text: 'Cancel',
-                                        onPress:()=>(console.log('dismiss')),
-                                        style: 'cancel',
-                                    },
-                                    { text: 'OK', onPress: () => navigation.navigate('Login' as never) },
-                                ])
-                            )
-                        } 
+                            Auth.dispatch({
+                                type: 'MODAL',
+                                name: null,
+                                isGuest: true,
+                                modal: true,
+                            })
+                        }
                     },
                 })}
                 component={ProfileScreen}

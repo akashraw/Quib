@@ -23,17 +23,19 @@ export const quibPlayerStyles = StyleSheet.create({
         paddingVertical: vw(0),
     },
     flatlistContainer: {
-        
-        backgroundColor:'#fff',
-        height: vw(50),
-        width: vw(50),
+        // backgroundColor:'transparent',
+        // backgroundColor:'#fff',
+        backgroundColor:'rgba( 248, 251, 248, .9)',
+        height: vw(65),
+        width: vw(90),
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 1,
+        // borderWidth: 1,
+        borderRadius:vw(2),
         borderColor: '#E6E6E6',
         paddingVertical: vw(2),
         paddingHorizontal: vw(2),
-        marginVertical: vw(3),
+        // marginVertical: vw(3),
     },
    
 })

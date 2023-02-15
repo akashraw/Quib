@@ -16,6 +16,7 @@ import {
   Logo,
 } from '../components/HeaderComponents';
 import {vw} from 'rxn-units';
+import GuestProfileScreen from '../screens/profileScreens/GuestProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,6 +53,14 @@ export default function AuthStack() {
       <Stack.Screen
         name="Login"
         component={LoginScreen}
+        options={{
+          headerShown: false,
+          statusBarColor: Style.quibBackColor,
+        }}
+      />
+      <Stack.Screen
+        name="Guest"
+        component={GuestProfileScreen}
         options={{
           headerShown: false,
           statusBarColor: Style.quibBackColor,

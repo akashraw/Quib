@@ -1,17 +1,20 @@
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground, KeyboardAvoidingView, Platform, ActivityIndicator, Dimensions } from 'react-native'
 import React, { useState } from 'react'
 import { Eula, StringData } from '../../constants/Constant'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ImagePicker from 'react-native-image-crop-picker'
 import CheckBox from '@react-native-community/checkbox'
 import { Style } from '../../constants/Styles'
-import { vw } from 'rxn-units'
+import { vh, vw } from 'rxn-units'
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
 import MatComIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Controller, useForm } from 'react-hook-form'
 import DropShadow from 'react-native-drop-shadow'
 import { API, RegisterAPI } from '../../constants/Api'
+import Modal from "react-native-modal";
+
+const deviceHeight = Dimensions.get('screen').height;
 
 interface props {
     navigation: any;
@@ -411,12 +414,24 @@ export default function RegisterScreen(props: props) {
                     </View>
                 </View>
             </KeyboardAwareScrollView >
-            {
-                Activity == true &&
-                <View style={styles.loadingActivity} >
-                    <ActivityIndicator size={vw(20)} color="#fff" />
+            <Modal isVisible={Activity} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.6}
+                onBackdropPress={() => setActivity(false)} onBackButtonPress={() => setActivity(false)} useNativeDriver={true}
+                useNativeDriverForBackdrop={true} statusBarTranslucent={true} style={{ height: vh(100), }} deviceHeight={deviceHeight} >
+                <View style={{
+                    flex: 1, justifyContent: 'center',
+                    alignItems: 'center', flexDirection: 'column',
+                }}>
+                    <Text style={{ color: '#fff', fontSize: vw(5), fontWeight: '400' }}>Please wait</Text>
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center', flexDirection: 'row'
+                    }}>
+                        <ActivityIndicator size={vw(20)} color="#fff" />
+                        {/* <QuibButton text={'Do it later'} onPressed={() => { setActivity(false) }} viewStyle={[[styles.button], { backgroundColor: Style.defaultGrey }]} textStyle={styles.buttonTxt} />
+            <QuibButton text={'Ok, let dot it'} onPressed={() => { navigation.navigate('Login') }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> */}
+                    </View>
                 </View>
-            }
+            </Modal>
         </SafeAreaView >
     )
 }

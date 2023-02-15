@@ -10,10 +10,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import QuibButton from '../../components/QuibButton';
-import {StringData} from '../../constants/Constant';
-import {vh, vw} from 'rxn-units';
-import {ScalingDot} from 'react-native-animated-pagination-dots';
-import {Style} from '../../constants/Styles';
+import { StringData } from '../../constants/Constant';
+import { vh, vw } from 'rxn-units';
+import { ScalingDot } from 'react-native-animated-pagination-dots';
+import { Style } from '../../constants/Styles';
 //for width
 // const width = Dimensions.get('screen').width;
 const DOT_SIZE = 8;
@@ -23,7 +23,7 @@ interface props {
   navigation: any;
 }
 
-export default function OnLanding({navigation}: props) {
+export default function OnLanding({ navigation }: props) {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   return (
     <SafeAreaView style={styles.container}>
@@ -37,7 +37,7 @@ export default function OnLanding({navigation}: props) {
         <Text style={styles.heading}>{StringData.onLandingHead}</Text>
         <FlatList
           horizontal
-          contentContainerStyle={{justifyContent:'center'}}
+          contentContainerStyle={{ justifyContent: 'center' }}
           snapToAlignment='center'
           decelerationRate="fast"
           pagingEnabled
@@ -45,20 +45,20 @@ export default function OnLanding({navigation}: props) {
           showsHorizontalScrollIndicator={false}
           bounces={false}
           onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {x: scrollX}}}],
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
             {
               useNativeDriver: false,
             },
           )}
           data={Slides}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <View key={index} style={styles.flatList}>
               <Image key={index} source={item.img} style={styles.image} />
             </View>
           )}
         />
         {/* Pagination */}
-        <View style={{marginTop: vw(8)}}>
+        <View style={{ marginTop: vw(8) }}>
           <ScalingDot
             data={Slides}
             // expandingDotWidth={30}
@@ -85,7 +85,7 @@ export default function OnLanding({navigation}: props) {
       </View> */}
 
       {/*Button*/}
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -94,21 +94,21 @@ export default function OnLanding({navigation}: props) {
           }}>
           <QuibButton
             text={'Join'}
-            onPress="Register"
+            onPressed={() => { navigation.navigate("Register") }}
             viewStyle={styles.button}
             textStyle={styles.buttonTxt}
           />
           <QuibButton
             text={'Visit'}
-            onPress="Bottom"
+            onPressed={() => { navigation.navigate("Bottom") }}
             viewStyle={styles.button}
             textStyle={styles.buttonTxt}
           />
         </View>
-        <View style={{marginTop: 20, alignItems: 'center'}}>
+        <View style={{ marginTop: 20, alignItems: 'center' }}>
           <QuibButton
             text={'Log In'}
-            onPress="Login"
+            onPressed={() => { navigation.navigate("Login") }}
             viewStyle={styles.button}
             textStyle={styles.buttonTxt}
           />
@@ -135,10 +135,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   flatList: {
-    justifyContent:'center',
-    alignSelf:'center',
-    alignItems:'center',
-    width:vw(100),
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'center',
+    width: vw(100),
     marginTop: 25,
     // paddingHorizontal: vw(1),
   },

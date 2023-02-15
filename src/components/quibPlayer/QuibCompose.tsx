@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated, Alert } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated, Alert, Dimensions } from 'react-native'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { vh, vw } from 'rxn-units';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
@@ -14,6 +14,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import { Button } from 'react-native-paper';
 import NumberPlease from 'digicard-react-native-number-please';
+const deviceHeight = Dimensions.get('screen').height;
 
 
 type FD = {
@@ -103,8 +104,10 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength }: props) {
       const [quibTime, setQuibTime] = useState(initialQuibTime);
 
       return (
-        <Modal isVisible={isModalVisible} coverScreen={true} deviceHeight={vh(100)}>
-          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(20) }}>
+        <Modal isVisible={isModalVisible} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.7}
+        onBackdropPress={() => setModalVisible(false)} onBackButtonPress={() => setModalVisible(false)} useNativeDriver={true}
+        useNativeDriverForBackdrop={true} statusBarTranslucent={true} deviceHeight={deviceHeight}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(20), borderRadius:vw(2) }}>
             <Text>Select the time(HH:MM:SS)</Text>
             <NumberPlease
               pickers={CountDown}

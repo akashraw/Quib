@@ -18,7 +18,7 @@ export default function ProfileScreen({ navigation }: props) {
     useEffect(() => {
         Promise.resolve(
             getUserById({ userId: '' }).then((res) => setUser(res))
-        )
+        ).then(()=>console.log(User))
     }, [])
     return (
         <SafeAreaView style={{}}>

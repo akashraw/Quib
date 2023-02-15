@@ -11,14 +11,17 @@ type AuthData = {
 type AuthContextData = {
     userName: string;
     isGuest: boolean;
+    Modal: boolean;
     handleLogin: (p: object) => {};
     getAuthState: () => {};
     handleLogout: () => {};
+    dispatch: (p: object) => {};
 };
 
 const initialState = {
     userName: null,
     isGuest: true,
+    Modal: false,
 };
 
 
@@ -34,9 +37,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     // useREDUCER =================================================
     const [state, dispatch] = useReducer(authReducer, initialState);
-    
+
     //=======================useEffect FOR GETTING THE LAST USER STATE=========================\\
-    React.useEffect(()=>{
+    React.useEffect(() => {
         getAuthState();
     }, [])
 
@@ -53,7 +56,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 return await handleLogin(user);
             } else {
                 return await handleLogout();
-                
+
             }
         } catch (error) {
             console.log(error)
@@ -73,7 +76,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             dispatch({
                 type: 'LOGIN',
                 isGuest: false,
-                name: data
+                name: data,
+                modal: false
             });
         } catch (error) {
             // throw new Error(error);
@@ -93,7 +97,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             dispatch({
                 type: 'LOGOUT',
                 isGuest: true,
-                name: null
+                name: null,
+                modal: false
             });
         } catch (error) {
             // throw new Error(error);

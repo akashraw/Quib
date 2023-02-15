@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, SectionList, TouchableWithoutFeedback, Pressable } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SectionList, TouchableWithoutFeedback, Pressable, Dimensions } from 'react-native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Style } from '../../constants/Styles'
 import { vw, vh } from 'rxn-units';
@@ -16,7 +16,11 @@ import { FlatList } from 'react-native-gesture-handler';
 import { Shadow } from 'react-native-shadow-2';
 import { FlashList } from '@shopify/flash-list';
 import { AuthContext } from '../../Auth';
+import Modal from 'react-native-modal';
+import QuibButton from '../../components/QuibButton';
 // import BottomTabNavigation from '../../components/BottomTabNavigation';
+const deviceHeight = Dimensions.get('screen').height;
+
 interface props {
   navigation: any;
 }
@@ -54,6 +58,40 @@ export default function ChooseMovies(props: props) {
       getMostActiveMovies().then(res => { if (res === undefined) { return isActiveMovieWorking.current = false } else { return setActiveMovies(res) } }),
     ]).then(() => setIsLoading(false)), 1000);
   }, []);
+
+  //=============================Login Modal=========================================================\\
+  const LoginModal = useCallback(() => {
+
+    const modalToggle = () => {
+      Auth.dispatch({
+        type: 'MODAL',
+        name: null,
+        isGuest: true,
+        modal: false,
+      })
+    }
+
+    return (
+      <Modal isVisible={Auth.Modal} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.6}
+        onBackdropPress={() => modalToggle()} onBackButtonPress={() => modalToggle()} useNativeDriver={true}
+        useNativeDriverForBackdrop={true} statusBarTranslucent={true} style={{ height: vh(100), }} deviceHeight={deviceHeight} >
+        <View style={{
+          flex: 1, justifyContent: 'center',
+          alignItems: 'center', flexDirection: 'column',
+        }}>
+          <Text style={{ color: '#fff', fontSize: vw(5), fontWeight: '400' }}>Please login to access this feature</Text>
+          <View style={{
+            justifyContent: 'center',
+            alignItems: 'center', flexDirection: 'row'
+          }}>
+            <QuibButton text={'Do it later'} onPressed={() => { modalToggle() }} viewStyle={[[styles.buttonModal], { backgroundColor: Style.defaultGrey }]} textStyle={styles.buttonTxtModal} />
+            <QuibButton text={'Ok, let dot it'} onPressed={() => { props.navigation.navigate('Login') }} viewStyle={styles.buttonModal} textStyle={styles.buttonTxtModal} />
+          </View>
+        </View>
+      </Modal>
+    )
+  },[Auth.Modal])
+  //=================================login modal ends=================================================\\
 
   // variables
   const snapPoints = useMemo(() => ['38%'], []);
@@ -235,9 +273,9 @@ export default function ChooseMovies(props: props) {
 
     } else return (
       <SectionList
-        contentContainerStyle={{paddingBottom:vh(10)}}
+        contentContainerStyle={{ paddingBottom: vh(10) }}
         getItemLayout={(data, index) => (
-          {length: vh(12), offset: vh(12) * index, index}
+          { length: vh(12), offset: vh(12) * index, index }
         )}
         bounces={false}
         keyExtractor={(_, index) => index.toString()}
@@ -262,6 +300,7 @@ export default function ChooseMovies(props: props) {
       </View>
       {/* <BottomTabNavigation/> */}
       {/* </SafeAreaView> */}
+      <LoginModal/>
     </BottomSheetModalProvider>
   )
 }
@@ -314,8 +353,30 @@ const styles = StyleSheet.create({
     // color: '#EDEDED',
     fontWeight: '500'
   },
-  title: {},
-  year: {},
-  director: {},
+  title: {
+
+  },
+  year: {
+
+  },
+  director: {
+
+  },
+  buttonModal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Style.defaultRed,
+    width: vw(30),
+    height: vw(8),
+    borderRadius: vw(2),
+    marginVertical: vw(4),
+    marginHorizontal: vw(2)
+},
+buttonTxtModal: {
+  textAlign: 'center',
+  fontSize: 14,
+  color: '#fff',
+  fontWeight: 'bold'
+},
 })
 
