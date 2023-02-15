@@ -119,7 +119,7 @@ function QuibCarousel({ item, index }: any) {
         )
     }
     return (
-        <View style={{ marginRight: vw(4) }}>
+        <View style={{ marginLeft: vw(3), marginRight:vw(1) }}>
             <QuibList />
         </View>
     )

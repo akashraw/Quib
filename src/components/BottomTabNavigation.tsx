@@ -24,7 +24,7 @@ const Tab = createBottomTabNavigator();
 const Heading = (props: any) => {
     return (
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
-            <Text style={{ fontSize: 22, fontWeight: '500', paddingLeft: vw(2), color: Style.defaultRed }}>{props.title}</Text>
+            <Text style={{ fontSize: 22, fontWeight: '500', color: Style.defaultRed }}>{props.title}</Text>
         </View>
     )
 }
