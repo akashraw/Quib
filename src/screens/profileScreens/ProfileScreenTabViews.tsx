@@ -35,39 +35,46 @@ import MovieCard from '../chooseMovieScreen/MovieCard';
 import ProfileStream from './ProfileStream';
 
 type Route = {
+  total: number;
   key: string;
   title: string;
   // icon: React.ComponentProps<typeof Ionicons>['name'];
 };
+type Prop = {
+  quib: Array<any>;
+  followee: Array<any>;
+  follower: Array<any>;
+  navi: any;
+  followerId: string;
+}
 
 type State = NavigationState<Route>;
 
-export default function ProfileScreenTabViews({ navi, followerId }: any) {
+export default function ProfileScreenTabViews({ quib, followee, follower, navi, followerId }: Prop) {
   const navigation = useNavigation();
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'first', title: 'Quibbed' },
-    { key: 'second', title: 'Following' },
-    { key: 'thrid', title: 'Followers' },
-  ]);
-  const [QuibMovie, setQuibMovie] = useState<any[]>([]);
-  const [Follower, setFollower] = useState<any[]>([]);
+  const [Quib, setQuib] = useState<any[]>([])
   const [Followee, setFollowee] = useState<any[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false)
-  const Followings = useRef<any[]>([]);
-  const Follow = useRef<any[]>([]);
-  const QuibMovies = useRef<any[]>([]);
+  const [Follower, setFollower] = useState<any[]>([]);
+  // const Followings = useRef<any[]>([]);
+  // const Follow = useRef<any[]>([]);
+  // const QuibMovies = useRef<any[]>([]);
   const Auth = React.useContext(AuthContext);
-
   useEffect(() => {
     Promise.all([
-      getMovieByUserId({ userId: '' }).then((res) => { setQuibMovie(res); QuibMovies.current = res }),
-      getFollowersByUserId({ userId: '' }).then((res) => { setFollower(res); Follow.current = res }),
-      getFolloweeByUserId({ userId: '' }).then((res) => { setFollowee(res); Followings.current = res }),
-    ]).then(() => setIsLoaded(true))
-    console.log(Follower);
+      getMovieByUserId({ userId: Auth.userName }).then((res) => { setQuib(res) }),
+      getFollowersByUserId({ userId: Auth.userName }).then((res) => { setFollower(res) }),
+      getFolloweeByUserId({ userId: Auth.userName }).then((res) => { setFollowee(res) }),
+    ])
+    console.log(Quib.length)
   }, [])
+
+  const [routes, setRoutes] = useState([
+    { key: 'first', title: 'Quibbed', total: quib.length },
+    { key: 'second', title: 'Following', total: followee.length },
+    { key: 'thrid', title: 'Followers', total: follower.length },
+  ]);
 
   const Profile = (userId: string) => {
     if (userId != Auth.userName) {
@@ -77,7 +84,7 @@ export default function ProfileScreenTabViews({ navi, followerId }: any) {
 
   const unFollowUser = ({ followeeId, index }: any) => {
     Promise.resolve(UnFollowUser({
-      FollowerId: followerId.followerId,
+      FollowerId: followerId,
       FolloweeId: followeeId
     }).then(() => handleUnFollow(index)))
   }
@@ -88,14 +95,13 @@ export default function ProfileScreenTabViews({ navi, followerId }: any) {
     setFollowee(temp);
   }
   const Quibbed = React.useCallback(() => {
-    console.log('render');
 
     return (
       <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100) }}>
         <FlashList
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
-          data={QuibMovies.current}
+          data={Quib}
           numColumns={3}
           estimatedItemSize={vw(40)}
           // ListFooterComponent={<View style={{ height: vw(22) }} />}
@@ -122,10 +128,10 @@ export default function ProfileScreenTabViews({ navi, followerId }: any) {
         />
       </View>
     );
-  }, [QuibMovies.current]);
+  }, [Quib]);
 
   //Following  user list
-  const Following = () => {
+  const Following = React.useCallback(() => {
 
     const RenderItem = ({ item, index }: any) => {
       let followeeId = item.newFolloweeId;
@@ -192,24 +198,24 @@ export default function ProfileScreenTabViews({ navi, followerId }: any) {
     }
     return (
       <View style={{ width: vw(100), height: vh(100) }}>
-        <FlatList
+        <FlashList
           data={Followee}
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
-        // estimatedItemSize={20}
+          estimatedItemSize={20}
         />
       </View>
     )
-  };
+  }, [Followee]);
 
 
   const Followers = React.useCallback(() => {
     const RenderItem = ({ item, index }: any) => {
       return (
         <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
-          <TouchableOpacity onPress={()=>Profile(item.newFollowerId)}  key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
+          <TouchableOpacity onPress={() => Profile(item.newFollowerId)} key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -269,7 +275,7 @@ export default function ProfileScreenTabViews({ navi, followerId }: any) {
     return (
       <View style={{ width: vw(100), height: vh(100) }}>
         <FlashList
-          data={Follow.current}
+          data={Follower}
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
           // keyExtractor={(_, index) => index.toString()}
@@ -278,7 +284,7 @@ export default function ProfileScreenTabViews({ navi, followerId }: any) {
         />
       </View>
     );
-  }, [Follow.current]);
+  }, [Follower]);
 
   const renderScene = SceneMap({
     first: Quibbed,
@@ -308,11 +314,12 @@ export default function ProfileScreenTabViews({ navi, followerId }: any) {
         return (
           <View style={styles.tab}>
             <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
-              <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
+              <Text style={[styles.label, styles.inactive]}>{route.total}</Text>
+              <Text style={[...[styles.label, styles.inactive], { fontSize: 14 }]}>{route.title}</Text>
             </Animated.View>
-            <Animated.View
-              style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}>
-              <Text style={[styles.label, styles.active]}>{route.title}</Text>
+            <Animated.View style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}>
+              <Text style={[styles.label, styles.active]}>{route.total}</Text>
+              <Text style={[[styles.label, styles.active], { fontSize: 14 }]}>{route.title}</Text>
             </Animated.View>
           </View>
         );
