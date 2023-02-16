@@ -7,6 +7,8 @@ import ProfileScreenTabViews from './ProfileScreenTabViews'
 import { Shadow } from 'react-native-shadow-2'
 import { getUserById } from '../../services/QuibAPIs'
 import { useNavigation } from '@react-navigation/core'
+import FastImage from 'react-native-fast-image'
+import { API, image256API } from '../../constants/Api'
 
 interface props {
     navigation: any,
@@ -18,7 +20,8 @@ export default function ProfileScreen({ navigation }: props) {
     useEffect(() => {
         Promise.resolve(
             getUserById({ userId: '' }).then((res) => setUser(res))
-        ).then(()=>console.log(User))
+        ).then(() => console.log(vw(25)))
+
     }, [])
     return (
         <SafeAreaView style={{}}>
@@ -27,12 +30,17 @@ export default function ProfileScreen({ navigation }: props) {
                     <View style={{ flex: 1, }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: vw(2) }}>
                             <View style={{ paddingHorizontal: vw(2) }}>
-                                <Shadow distance={5}>
-                                    <Image
-                                        source={require('../../assets/Movie/arrival.jpeg')}
+                                {/* <Shadow distance={5}> */}
+                                    <FastImage
+                                        source={{
+                                            uri: `${image256API}${User.avatarBase256ImagePath}`,
+                                            priority: FastImage.priority.high,
+                                            cache: FastImage.cacheControl.immutable,
+                                        }}
+                                        resizeMode="contain"
                                         style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
                                     />
-                                </Shadow>
+                                {/* </Shadow> */}
                             </View>
                             <View style={{ alignSelf: 'center', justifyContent: 'center', paddingHorizontal: vw(2) }}>
                                 <View style={{ paddingBottom: vw(1) }}>
@@ -42,7 +50,7 @@ export default function ProfileScreen({ navigation }: props) {
                                     <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 14 }}>{User.firstName} {User.lastName}</Text>
                                 </View>
                                 <View style={{ paddingBottom: vw(0) }}>
-                                    <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: 12, marginRight: vw(2), width: vw(60), }} numberOfLines={3} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Leo in vitae turpis massa sed elementum tempus.</Text>
+                                    <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: 12, marginRight: vw(2), width: vw(60), }} numberOfLines={3} >{User.about}</Text>
                                 </View>
                             </View>
                         </View>
@@ -57,7 +65,7 @@ export default function ProfileScreen({ navigation }: props) {
                     </View>
                 </View>
                 <View style={{ height: vh(100), }}>
-                    <ProfileScreenTabViews navi={navigation} followerId={User.id}/>
+                    <ProfileScreenTabViews navi={navigation} followerId={User.id} />
                 </View>
             </View>
         </SafeAreaView>

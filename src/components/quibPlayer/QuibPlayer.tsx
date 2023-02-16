@@ -87,7 +87,7 @@ export default function QuibPlayer({navigation, route}: props) {
 
   useEffect(() => {
     Promise.all([
-      getMoviePoster(MovieId)
+      getMoviePoster(MovieId.MovieId)
         .then(
           (res: any) =>
             (posterRef.current = res.map((res: any) => res.posterContent)),
@@ -443,30 +443,6 @@ export default function QuibPlayer({navigation, route}: props) {
     const [QuibCarTime, setQuibCarTime] = useState(0);
     const QuibCarRef = useRef<any>(null);
     const {hours, mintues, seconds } = getFormattedTime(QuibCarTime);
-    // if (isVisble == true) return (
-    //     <View style={{
-    //         flex: 1,
-    //         justifyContent: 'center', alignItems: 'center', position: 'absolute', overflow: 'hidden',
-    //         backgroundColor: 'rgba(4, 59, 92, 0.8 )', zIndex: 2, elevation: 2, height: vmax(),
-    //     }}>
-    //         <FlatList
-    //             horizontal
-    //             showsHorizontalScrollIndicator={false}
-    //             style={{ width: vw(100), height: vh(50), marginTop: vw(-90), alignSelf: 'center', backgroundColor: 'transparent' }}
-    //             contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(2) }}
-    //             data={resMap.current}
-    //             renderItem={({ item, index }) => < QuibCarousel item={item} index={index} />}
-    //             initialNumToRender={10}
-    //             windowSize={5}
-    //             maxToRenderPerBatch={10}
-    //             updateCellsBatchingPeriod={30}
-    //             showsVerticalScrollIndicator={false}
-    //             keyExtractor={(_, index) => index.toString()}
-    //             initialScrollIndex={0}
-    //         />
-    //     </View>
-    // )
-    // else return null;
     return (
       <Modal
         isVisible={isVisble}
@@ -480,19 +456,20 @@ export default function QuibPlayer({navigation, route}: props) {
         useNativeDriverForBackdrop={true}
         statusBarTranslucent={true}
         deviceHeight={deviceHeight}>
-        <View
+        {/* <View
           style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-          }}>
+          }}> */}
           <View
             style={{
               width: vw(100),
-              height: vh(70),
+              height: vh(65),
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor: 'transparent',
+              alignSelf:'center'
             }}>
             <FlashList
               horizontal
@@ -518,6 +495,7 @@ export default function QuibPlayer({navigation, route}: props) {
               width: vw(95),
               flexDirection: 'row',
               height: vh(12),
+              alignSelf:'center'
             }}>
             <BlurView
               style={{height: vh(12), width: vw(95)}}
@@ -536,6 +514,7 @@ export default function QuibPlayer({navigation, route}: props) {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     marginRight: vw(5),
+                    paddingTop:vw(2)
                     // paddingTop: vw(1.5),
                   }}>
                   <Slider
@@ -614,7 +593,7 @@ export default function QuibPlayer({navigation, route}: props) {
               </LinearGradient>
             </BlurView>
           </View>
-        </View>
+        {/* </View> */}
       </Modal>
     );
   };

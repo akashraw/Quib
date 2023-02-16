@@ -26,6 +26,7 @@ import {
 } from 'react-native-tab-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { vh, vw } from 'rxn-units';
+import { AuthContext } from '../../Auth';
 import QuibButton from '../../components/QuibButton';
 import { API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
@@ -41,7 +42,7 @@ type Route = {
 
 type State = NavigationState<Route>;
 
-export default function ProfileScreenTabViews({navi, followerId }:any) {
+export default function ProfileScreenTabViews({ navi, followerId }: any) {
   const navigation = useNavigation();
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
@@ -57,32 +58,42 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
   const Followings = useRef<any[]>([]);
   const Follow = useRef<any[]>([]);
   const QuibMovies = useRef<any[]>([]);
+  const [Refreshing, setRefreshing] = useState(false);
+  const [Refreshings, setRefreshings] = useState(false);
+  const Auth = React.useContext(AuthContext);
 
   useEffect(() => {
     Promise.all([
-      getMovieByUserId({ userId: '' }).then((res) => { setQuibMovie(res); QuibMovies.current = res }),
-      getFollowersByUserId({ userId: '' }).then((res) => { setFollower(res); Follow.current = res }),
-      getFolloweeByUserId({ userId: '' }).then((res) => { setFollowee(res); Followings.current = res }),
+      getMovieByUserId({ userId: Auth.userName }).then((res) => { setQuibMovie(res); QuibMovies.current = res }),
+      getFollowersByUserId({ userId: Auth.userName }).then((res) => { setFollower(res); Follow.current = res }),
+      getFolloweeByUserId({ userId: Auth.userName }).then((res) => { setFollowee(res); Followings.current = res }),
     ]).then(() => setIsLoaded(true))
-    // console.log(followerId);
+    console.log(Follower);
   }, [])
 
 
+  //********************to navigate to profile*****************************************\\
+  const Profile = (userId: string) => {
+    if (userId != Auth.userName) {
+      return navigation.navigate('OtherProfile' as never, { userId: userId } as never);
+    } else return navigation.navigate('Profile' as never);
+  };
+  //*******************************Unfollow***************************************************\\
   const unFollowUser = ({ followeeId, index }: any) => {
     Promise.resolve(UnFollowUser({
       FollowerId: followerId.followerId,
       FolloweeId: followeeId
     }).then(() => handleUnFollow(index)))
   }
-
+  //*******************************handling the list**************************************\\
   const handleUnFollow = (index: any) => {
     let temp = [...Followee];
     temp.splice(index, 1);
     setFollowee(temp);
   }
-  const Quibbed = React.useCallback(() => {
-    console.log('render');
 
+  //****************************Movies the use Quibbed in ***************************\\
+  const Quibbed = React.useCallback(() => {
     return (
       <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100) }}>
         <FlashList
@@ -97,7 +108,7 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
             <View
               style={{ justifyContent: 'center', alignItems: 'center' }}>
               <TouchableOpacity
-               onPress={() => {navigation.navigate('Stream' as never,  { id: followerId, movieId: item.id } as never)}}
+                onPress={() => { navigation.navigate('Stream' as never, { id: followerId, movieId: item.id } as never) }}
               >
                 <MovieCard
                   key={index}
@@ -117,9 +128,21 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
     );
   }, [QuibMovies.current]);
 
-  //Following  user list
+  //********************************Following  user list****************************\\
   const Following = () => {
+    const [Followees, setFollowees] = useState<any[]>([])
+    const [Refreshes, setRefreshes] = useState(false)
 
+    useEffect(() => {
+      Promise.resolve(getFolloweeByUserId({ userId: Auth.userName }).then((res) => { setFollowees(res) }))
+    }, [])
+
+
+    //********onRefresh Functions*********\\
+    const onRefreshFollowing = async () => {
+      const followeesData = await getFolloweeByUserId({ userId: Auth.userName });
+      setRefreshes(followeesData);
+    }
     const RenderItem = ({ item, index }: any) => {
       let followeeId = item.newFolloweeId;
       return (
@@ -128,10 +151,7 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
-              //   alignItems: 'center',
-              //   alignSelf: 'center',
               borderRadius: vw(2),
-              // marginVertical:vw(2),
             }}>
             {/* bannner top */}
 
@@ -185,32 +205,46 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
     }
     return (
       <View style={{ width: vw(100), height: vh(100) }}>
-        <FlatList
-          data={Followee}
+        <FlashList
+          data={Followees}
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
+          refreshing={Refreshes}
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
-        // estimatedItemSize={20}
+          estimatedItemSize={20}
+          onRefresh={onRefreshFollowing}
         />
       </View>
     )
   };
 
-
+  //********************************Followers  user list****************************\\
   const Followers = React.useCallback(() => {
+    const [Followers, setFollowers] = useState<any[]>([])
+    const [Refresh, setRefresh] = useState(false)
+
+    useEffect(() => {
+      Promise.resolve(getFollowersByUserId({ userId: Auth.userName }).then((res) => { setFollowers(res) }))
+    }, [])
+
+
+    //***********************************onRefresh Functions*************************************\\
+    const onRefreshFollower = async () => {
+      const followerData = await getFollowersByUserId({ userId: Auth.userName });
+      setFollowers(followerData);
+      setRefresh(false);
+    }
+
     const RenderItem = ({ item, index }: any) => {
       return (
         <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
-          <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
+          <TouchableOpacity onPress={() => Profile(item.newFollowerId)} key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
-                //   alignItems: 'center',
-                //   alignSelf: 'center',
                 borderRadius: vw(2),
-                // marginVertical:vw(2),
               }}>
               {/* bannner top */}
 
@@ -249,12 +283,6 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
                     </Text>
                   </View>
                 </View>
-                {/* <QuibButton
-                  text={'Unfollow'}
-                  onPress={undefined}
-                  viewStyle={styles.button}
-                  textStyle={styles.buttonTxt}
-                /> */}
               </View>
             </View>
             {/* </View> */}
@@ -265,22 +293,27 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
     return (
       <View style={{ width: vw(100), height: vh(100) }}>
         <FlashList
-          data={Follow.current}
+          data={Followers}
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
-          // keyExtractor={(_, index) => index.toString()}
+          refreshing={Refresh}
+          keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
           estimatedItemSize={20}
+          onRefresh={onRefreshFollower}
         />
       </View>
     );
   }, [Follow.current]);
 
+  //********************************Scenes for Tab View*******************************\\
   const renderScene = SceneMap({
     first: Quibbed,
     second: Following,
     thrid: Followers,
   });
+
+  //***********************************Render function for Scene****************************************************\\
   const renderItem =
     ({
       navigationState,
@@ -314,6 +347,7 @@ export default function ProfileScreenTabViews({navi, followerId }:any) {
         );
       };
 
+  //***********************************Render function for Scene****************************************************\\
   const renderTabBar = (
     props: SceneRendererProps & { navigationState: State },
   ) => (

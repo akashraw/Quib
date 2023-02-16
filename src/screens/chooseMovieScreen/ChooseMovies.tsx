@@ -90,7 +90,7 @@ export default function ChooseMovies(props: props) {
         </View>
       </Modal>
     )
-  },[Auth.Modal])
+  }, [Auth.Modal])
   //=================================login modal ends=================================================\\
 
   // variables
@@ -243,7 +243,10 @@ export default function ChooseMovies(props: props) {
   const MovieCards = ({ item, index }: any) => {
 
     return (
-      <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} viewStyle={undefined} textStyle={undefined} linearGradStyle={undefined} imgSrc={item.posterContentThumb} />
+      <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
+        <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} viewStyle={undefined} textStyle={undefined} linearGradStyle={undefined} imgSrc={item.posterContentThumb} />
+      </TouchableOpacity>
+
     )
   }
 
@@ -300,7 +303,7 @@ export default function ChooseMovies(props: props) {
       </View>
       {/* <BottomTabNavigation/> */}
       {/* </SafeAreaView> */}
-      <LoginModal/>
+      <LoginModal />
     </BottomSheetModalProvider>
   )
 }
@@ -371,12 +374,12 @@ const styles = StyleSheet.create({
     borderRadius: vw(2),
     marginVertical: vw(4),
     marginHorizontal: vw(2)
-},
-buttonTxtModal: {
-  textAlign: 'center',
-  fontSize: 14,
-  color: '#fff',
-  fontWeight: 'bold'
-},
+  },
+  buttonTxtModal: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 'bold'
+  },
 })
 

@@ -89,7 +89,7 @@ export default function AppStack() {
         component={ProfileStream}
         options={{
           headerTitleAlign: 'center',
-          headerTitle: () => <Heading title={'Stream'} />,
+          headerTitle: () => <Heading title={'Quib Stack'} />,
           headerLeft: () => <BackIcon />,
           headerBackVisible: false,
         }}

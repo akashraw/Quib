@@ -125,7 +125,7 @@ export async function getMoviePoster(id: any) {
     }
     try {
         let json;
-        let response = await fetch(`${MoviePosterByIdAPI}?MovieId=${id.MovieId}`, headerOptions);
+        let response = await fetch(`${MoviePosterByIdAPI}?MovieId=${id}`, headerOptions);
         json = await response.json();
 
         return json;
@@ -290,7 +290,7 @@ export async function getMovieByUserId(Quib: QuibUserIdProp) {
         let json;
         let response = await fetch(`${getMovieByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
         json = await response.json();
-        console.log(json)
+        // console.log(json)
         return json;
     }
     catch (error) {

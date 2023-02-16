@@ -1,19 +1,21 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { GetMovieById, QuibByMovieAndUserId } from '../../services/QuibAPIs';
-import { vw } from 'rxn-units';
+import { GetMovieById, getMoviePoster, QuibByMovieAndUserId } from '../../services/QuibAPIs';
+import { vh, vw } from 'rxn-units';
 import DropShadow from 'react-native-drop-shadow';
 import FastImage from 'react-native-fast-image';
 import getFormattedTime from '../../components/GetFormattedTime';
 import { quibPlayerStyles } from '../../components/quibPlayer/QuibPlayerStyle';
 import { API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
+import { FlashList } from '@shopify/flash-list';
 
 export default function ProfileStream(routes: any) {
     const props = routes.route.params;
     const [FlatData, setFlatData] = useState<any[]>([]);
     const [Data, setData] = useState<any>({});
-
+    const posterRef = React.useRef(String);
+    const [isPoster, setIsPoster] = useState(Boolean);
     useEffect(() => {
         Promise.all([
             QuibByMovieAndUserId({
@@ -23,11 +25,25 @@ export default function ProfileStream(routes: any) {
             GetMovieById({
                 MovieId: props.movieId,
                 userId: ''
-            }).then((res: any) => setData(res))
+            }).then((res: any) => setData(res)),
+            getMoviePoster(props.movieId).then(
+                (res: any) =>
+                    (posterRef.current = res.map((res: any) => res.posterContent)),
+            )
+                .then(() => FileCheck()),
         ])
     }, [])
+    //==========================file check================================\\
+    const FileCheck = () => {
+        let FS = posterRef.current.toString().split('.').pop();
 
-    //Quib Cards
+        if (FS == 'jpeg' || FS == 'jpg') {
+            setIsPoster(true);
+            return;
+        } else setIsPoster(false);
+    };
+
+    //=========================Quib Cards=================================\\
     const Quibs = ({ item, index }: any) => {
         let { hours, mintues, seconds } = getFormattedTime(item.time)
 
@@ -136,23 +152,65 @@ export default function ProfileStream(routes: any) {
         )
     }
 
+    //=======================================================Header===================================================================\\
+    const Header = () => {
+        return (
+            <View
+                style={styles.quibCard}>
+                <View>
+                    <Text style={styles.heading}>Quib stack for</Text>
+                </View>
+                <View>
+                    <FastImage
+                        style={styles.image}
+                        source={{
+                            // uri: `${API}${Poster}`,
+                            uri: isPoster
+                                ? `${API}${posterRef.current}`
+                                : `data:image/jpeg;base64,${posterRef.current}`,
+                            priority: FastImage.priority.high,
+                            cache: FastImage.cacheControl.immutable,
+                        }}
+                        resizeMode="contain"
+                    />
+                </View>
+            </View>
+        );
+    };
+
     return (
-        <View>
-            <Text>{Data.title}</Text>
-            <FlatList
+        <View style={{flex:1}}>
+            <FlashList
+                ListHeaderComponent={() => (
+                    <View>
+                      <DropShadow
+                        style={{
+                          shadowColor: '#000',
+                          shadowOffset: {
+                            width: 0,
+                            height: 0,
+                          },
+                          shadowOpacity: 0.5,
+                          shadowRadius: vw(1),
+                        }}>
+                        <Header />
+                      </DropShadow>
+                    </View>
+                  )}
                 showsHorizontalScrollIndicator={false}
-                style={{ alignSelf: 'center', marginHorizontal: vw(0) }}
-                contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
+                // style={{ alignSelf: 'center', marginHorizontal: vw(0) }}
+                // contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
                 data={FlatData}
                 extraData={FlatData}
                 renderItem={({ item, index }) => < Quibs item={item} index={index} />}
-                initialNumToRender={10}
-                windowSize={5}
-                maxToRenderPerBatch={10}
-                updateCellsBatchingPeriod={30}
+                // initialNumToRender={10}
+                // windowSize={5}
+                // maxToRenderPerBatch={10}
+                // updateCellsBatchingPeriod={30}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(_, index) => index.toString()}
                 initialScrollIndex={0}
+                estimatedItemSize={vh(30)}
             />
         </View>
     )
@@ -162,6 +220,7 @@ const styles = StyleSheet.create({
     quibCard: {
         width: vw(95),
         alignSelf: 'center',
+        alignItems:'center',
         borderRadius: vw(1),
         backgroundColor: Style.quibPlayerCardBack,
         borderWidth: 0,
@@ -181,5 +240,19 @@ const styles = StyleSheet.create({
         paddingVertical: vw(3),
         marginVertical: vw(1),
         marginBottom: vw(2)
+    },
+    heading: {
+        alignSelf:'center',
+        fontSize: 24,
+        fontWeight: 'bold',
+        // marginBottom:-80,
+        paddingTop: vw(2),
+        color: Style.defaultTxtColor,
+    },
+    image: {
+        resizeMode: 'contain',
+        width: vw(70),
+        height: vh(40),
+        margin: vw(5),
     },
 })

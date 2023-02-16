@@ -9,13 +9,18 @@ import { Shadow } from 'react-native-shadow-2'
 import { AuthContext } from '../../Auth'
 import { useNavigation } from '@react-navigation/native'
 import Modal from 'react-native-modal';
+import { getUserById } from '../../services/QuibAPIs'
+import { image256API } from '../../constants/Api'
 const deviceHeight = Dimensions.get('screen').height;
 
 export default function SetttingScreen() {
+    const [User, setUser] = React.useState<any>([])
     const navigation = useNavigation();
     const Auth = useContext(AuthContext);
+    React.useEffect(() => {
+        Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)))
+    }, [])
     const LoginModal = React.useCallback(() => {
-
         const modalToggle = () => {
             Auth.dispatch({
                 type: 'MODAL',
@@ -52,17 +57,22 @@ export default function SetttingScreen() {
             {/* Header Starts */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: vw(90), marginBottom: vw(10), paddingHorizontal: vw(5) }}>
                 <View style={{ flexDirection: 'row', }}>
-                    <Shadow distance={5}>
-                        <Image
-                            style={{ height: vw(25), width: vw(25), borderRadius: vw(13) }}
-                            source={require('../../assets/Movie/arrival.jpeg')}
-                        />
-                    </Shadow>
+                    {/* <Shadow distance={5}> */}
+                    <FastImage
+                        source={{
+                            uri: `${image256API}${User.avatarBase256ImagePath}`,
+                            priority: FastImage.priority.high,
+                            cache: FastImage.cacheControl.immutable,
+                        }}
+                        resizeMode="contain"
+                        style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
+                    />
+                    {/* </Shadow> */}
                     {
                         Auth.isGuest == false ?
                             <View style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(4), justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>@akashraw</Text>
-                                <Text style={{ fontSize: 14, fontWeight: '500', color: Style.defaultLightGrey }}>Akash Rawat</Text>
+                                <Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>{User.userName}</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '500', color: Style.defaultLightGrey }}>{User.firstName} {User.lastName}</Text>
                             </View>
                             :
                             <View style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(4), justifyContent: 'center' }}>

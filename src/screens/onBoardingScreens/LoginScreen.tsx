@@ -179,7 +179,7 @@ export default function LoginScreen(props: props) {
         </View>
       </KeyboardAwareScrollView>
       <Modal isVisible={Activity} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.6}
-        onBackdropPress={() => setActivity(false)} onBackButtonPress={() => setActivity(false)} useNativeDriver={true}
+        onBackdropPress={() => null} onBackButtonPress={() => null} useNativeDriver={true}
         useNativeDriverForBackdrop={true} statusBarTranslucent={true} style={{ height: vh(100), }} deviceHeight={deviceHeight} >
         <View style={{
           flex: 1, justifyContent: 'center',

@@ -10,13 +10,8 @@ import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import { Style } from '../constants/Styles';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { vh, vw } from 'rxn-units';
-import NotificationScreen from '../screens/notificationScreen/NotificationScreen';
 import QuibButton from './QuibButton';
 import { AuthContext } from '../Auth';
-import Modal from "react-native-modal";
-import GuestProfileScreen from '../screens/profileScreens/GuestProfileScreen';
-
-const deviceHeight = Dimensions.get('screen').height;
 
 
 const Tab = createBottomTabNavigator();
@@ -32,7 +27,7 @@ const BackIcon = () => {
     const navigation = useNavigation();
     return (
         <View >
-            <TouchableOpacity style={{ flexDirection: 'row', paddingLeft: vw(4), justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('Home' as never)}>
+            <TouchableOpacity style={{ flexDirection: 'row', paddingLeft: vw(4), justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('Choose' as never)}>
                 <IonIcon name='arrow-back' size={26} color={Style.defaultRed} />
             </TouchableOpacity>
         </View>
@@ -42,6 +37,7 @@ const BackIcon = () => {
 
 export default function BottomTabNavigation(navigation: any) {
     const Auth = React.useContext(AuthContext)
+    const navi = useNavigation();
     return (
 
         <Tab.Navigator
@@ -64,7 +60,7 @@ export default function BottomTabNavigation(navigation: any) {
                     // headerTitleStyle:{marginLeft:vw(2)},
                     headerTitle: () => <Heading title={`What we're quibbing`} />,
                     headerLeft: () => Auth.isGuest == true ? <BackIcon /> : null,
-                    headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPressed={() => { navigation.navigate('Login') }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
+                    headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPressed={() => { navi.navigate('Login' as never) }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
                     tabBarIcon: ({ focused }) => {
                         if (focused) return < IonIcon name='home' color={Style.defaultRed} size={24} />
                         else return < IonIcon name='home-outline' size={24} color={Style.defaultRed} />
@@ -113,7 +109,9 @@ export default function BottomTabNavigation(navigation: any) {
                     headerTitleAlign: 'center',
                     headerTitle: () => <Heading title={`Profile`} />,
                     headerLeft: () => <BackIcon />,
-                    headerRight: () => (<TouchableOpacity onPress={() => navigation.navigate("Edit" as never)}><IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} /></TouchableOpacity>),
+                    headerRight: () => <TouchableOpacity onPress={() => navi.navigate('Edit' as never)}>
+                                            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} />
+                                        </TouchableOpacity>,
                     tabBarIcon: ({ focused }) => {
                         if (focused) return < IonIcon name='person' color={Style.defaultRed} size={24} />
                         else return < IonIcon name='person-outline' size={24} color={Style.defaultRed} />

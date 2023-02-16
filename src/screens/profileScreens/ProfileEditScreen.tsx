@@ -5,35 +5,51 @@ import ImagePicker from 'react-native-image-crop-picker'
 import { Style } from '../../constants/Styles'
 import { vw } from 'rxn-units'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { AuthContext } from '../../Auth'
+import { getUserById, getUserProfile } from '../../services/QuibAPIs'
+import FastImage from 'react-native-fast-image'
+import { image256API } from '../../constants/Api'
 
 interface props {
     navigation: any;
 }
 
 export default function ProfileEditScreen(props: props) {
-
+    const Auth = React.useContext(AuthContext);
     // const [Email, setEmail] = useState('');
     // const [Password, setPassword] = useState('');
     // const [ConfirmPassword, setConfirmPassword] = useState('');
-    const [userName, setUserName] = useState('akashraw');
-    const [firstName, setFirstName] = useState('Akash');
-    const [lastName, setLastName] = useState('Rawat');
+    const [User, setUser] = useState<any>([]);
+    const [userName, setUserName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [Img, setImg] = useState('');
-    const [Bio, setBio] = useState('Hello World. Get ready for Quibs!');
+    const [Bio, setBio] = useState('');
 
+    //==============================================================useEffect======================================================================\\
+    React.useEffect(() => {
+        Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)))
+        console.log(User.userName)
+    }, [])
+
+    //*******************************************//
     const Color = "#5555";
 
     const UserIcon = () => {
         if (!Img)
             return (
                 <TouchableOpacity onPress={launchImgLib}>
-                    <View style={{ borderRadius: vw(20), borderWidth: 5, borderColor: Style.defaultRed, marginBottom: vw(1) }}>
+                    <View style={{ borderRadius: vw(20), borderWidth:0, borderColor: Style.defaultRed, marginBottom: vw(1) }}>
                         {/* <MatComIcon name='account-edit' size={72} color={Style.defaultRed}/> */}
-                        <ImageBackground source={require('../../assets/man.png')} imageStyle={{ width: vw(30), height: vw(30) }} style={{ justifyContent: 'center', width: vw(30), height: vw(30), alignItems: 'center', }} >
-                            <View style={{ paddingTop: vw(0), backgroundColor: '#00000060', width: vw(30), height: vw(30), borderRadius: vw(20), justifyContent: 'center', alignItems: 'center' }}>
-                                <Icon name='camera-outline' size={vw(10)} color={Style.defaultTxtColor} />
-                            </View>
-                        </ImageBackground>
+                        <FastImage
+                            source={{
+                                uri: `${image256API}${User.avatarBase256ImagePath}`,
+                                priority: FastImage.priority.high,
+                                cache: FastImage.cacheControl.immutable,
+                            }}
+                            resizeMode="contain"
+                            style={{ width: vw(30), height: vw(30), borderRadius: vw(15) }}
+                        />
                     </View>
                 </TouchableOpacity>
             )
@@ -64,27 +80,27 @@ export default function ProfileEditScreen(props: props) {
                 </View>
                 <View >
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Display name'
+                        <TextInput placeholder={User.userName}
                             value={userName}
-                            placeholderTextColor={Color}
+                            placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setUserName(text)} style={styles.inputTxt} />
                     </View>
                     <View style={styles.inputField}>
-                        <TextInput placeholder='First name'
+                        <TextInput placeholder={User.firstName}
                             value={firstName}
-                            placeholderTextColor={Color}
+                            placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setFirstName(text)} style={styles.inputTxt} />
                     </View>
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Last name'
+                        <TextInput placeholder={User.lastName}
                             value={lastName}
-                            placeholderTextColor={Color}
+                            placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setLastName(text)} style={styles.inputTxt} />
                     </View>
                     <View style={[styles.inputField, { height: vw(30), justifyContent: 'flex-start' }]}>
-                        <TextInput placeholder='Bio'
+                        <TextInput placeholder={User.about}
                             value={Bio}
-                            placeholderTextColor={Color}
+                            placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setBio(text)} style={styles.inputTxt} />
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: vw(5) }}>

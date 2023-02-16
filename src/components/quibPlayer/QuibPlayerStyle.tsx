@@ -26,7 +26,7 @@ export const quibPlayerStyles = StyleSheet.create({
         // backgroundColor:'transparent',
         // backgroundColor:'#fff',
         backgroundColor:'rgba( 248, 251, 248, .9)',
-        height: vw(65),
+        height: vw(60),
         width: vw(90),
         justifyContent: 'center',
         alignItems: 'center',
