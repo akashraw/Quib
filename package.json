@@ -42,6 +42,7 @@
     "react-native-linear-gradient": "^2.6.2",
     "react-native-modal": "^13.0.1",
     "react-native-modal-datetime-picker": "^14.0.1",
+    "react-native-modalfy": "^3.3.3",
     "react-native-number-please": "^1.0.5",
     "react-native-pager-view": "^6.1.2",
     "react-native-paper": "^5.1.3",

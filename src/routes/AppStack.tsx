@@ -50,7 +50,7 @@ export default function AppStack() {
           gestureEnabled: false,
           headerShown: false,
           statusBarTranslucent:true,
-          statusBarColor:Style.quibBackColor
+          statusBarColor: 'transparent'
         }}
       />
       <Stack.Screen
