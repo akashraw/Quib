@@ -238,7 +238,7 @@ export async function QuibByMovieAndUserId(Quib: QuibProp) {
             'Content-type': 'application/json'
         },
     }
-    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
         let response = await fetch(`${getQuibByMovieAndUserIdAPI}?MovieId=${Quib.MovieId}&UserId=${Quib.userId}`, headerOptions);
@@ -261,7 +261,7 @@ export async function AddQuib(Quib: PostQuibProp) {
             'Content-type': 'application/json'
         },
     }
-    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
         let response = await fetch(`${addQuibAPI}?body=${Quib.body}&UserId=${Quib.userId}=${Quib.MovieId}&isSeedQuib=false&isSeedQuibType=null&isScreenShot=false&Time=${Quib.time}`, headerOptions);
@@ -285,7 +285,7 @@ export async function getMovieByUserId(Quib: QuibUserIdProp) {
             'Content-type': 'application/json'
         },
     }
-    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
         let response = await fetch(`${getMovieByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
@@ -308,7 +308,7 @@ export async function getFollowersByUserId(Quib: QuibUserIdProp) {
             'Content-type': 'application/json'
         },
     }
-    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
         let response = await fetch(`${getFollowersByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
@@ -330,7 +330,7 @@ export async function getFolloweeByUserId(Quib: QuibUserIdProp) {
             'Content-type': 'application/json'
         },
     }
-    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
         let response = await fetch(`${getFolloweeByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
@@ -353,7 +353,8 @@ export async function getUserById(Quib: QuibUserIdProp) {
             'Content-type': 'application/json'
         },
     }
-    Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    console.log(Quib.userId)
     try {
         let json;
         let response = await fetch(`${getUserByIdAPI}?UserId=${Quib.userId}`, headerOptions);

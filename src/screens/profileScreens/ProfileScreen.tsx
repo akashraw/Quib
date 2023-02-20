@@ -31,7 +31,7 @@ export default function ProfileScreen({ navigation }: props) {
             getFollowersByUserId({ userId: Auth.userName }).then((res) => { setFollowers(res) }),
             getFolloweeByUserId({ userId: Auth.userName }).then((res) => { setFollowings(res) }),
             getUserById({ userId: Auth.userName }).then((res) => setUser(res))
-        ]).then(()=>setIsLoaded(true))
+        ]).then(()=>setIsLoaded(true)).then(()=>console.log(User.avatarBase256ImagePath))
     }, [])
     return (
         <SafeAreaView style={{}}>
@@ -42,7 +42,6 @@ export default function ProfileScreen({ navigation }: props) {
                             <View style={{ flex: 1, }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: vw(2) }}>
                                     <View style={{ paddingHorizontal: vw(2) }}>
-                                        {/* <Shadow distance={5}> */}
                                         <FastImage
                                             source={{
                                                 uri: `${image256API}${User.avatarBase256ImagePath}`,
@@ -52,7 +51,6 @@ export default function ProfileScreen({ navigation }: props) {
                                             resizeMode="contain"
                                             style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
                                         />
-                                        {/* </Shadow> */}
                                     </View>
                                     <View style={{ alignSelf: 'center', justifyContent: 'center', paddingHorizontal: vw(2) }}>
                                         <View style={{ paddingBottom: vw(1) }}>

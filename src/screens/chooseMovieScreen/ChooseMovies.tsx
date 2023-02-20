@@ -18,6 +18,10 @@ import { FlashList } from '@shopify/flash-list';
 import { AuthContext } from '../../Auth';
 import Modal from 'react-native-modal';
 import QuibButton from '../../components/QuibButton';
+import SkeletonLoader from './SkeletonLoader';
+import SkeletonHorizontal from './SkeletonHorizontal';
+import SkeletonVertical from './SkeletonVertical';
+import { LogBox } from 'react-native';
 // import BottomTabNavigation from '../../components/BottomTabNavigation';
 const deviceHeight = Dimensions.get('screen').height;
 
@@ -38,7 +42,7 @@ export default function ChooseMovies(props: props) {
   const [allMovieRes, setallMovieRes] = useState([]);
   const [RecentMovies, setRecentMovies] = useState([]);
   const [ActiveMovies, setActiveMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   // const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { handleSheetPositionChange } = useBottomSheetBackHandler(bottomSheetModalRef);
@@ -47,16 +51,16 @@ export default function ChooseMovies(props: props) {
   const isRecentMovieWorking = useRef<boolean>(true);
   const Auth = React.useContext(AuthContext);
   // const [Star, setStar] = useState('star-o')
-
+  LogBox.ignoreLogs(['FlashList']);
 
 
   useEffect(() => {
     console.log(Auth.isGuest)
-    setTimeout(() => Promise.all([
-      getAllMovies().then(res => setallMovieRes(res)),
+    Promise.all([
+      getAllMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setallMovieRes(res) } }),
       getRecentMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setRecentMovies(res) } }),
       getMostActiveMovies().then(res => { if (res === undefined) { return isActiveMovieWorking.current = false } else { return setActiveMovies(res) } }),
-    ]).then(() => setIsLoading(false)), 1000);
+    ])
   }, []);
 
   //=============================Login Modal=========================================================\\
@@ -148,7 +152,7 @@ export default function ChooseMovies(props: props) {
   };
 
   // for rending movie card list 
-  const MovieBanner = ({ item, index }: any) => {
+  const MovieBanner = useCallback(({ item, index }: any) => {
     const check: string = item.posterContentThumb;
     let FS = check.split('.').pop();
     return (
@@ -170,8 +174,8 @@ export default function ChooseMovies(props: props) {
               {/* </Shadow> */}
               <View>
                 <Text style={[[styles.title, styles.txt], { width: vw(55), paddingRight: vw(1) }]} numberOfLines={1}>{item.title}</Text>
-                <Text style={[...[styles.txt], { fontSize: 12 }]}>{item.releaseYear}</Text>
-                <Text style={[...[styles.txt], { fontSize: 12 }]}>{item.director}</Text>
+                <Text style={[...[styles.txt], { fontSize: vw(3) }]}>{item.releaseYear}</Text>
+                <Text style={[...[styles.txt], { fontSize: vw(3) }]}>{item.director}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -191,8 +195,9 @@ export default function ChooseMovies(props: props) {
       </View>
     )
 
-  }
-  const SectionHeading = (section: any) => {
+  }, [allMovieRes])
+
+  const SectionHeading = useCallback((section: any) => {
     if (!section.sort) {
       return (
         <View style={{
@@ -201,9 +206,11 @@ export default function ChooseMovies(props: props) {
           <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
           <FlatList
             horizontal
+            style={{ width: vw(100) }}
             showsHorizontalScrollIndicator={false}
             data={section.data}
             renderItem={({ item, index }: any) => <MovieCards item={item} index={index} />}
+            ListEmptyComponent={() => <SkeletonHorizontal />}
           // estimatedItemSize={vw(40)}
           />
           <TouchableOpacity>
@@ -227,19 +234,20 @@ export default function ChooseMovies(props: props) {
             </View>
           </TouchableOpacity>
         </View>
-        {/* <View style={{height:vh(87.6), width:vw(100)}}>
-          <FlashList
-            bounces={false}
-            keyExtractor={(_, index) => index.toString()}
-            showsVerticalScrollIndicator={false}
-            data={section.data}
-            renderItem={({ item, index }: any) => <MovieBanner item={item} index={index} />}
-            estimatedItemSize={vh(12)}
-          />
-        </View> */}
+        {/* <View style={{flex:1, width:vw(100)}}> */}
+        <FlatList
+          // bounces={false}
+          style={{ width: vw(100), flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          data={section.data}
+          renderItem={({ item, index }: any) => <MovieBanner item={item} index={index} />}
+          // estimatedItemSize={vh(12)}
+          ListEmptyComponent={() => <SkeletonVertical />}
+        />
+        {/* </View> */}
       </View>
     )
-  }
+  }, [allMovieRes, RecentMovies, ActiveMovies])
   const MovieCards = ({ item, index }: any) => {
 
     return (
@@ -253,29 +261,31 @@ export default function ChooseMovies(props: props) {
   const Loaded = () => {
     const Sections = () => {
       if (Auth.isGuest == true) {
-        const sect = [
+        const sect: any[] = [
           { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }: any) => <MovieBanner item={item} index={index} /> },
         ]
         return sect;
       }
       else {
-        const sect = [
+        const sect: any[] = [
           { title: 'Recent Quib', sort: false, data: RecentMovies, renderItem: () => { return null } },
           { title: 'Most Active Quib', sort: false, data: ActiveMovies, renderItem: () => { return null } },
-          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }: any) => <MovieBanner item={item} index={index} /> },
+          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: () => { return null } },
         ]
         return sect
       }
     }
-    if (isLoading) {
-      return (
-        <View style={{ height: vh(100), justifyContent: 'center', alignItems: 'center', paddingBottom: vw(35), backgroundColor: Style.quibBackColor }}>
-          <Wave size={65} color={Style.defaultRed} animating={isLoading} />
-        </View>
-      )
+    // if (isLoading) {
+    //   return (
+    //     <View style={{ height: vh(100), justifyContent: 'center', alignItems: 'center', paddingBottom: vw(35), backgroundColor: Style.quibBackColor }}>
+    //       <Wave size={65} color={Style.defaultRed} animating={isLoading} />
+    //     </View>
+    //   )
 
-    } else return (
+    // } else
+    return (
       <SectionList
+        ListEmptyComponent={() => <SkeletonVertical />}
         contentContainerStyle={{ paddingBottom: vh(10) }}
         getItemLayout={(data, index) => (
           { length: vh(12), offset: vh(12) * index, index }
@@ -283,12 +293,8 @@ export default function ChooseMovies(props: props) {
         bounces={false}
         keyExtractor={(_, index) => index.toString()}
         showsVerticalScrollIndicator={false}
-        // sections={[
-        //   { title: 'Recent Quib', sort: false, data: RecentMovies, renderItem: ({ item, index }) => { return null } },
-        //   { title: 'Most Active Quib', sort: false, data: ActiveMovies, renderItem: ({ item, index }) => { return null } },
-        //   { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }) => MovieBanner({ item, index }) }
-        // ]}
         sections={Sections()}
+        style={{ width: vw(100) }}
         renderSectionHeader={({ section }) => SectionHeading(section)}
       />
     )
@@ -332,7 +338,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   txt: {
-    fontSize: 14,
+    fontSize: vw(3.5),
     color: Style.quibText,
     fontWeight: 'bold'
   },

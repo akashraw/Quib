@@ -461,6 +461,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingLeft: vw(4),
         fontSize: 16,
+        flex: 1,
         // paddingBottom: -2,
         // paddingTop: 20,
         color: Style.defaultTxtColor

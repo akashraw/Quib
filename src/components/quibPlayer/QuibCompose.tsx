@@ -28,6 +28,7 @@ interface props {
   mins: number,
   secs: number,
   time: number,
+  userId: string,
 }
 type PostQuibProp = {
   MovieId: number,
@@ -43,7 +44,7 @@ type Route = {
 type State = NavigationState<Route>;
 
 
-function QuibCompose({ MovieId, hour, mins, secs, time, movieLength }: props) {
+function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [QuibInput, setQuibInput] = useState<string>('');
   const [FlatData, setFlatData] = useState<any[]>([]);
@@ -67,7 +68,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength }: props) {
   ]
 
   useEffect(() => {
-    QuibByMovieAndUserId({ MovieId, userId: '' })
+    QuibByMovieAndUserId({ MovieId, userId })
       .then((res: any) => setFlatData(res))
   }, []);
 

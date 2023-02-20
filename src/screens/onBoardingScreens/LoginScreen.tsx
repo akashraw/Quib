@@ -164,7 +164,7 @@ export default function LoginScreen(props: props) {
             {/* <Button mode="contained" onPress={handleSubmit(onSubmit)} disabled={!isValid} buttonColor={Style.defaultRed} >
           <Text style={styles.buttonTxt}>Submit</Text>
         </Button> */}
-            <TouchableOpacity activeOpacity={.2}>
+            <TouchableOpacity activeOpacity={.2} onPress={()=>props.navigation.navigate('Forget')}>
               <Text style={{ paddingTop: vw(4), color: Style.forgetPass }}>Forgot the password?</Text>
             </TouchableOpacity>
           </View>
@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: vw(4),
     fontSize: 16,
+    flex:1,
     // paddingBottom: -2,
     // paddingTop: 20,
     color: Style.defaultTxtColor

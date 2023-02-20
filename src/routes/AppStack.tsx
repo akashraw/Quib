@@ -18,6 +18,7 @@ import {
   Logo,
 } from '../components/HeaderComponents';
 import {vw} from 'rxn-units';
+import SkeletonLoader from '../screens/chooseMovieScreen/SkeletonLoader';
 
 const Stack = createNativeStackNavigator();
 

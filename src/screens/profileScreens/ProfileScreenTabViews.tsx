@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    marginVertical: vw(1.5),
+    marginTop: vw(1.5),
     backgroundColor: 'transparent',
     fontWeight: 'bold',
   },

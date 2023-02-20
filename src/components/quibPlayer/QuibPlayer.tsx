@@ -56,6 +56,7 @@ interface props {
 export default function QuibPlayer({ navigation, route }: props) {
   // const isMovieMove = useRef<boolean>(); //used for dualSync
   const QuibCarTimeRef = useRef<any>(0);
+  const QuibScurbCarRef = useRef<Slider>(null);
   // const isQuibMove = useRef<boolean>(); //used for dualSync
   const [Active, setActive] = useState(false);
   const MovieLen = useRef(0);
@@ -80,7 +81,7 @@ export default function QuibPlayer({ navigation, route }: props) {
   const [Time, setTime] = useState(0);
   // const [isVisbleModal, setIsVisbleModal] = useState(false);
   const TimeRefer = useRef(0);
-  const QuibCarRef = useRef(0);
+  const QuibCarRef = useRef<any>(null);
   // const [AllSync, setAllSync] = useState<boolean>(true); //used for dualSync
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { handleSheetPositionChange } =
@@ -443,12 +444,42 @@ export default function QuibPlayer({ navigation, route }: props) {
       </View>
     );
   };
+  const Flash = useCallback(() => {
+    const [QuibCarTime, setQuibCarTime] = useState(0);
+    const { hours, mintues, seconds } = getFormattedTime(QuibCarTime);
+    return (
+      <View
+        style={{
+          width: vw(100),
+          height: vh(65),
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'transparent',
+          alignSelf: 'center'
+        }}>
+        <FlashList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={resMap.current}
+          renderItem={({ item, index }) => (
+            <QuibCarousel item={item} index={index} />
+          )}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(_, index) => index.toString()}
+          initialScrollIndex={0}
+          ref={QuibCarRef}
+          estimatedItemSize={vw(90)}
+        />
+      </View>
+    )
+  }, [])
 
-  const QuibCarouselModal = () => {
+  const QuibCarouselModal = (ref: any) => {
     const [QuibCarTime, setQuibCarTime] = useState(QuibCarTimeRef.current);
-    const QuibCarRef = useRef<any>(null);
+    // const QuibCarRef = useRef<any>(null);
     const { hours, mintues, seconds } = getFormattedTime(QuibCarTime);
     // setQuibCarTime(QuibCarTimeRef.current)
+
     return (
       <Modal
         isVisible={isVisble}
@@ -467,144 +498,8 @@ export default function QuibPlayer({ navigation, route }: props) {
         style={{ flex: 1 }}
 
       >
-        {/* <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}> */}
-        <View
-          style={{
-            width: vw(100),
-            height: vh(65),
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'transparent',
-            alignSelf: 'center'
-          }}>
-          <FlashList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={resMap.current}
-            renderItem={({ item, index }) => (
-              <QuibCarousel item={item} index={index} />
-            )}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(_, index) => index.toString()}
-            initialScrollIndex={0}
-            ref={QuibCarRef}
-            estimatedItemSize={vw(90)}
-          />
-        </View>
-        {/* <View
-          style={{
-            borderRadius: vw(10),
-            borderTopWidth: 0,
-            borderTopColor: 'black',
-            bottom: 0,
-            overflow: 'hidden',
-            width: vw(95),
-            flexDirection: 'row',
-            height: vh(12),
-            alignSelf: 'center'
-          }}>
-          <BlurView
-            style={{ height: vh(12), width: vw(95) }}
-            blurType="light"
-            blurAmount={15}
-            reducedTransparencyFallbackColor="#00000000"
-            overlayColor="#00000000">
-            <LinearGradient
-              colors={['#00000020', '#00000099']}
-              style={{ flex: 1, width: vw(100), backgroundColor: '#00000000' }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  alignSelf: 'center',
-                  flex: 1,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  marginRight: vw(5),
-                  paddingTop: vw(2)
-                  // paddingTop: vw(1.5),
-                }}>
-                <Slider
-                  maximumValue={MovieLen.current}
-                  // minimumTrackTintColor='#00000000'
-                  // maximumTrackTintColor='#00000000'
-                  minimumTrackTintColor={Style.defaultRed}
-                  maximumTrackTintColor={Style.defaultTxtColor}
-                  containerStyle={{ width: vw(80) }}
-                  value={QuibCarTime}
-                  // onSlidingStart={() => (isActive.current = false)}
-                  trackClickable={false}
-                  step={1}
-                  onSlidingComplete={value => {
-                    value = Array.isArray(value) ? value[0] : value;
-                    setQuibCarTime(value);
-                    const Reduce = resMap.current.reduce(
-                      (accumulator, current) => {
-                        const val = Array.isArray(value) ? value[0] : value;
-                        return Math.abs(current.time - val) <
-                          Math.abs(accumulator.time - val)
-                          ? current
-                          : accumulator;
-                      },
-                    );
-                    const ScurbIndex = resMap.current.findIndex(
-                      (item, index) => {
-                        if (item.time == Reduce.time) {
-                          console.log(Reduce.time);
-                          console.log(index);
-                          // quibScrubIndexRef.current = index;
-                          return index;
-                        }
-                      },
-                    );
-                    if (ScurbIndex < 0) {
-                      QuibCarRef.current?.scrollToOffset({
-                        animated: true,
-                        offset: 0,
-                      });
-                    } else {
-                      toggle;
-                      QuibCarRef.current?.scrollToIndex({
-                        animated: true,
-                        index: ScurbIndex,
-                      });
-                    }
-                  }}
-                  trackStyle={{ marginLeft: vw(0) }}
-                  animateTransitions={true}
-                />
-                <View style={{ paddingBottom: vw(0) }}>
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() =>
-                      Auth.isGuest == true
-                        ? setActive(true)
-                        : handlePresentModalPress(QuibCarTime)
-                    }>
-                    <View style={[...[styles.timer], { height: vw(6) }]}>
-                      <Text
-                        style={{
-                          textAlign: 'center',
-                          color: '#fff',
-                          fontSize: 16,
-                          fontWeight: '500',
-                        }}>
-                        {hours < 10 ? `0${hours}` : `${hours}`}:
-                        {mintues < 10 ? `0${mintues}` : `${mintues}`}:
-                        {seconds < 10 ? `0${seconds}` : `${seconds}`}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </LinearGradient>
-          </BlurView>
-        </View> */}
-        {/* </View> */}
+
+        <Flash />
       </Modal>
     );
   };
@@ -718,6 +613,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         }}>
         <QuibCompose
           MovieId={MovieId.MovieId}
+          userId={Auth.userName}
           hour={hours}
           mins={mintues}
           secs={seconds}
@@ -944,13 +840,50 @@ export default function QuibPlayer({ navigation, route }: props) {
                           isActive.current = false;
                           setIsVisble(true);
                           value = Array.isArray(value) ? value[0] : value;
-                          QuibCarTimeRef.current = value;
                         }}
+                        onValueChange={(value) => {
+                          value = Array.isArray(value) ? value[0] : value;
+                          const Reduce = resMap.current.reduce(
+                            (accumulator, current) => {
+                              const val = Array.isArray(value)
+                                ? value[0]
+                                : value;
+                              return Math.abs(current.time - val) <
+                                Math.abs(accumulator.time - val)
+                                ? current
+                                : accumulator;
+                            },
+                          );
+                          const ScurbIndex = resMap.current.findIndex(
+                            (item, index) => {
+                              if (item.time == Reduce.time) {
+                                console.log(Reduce.time);
+                                console.log(index);
+                                // quibScrubIndexRef.current = index;
+                                return index;
+                              }
+                            },
+                          );
+                          if (ScurbIndex < 0) {
+                            QuibCarRef.current?.scrollToOffset({
+                              animated: true,
+                              offset: 0,
+                            });
+                          } else {
+                            toggle;
+                            QuibCarRef.current?.scrollToIndex({
+                              animated: true,
+                              index: ScurbIndex,
+                            });
+                          }
+                        }}
+                        ref={QuibScurbCarRef}
                         trackClickable={false}
                         step={1}
                         onSlidingComplete={value => {
                           value = Array.isArray(value) ? value[0] : value;
                           setQuibTime(value);
+                          setIsVisble(false);
                           const Reduce = movieQuib.reduce(
                             (accumulator, current) => {
                               const val = Array.isArray(value)
@@ -1179,7 +1112,7 @@ const styles = StyleSheet.create({
     // zIndex:1,
     alignItems: 'center',
     width: vw(96),
-    paddingTop:StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight,
     // overflow: 'hidden',
     // padding: vw(3),
   },

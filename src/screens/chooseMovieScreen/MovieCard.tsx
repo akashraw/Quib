@@ -16,8 +16,7 @@ type Movie = {
 }
 
 export default function MovieCard({ title, year, director, viewStyle, textStyle, linearGradStyle, imgSrc }: Movie) {
-    // const check: string = imgSrc;
-    // console.log('hi')        
+    // const check: string = imgSrc;        
     let FS = imgSrc?.split('.').pop();
     return (
         // <Shadow distance={0}>

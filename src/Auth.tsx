@@ -40,6 +40,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     //=======================useEffect FOR GETTING THE LAST USER STATE=========================\\
     React.useEffect(() => {
+        // handleLogout();
         getAuthState();
     }, [])
 
@@ -49,17 +50,23 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         try {
             //GET TOKEN && USER
             // let token = await AsyncStorage.getItem(TOKEN_KEY);
+            // await AsyncStorage.clear()
             let user = await AsyncStorage.getItem(USER_KEY);
             user != null ? JSON.parse(user) : null;
 
             if (user != null) {
-                return await handleLogin(user);
+                return dispatch({
+                    type: 'LOGIN',
+                    isGuest: false,
+                    name: user,
+                    modal: false
+                });
             } else {
                 return await handleLogout();
 
             }
         } catch (error) {
-            console.log(error)
+            console.log('this '+error)
         }
     };
 
@@ -91,7 +98,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         try {
 
             //REMOVE DATA
-            await AsyncStorage.removeItem(USER_KEY)
+            await AsyncStorage.clear()
 
             //DISPATCH TO REDUCER
             dispatch({

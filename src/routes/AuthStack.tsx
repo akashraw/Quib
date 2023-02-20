@@ -1,9 +1,9 @@
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabNavigation from '../components/BottomTabNavigation';
 import QuibPlayer from '../components/quibPlayer/QuibPlayer';
-import {Style} from '../constants/Styles';
+import { Style } from '../constants/Styles';
 import LoginScreen from '../screens/onBoardingScreens/LoginScreen';
 import OnLanding from '../screens/onBoardingScreens/OnLanding';
 import RegisterScreen from '../screens/onBoardingScreens/RegisterScreen';
@@ -15,8 +15,9 @@ import {
   Heading,
   Logo,
 } from '../components/HeaderComponents';
-import {vw} from 'rxn-units';
+import { vw } from 'rxn-units';
 import GuestProfileScreen from '../screens/profileScreens/GuestProfileScreen';
+import ForgetPassword from '../screens/onBoardingScreens/ForgetPassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,7 @@ export default function AuthStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: Style.quibHeader},
+        headerStyle: { backgroundColor: Style.quibHeader },
         statusBarColor: Style.quibHeader,
         navigationBarHidden: true,
       }}
@@ -58,6 +59,14 @@ export default function AuthStack() {
           statusBarColor: Style.quibBackColor,
         }}
       />
+       <Stack.Screen
+        name="Forget"
+        component={ForgetPassword}
+        options={{
+          headerShown: false,
+          statusBarColor: Style.quibBackColor,
+        }}
+      />
       <Stack.Screen
         name="Guest"
         component={GuestProfileScreen}
@@ -80,6 +89,8 @@ export default function AuthStack() {
         options={{
           gestureEnabled: false,
           headerShown: false,
+          statusBarTranslucent: true,
+          statusBarColor: 'transparent'
         }}
       />
       <Stack.Screen
