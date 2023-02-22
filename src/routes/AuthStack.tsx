@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabNavigation from '../components/BottomTabNavigation';
@@ -11,17 +11,21 @@ import OtherProfileScreen from '../screens/otherProfileScreens/OtherProfileScree
 import ProfileStream from '../screens/profileScreens/ProfileStream';
 import {
   BackIcon,
-  EditIcon,
   Heading,
   Logo,
 } from '../components/HeaderComponents';
 import { vw } from 'rxn-units';
 import GuestProfileScreen from '../screens/profileScreens/GuestProfileScreen';
 import ForgetPassword from '../screens/onBoardingScreens/ForgetPassword';
+import RNBootSplash from "react-native-bootsplash";
 
 const Stack = createNativeStackNavigator();
 
 export default function AuthStack() {
+  React.useEffect(() => {
+    RNBootSplash.hide({ fade: true, duration: 500 });
+  }, []);
+
   return (
     <Stack.Navigator
       screenOptions={{

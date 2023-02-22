@@ -1,12 +1,9 @@
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabNavigation from '../components/BottomTabNavigation';
 import QuibPlayer from '../components/quibPlayer/QuibPlayer';
-import {Style} from '../constants/Styles';
-import LoginScreen from '../screens/onBoardingScreens/LoginScreen';
-import OnLanding from '../screens/onBoardingScreens/OnLanding';
-import RegisterScreen from '../screens/onBoardingScreens/RegisterScreen';
+import { Style } from '../constants/Styles';
 import OtherProfileScreen from '../screens/otherProfileScreens/OtherProfileScreens';
 import ProfileEditScreen from '../screens/profileScreens/ProfileEditScreen';
 import ProfileScreen from '../screens/profileScreens/ProfileScreen';
@@ -17,25 +14,26 @@ import {
   Heading,
   Logo,
 } from '../components/HeaderComponents';
-import {vw} from 'rxn-units';
-import SkeletonLoader from '../screens/chooseMovieScreen/SkeletonLoader';
+import { vw } from 'rxn-units';
+import SeeMoreRecent from '../screens/chooseMovieScreen/SeeMoreRecent';
+import SeeMoreActive from '../screens/chooseMovieScreen/SeeMoreActive';
+import RNBootSplash from "react-native-bootsplash";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
+  React.useEffect(() => {
+    RNBootSplash.hide({ fade: true, duration: 500 });
+  }, []);
+
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {backgroundColor: Style.quibHeader},
+        headerStyle: { backgroundColor: Style.quibHeader },
         statusBarColor: Style.quibHeader,
         navigationBarHidden: true,
       }}
       initialRouteName="Bottom">
-      {/* <Stack.Screen name='Choose' component={ChooseMovies} options={{
-            headerTitle: () => <WWQ title={`What we're quibbing`} />,
-            headerBackVisible: false,
-            headerRight: () => <OnLandingButton text="Log In" onPress="Test" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
-          }} /> */}
       <Stack.Screen
         name="Bottom"
         component={BottomTabNavigation}
@@ -45,12 +43,34 @@ export default function AppStack() {
         }}
       />
       <Stack.Screen
+        name='SeeRecent'
+        component={SeeMoreRecent}
+        options={{
+          headerTitleAlign: 'center',
+          // headerTitleStyle:{marginLeft:vw(2)},
+          headerTitle: () => <Heading title={`Recent Movies`} />,
+          headerLeft: () => <BackIcon />,
+          headerBackVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name='SeeMostActive'
+        component={SeeMoreActive}
+        options={{
+          headerTitleAlign: 'center',
+          // headerTitleStyle:{marginLeft:vw(2)},
+          headerTitle: () => <Heading title={`Most Active Movies`} />,
+          headerLeft: () => <BackIcon />,
+          headerBackVisible: false,
+        }}
+      />
+      <Stack.Screen
         name="Qplayer"
         component={QuibPlayer}
         options={{
           gestureEnabled: false,
           headerShown: false,
-          statusBarTranslucent:true,
+          statusBarTranslucent: true,
           statusBarColor: 'transparent'
         }}
       />

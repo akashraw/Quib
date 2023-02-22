@@ -46,10 +46,10 @@ export default function ChooseMovies(props: props) {
   // const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { handleSheetPositionChange } = useBottomSheetBackHandler(bottomSheetModalRef);
-  const [value, setValue] = React.useState('first');
   const isActiveMovieWorking = useRef<boolean>(true);
   const isRecentMovieWorking = useRef<boolean>(true);
   const Auth = React.useContext(AuthContext);
+  const AllMovieRef = useRef<any>([]);
   // const [Star, setStar] = useState('star-o')
   LogBox.ignoreLogs(['FlashList']);
 
@@ -57,7 +57,7 @@ export default function ChooseMovies(props: props) {
   useEffect(() => {
     console.log(Auth.isGuest)
     Promise.all([
-      getAllMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setallMovieRes(res) } }),
+      getAllMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { setallMovieRes(res); return AllMovieRef.current = res; } }),
       getRecentMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setRecentMovies(res) } }),
       getMostActiveMovies().then(res => { if (res === undefined) { return isActiveMovieWorking.current = false } else { return setActiveMovies(res) } }),
     ])
@@ -100,7 +100,7 @@ export default function ChooseMovies(props: props) {
   // variables
   const snapPoints = useMemo(() => ['38%'], []);
 
-  // callbacks
+  // ===================================callbacks====================================================\\
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
@@ -117,9 +117,24 @@ export default function ChooseMovies(props: props) {
     []
   );
 
-  //FOR bottom sheet modal for sorting function
+  //=========================FOR bottom sheet modal for sorting function===================================\\
   const BottomSheet = () => {
-
+    const [value, setValue] = React.useState('A-Z');
+    const Sorting = (params: string) => {
+      setValue(params);
+      if (params == 'A-Z') {
+        setallMovieRes(AllMovieRef.current)
+        return console.log(allMovieRes)
+      } else if (params == 'Z-A') {
+        let temp = AllMovieRef.current
+        setallMovieRes(temp.reverse())
+        return console.log(temp)
+      } else if (params == 'acend') {
+        return
+      } else {
+        return
+      }
+    }
     // renders
     return (
       <BottomSheetModal
@@ -138,11 +153,11 @@ export default function ChooseMovies(props: props) {
             <View style={{ paddingBottom: vw(2) }}>
               <Text style={{ fontSize: 16, fontWeight: '500' }}>Sort By</Text>
             </View>
-            <RadioButton.Group onValueChange={value => setValue(value)} value={value} >
-              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Alphabetical Z-A" value="Alphabetical Z-A" />
-              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Alphabetical A-Z" value="Alphabetical A-Z" />
-              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Year wise ascending" value="Year wise ascending" />
-              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Year wise descending" value="Year wise descending" />
+            <RadioButton.Group onValueChange={value => Sorting(value)} value={value} >
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Alphabetical A-Z" value="A-Z" />
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Alphabetical Z-A" value="Z-A" />
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Year wise ascending" value="ascend" />
+              <RadioButton.Item style={{ width: vw(100), paddingHorizontal: vw(10) }} labelStyle={{ fontSize: 14, fontWeight: 'bold' }} color={Style.defaultRed} label="Year wise descending" value="descend" />
             </RadioButton.Group>
 
           </View>
@@ -151,8 +166,29 @@ export default function ChooseMovies(props: props) {
     );
   };
 
+  //======================================All Movies=======================================================\\
+  const AllMovies = useCallback(() => {
+
+    return (
+      < FlatList
+        // bounces={false}
+        style={{ width: vw(100), flex: 1 }
+        }
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(_, index) => index.toString()}
+        data={allMovieRes}
+        renderItem={({ item, index }: any) => <MovieBanner item={item} index={index} />
+        }
+        // estimatedItemSize={vh(12)}
+        ListEmptyComponent={() => <SkeletonVertical />}
+      />
+
+    )
+  }, [allMovieRes]);
+
+
   // for rending movie card list 
-  const MovieBanner = useCallback(({ item, index }: any) => {
+  const MovieBanner = ({ item, index }: any) => {
     const check: string = item.posterContentThumb;
     let FS = check.split('.').pop();
     return (
@@ -195,11 +231,31 @@ export default function ChooseMovies(props: props) {
       </View>
     )
 
-  }, [allMovieRes])
+  }
 
   const SectionHeading = useCallback((section: any) => {
     if (!section.sort) {
-      return (
+      if (!section.recent) {
+        return (
+          <View style={{
+            justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2),
+          }}>
+            <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
+            <FlatList
+              horizontal
+              style={{ width: vw(100) }}
+              showsHorizontalScrollIndicator={false}
+              data={section.data}
+              renderItem={({ item, index }: any) => <MovieCards item={item} index={index} />}
+              ListEmptyComponent={() => <SkeletonHorizontal />}
+            // estimatedItemSize={vw(40)}
+            />
+            <TouchableOpacity onPress={() => props.navigation.navigate('SeeMostActive', { Data: section.data })} >
+              <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      } else return (
         <View style={{
           justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2),
         }}>
@@ -213,7 +269,7 @@ export default function ChooseMovies(props: props) {
             ListEmptyComponent={() => <SkeletonHorizontal />}
           // estimatedItemSize={vw(40)}
           />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => props.navigation.navigate('SeeRecent', { Data: section.data })} >
             <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
           </TouchableOpacity>
         </View>
@@ -234,20 +290,11 @@ export default function ChooseMovies(props: props) {
             </View>
           </TouchableOpacity>
         </View>
-        {/* <View style={{flex:1, width:vw(100)}}> */}
-        <FlatList
-          // bounces={false}
-          style={{ width: vw(100), flex: 1 }}
-          showsVerticalScrollIndicator={false}
-          data={section.data}
-          renderItem={({ item, index }: any) => <MovieBanner item={item} index={index} />}
-          // estimatedItemSize={vh(12)}
-          ListEmptyComponent={() => <SkeletonVertical />}
-        />
-        {/* </View> */}
+        <AllMovies />
       </View>
     )
-  }, [allMovieRes, RecentMovies, ActiveMovies])
+  }, [allMovieRes])
+
   const MovieCards = ({ item, index }: any) => {
 
     return (
@@ -268,9 +315,9 @@ export default function ChooseMovies(props: props) {
       }
       else {
         const sect: any[] = [
-          { title: 'Recent Quib', sort: false, data: RecentMovies, renderItem: () => { return null } },
-          { title: 'Most Active Quib', sort: false, data: ActiveMovies, renderItem: () => { return null } },
-          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: () => { return null } },
+          { title: 'Recent Quib', sort: false, recent: true, data: RecentMovies, renderItem: () => { return null } },
+          { title: 'Most Active Quib', sort: false, recent: false, data: ActiveMovies, renderItem: () => { return null } },
+          { title: 'All Movies', sort: true, recent: false, data: allMovieRes, renderItem: () => { return null } },
         ]
         return sect
       }

@@ -16,9 +16,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
-        {/* <NavigationContainer onReady={() => RNBootSplash.hide({ fade: true })}> */}
           <Router />
-        {/* </NavigationContainer> */}
       </AuthProvider>
     </GestureHandlerRootView>
 

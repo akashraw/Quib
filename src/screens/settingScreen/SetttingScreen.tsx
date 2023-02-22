@@ -18,7 +18,9 @@ export default function SetttingScreen() {
     const navigation = useNavigation();
     const Auth = useContext(AuthContext);
     React.useEffect(() => {
-        Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)))
+        if (Auth.isGuest == false) {
+            Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)))
+        }
     }, [])
     const LoginModal = React.useCallback(() => {
         const modalToggle = () => {
@@ -58,15 +60,20 @@ export default function SetttingScreen() {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: vw(90), marginBottom: vw(10), paddingHorizontal: vw(5) }}>
                 <View style={{ flexDirection: 'row', }}>
                     {/* <Shadow distance={5}> */}
-                    <FastImage
-                        source={{
-                            uri: `${image256API}${User.avatarBase256ImagePath}`,
-                            priority: FastImage.priority.high,
-                            cache: FastImage.cacheControl.immutable,
-                        }}
-                        resizeMode="contain"
-                        style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
-                    />
+                    {
+                        Auth.isGuest == false ?
+                            <FastImage
+                                source={{
+                                    uri: `${image256API}${User.avatarBase256ImagePath}`,
+                                    priority: FastImage.priority.high,
+                                    cache: FastImage.cacheControl.immutable,
+                                }}
+                                resizeMode="contain"
+                                style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
+                            />
+                            :
+                            <View style={{ width: vw(25), height: vw(25), backgroundColor: 'transparent' }} />
+                    }
                     {/* </Shadow> */}
                     {
                         Auth.isGuest == false ?
