@@ -203,10 +203,6 @@ export default function ProfileStream(routes: any) {
                 data={FlatData}
                 extraData={FlatData}
                 renderItem={({ item, index }) => < Quibs item={item} index={index} />}
-                // initialNumToRender={10}
-                // windowSize={5}
-                // maxToRenderPerBatch={10}
-                // updateCellsBatchingPeriod={30}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(_, index) => index.toString()}
                 initialScrollIndex={0}

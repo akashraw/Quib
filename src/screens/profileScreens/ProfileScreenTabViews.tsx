@@ -63,21 +63,20 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
   const Auth = React.useContext(AuthContext);
   useEffect(() => {
     Promise.all([
-      getMovieByUserId({ userId: Auth.userName }).then((res) => { setQuib(res) }),
-      getFollowersByUserId({ userId: Auth.userName }).then((res) => { setFollower(res) }),
-      getFolloweeByUserId({ userId: Auth.userName }).then((res) => { setFollowee(res) }),
+      setQuib(quib),
+      setFollowee(followee),
+      setFollower(follower),      
     ])
-    console.log(Quib.length)
   }, [])
 
-  const [routes, setRoutes] = useState([
+  const [routes] = useState([
     { key: 'first', title: 'Quibbed', total: quib.length },
     { key: 'second', title: 'Following', total: followee.length },
     { key: 'thrid', title: 'Followers', total: follower.length },
   ]);
 
   const Profile = (userId: string) => {
-    if (userId != Auth.userName) {
+    if (userId !== Auth.userName) {
       return navigation.navigate('OtherProfile' as never, { userId: userId } as never);
     } else return navigation.navigate('Profile' as never);
   };
@@ -97,7 +96,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
   const Quibbed = React.useCallback(() => {
 
     return (
-      <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100) }}>
+      <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100), height:vh(100) }}>
         <FlashList
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
@@ -150,13 +149,14 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
 
             {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
             <View style={styles.followFollowers}>
-              <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
+              <TouchableOpacity onPress={() => Profile(followeeId)} key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
                 <View
                   style={{
                     alignSelf: 'center',
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
+                    width:vw(70)
                   }}>
                   <Image
                     style={{
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    marginTop: vw(1.5),
+    marginTop: vw(1),
     backgroundColor: 'transparent',
     fontWeight: 'bold',
   },

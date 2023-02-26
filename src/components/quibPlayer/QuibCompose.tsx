@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated, Alert, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated, Alert, Dimensions, Keyboard } from 'react-native'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { vh, vw } from 'rxn-units';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import { Style } from '../../constants/Styles';
 import { quibPlayerStyles } from './QuibPlayerStyle';
 import { SceneMap, TabView, NavigationState, SceneRendererProps } from 'react-native-tab-view';
@@ -10,10 +10,10 @@ import FastImage from 'react-native-fast-image';
 import { DeleteBump, AddQuib, QuibByMovieAndUserId, DeleteQuib } from '../../services/QuibAPIs';
 import { API } from '../../constants/Api';
 import DropShadow from 'react-native-drop-shadow';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import { Button } from 'react-native-paper';
 import NumberPlease from 'digicard-react-native-number-please';
+import Toast from 'react-native-toast-message';
 const deviceHeight = Dimensions.get('screen').height;
 
 
@@ -106,9 +106,9 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
 
       return (
         <Modal isVisible={isModalVisible} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.7}
-        onBackdropPress={() => setModalVisible(false)} onBackButtonPress={() => setModalVisible(false)} useNativeDriver={true}
-        useNativeDriverForBackdrop={true} statusBarTranslucent={true} deviceHeight={deviceHeight}>
-          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(20), borderRadius:vw(2) }}>
+          onBackdropPress={() => setModalVisible(false)} onBackButtonPress={() => setModalVisible(false)} useNativeDriver={true}
+          useNativeDriverForBackdrop={true} statusBarTranslucent={true} deviceHeight={deviceHeight}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(20), borderRadius: vw(2) }}>
             <Text>Select the time(HH:MM:SS)</Text>
             <NumberPlease
               pickers={CountDown}
@@ -242,18 +242,20 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
   );
 
   const setData = () => {
-    AddQuib({ MovieId: MovieId, userId: '', time: time, body: QuibInput } as PostQuibProp).then(() => setRefresh(true));
-
-
-    // DataRef.current.push({
-    //   Quib: QuibInput,
-    //   time:time
-    // })
-    // setFlatData([...DataRef.current]);
+    Keyboard.dismiss();
+    if (QuibInput == '') {
+      return Toast.show({
+        visibilityTime: 5000,
+        autoHide: true,
+        type: 'error',
+        text1: 'Empty field',
+        text2: 'Please write a Quib before saving it.',
+      })
+    } else AddQuib({ MovieId: MovieId, userId: userId, time: time, body: QuibInput } as PostQuibProp).then(() => setRefresh(true))
   }
 
   const deletePost = ({ id, movieId, index }: any) => {
-    Promise.resolve(DeleteBump({ quibId: id, MovieId: movieId, userId: '' }))
+    Promise.resolve(DeleteBump({ quibId: id, MovieId: movieId, userId: userId }))
       .then(() => handleRemoveItem(index)).then(() => console.log('deleted'))
   }
 
@@ -409,10 +411,16 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ color: Style.defaultTxtColor, fontSize: 20, fontWeight: '500', paddingBottom: vw(1) }}>Write a Quib</Text>
       </View>
-      <View style={{ backgroundColor: Style.quibPlayerCardBack, borderWidth: 1, borderRadius: vw(1), borderColor: '#fff', width: vw(90), height: vw(30), marginBottom:vw(1),alignItems:'flex-start', justifyContent:'flex-start' }}>
-        {/* <BottomSheetTextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} /> */}
-        <TextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3), flex:1, justifyContent:'flex-start', flexDirection:'row', alignItems:'flex-start' }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
-      </View>
+      {/* <View style={{ backgroundColor: Style.quibPlayerCardBack, borderWidth: 1, borderRadius: vw(1), borderColor: '#fff', width: vw(90), height: vw(30), marginBottom: vw(1), flexDirection:'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}> */}
+      {/* <BottomSheetTextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true} style={{ paddingHorizontal: vw(3) }} onChange={({ nativeEvent: { text } }) => setQuibInput(text)} /> */}
+      <TextInput placeholderTextColor={Style.defaultTxtColor} placeholder='Write a Quib here..' multiline={true}
+        style={{
+          paddingHorizontal: vw(3), backgroundColor: Style.quibPlayerCardBack, borderWidth: 1, borderRadius: vw(1),
+          borderColor: '#fff', width: vw(90), marginBottom: vw(1), flexDirection: 'row', alignItems: 'flex-start',
+          justifyContent: 'flex-start', color: 'black'
+        }}
+        onChange={({ nativeEvent: { text } }) => setQuibInput(text)} />
+      {/* </View> */}
       <View style={{ paddingTop: vw(1), flexDirection: 'row', justifyContent: 'space-around', width: vw(80), marginBottom: vw(-4) }}>
         <Timer />
         <TouchableOpacity activeOpacity={.4} disabled={false} onPress={setData}>
@@ -433,6 +441,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
         />
 
       </View>
+      {/* <Toast /> */}
     </View>
     // </BottomSheetModal>
     // {/* </BottomSheetModalProvider> */}

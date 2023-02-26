@@ -31,7 +31,8 @@ export default function AuthStack() {
       screenOptions={{
         headerStyle: { backgroundColor: Style.quibHeader },
         statusBarColor: Style.quibHeader,
-        navigationBarHidden: true,
+        // navigationBarHidden: true,
+        // navigationBarColor:'transparent'
       }}
       initialRouteName="Home">
       <Stack.Screen
@@ -41,6 +42,7 @@ export default function AuthStack() {
           headerShown: false,
           statusBarColor: Style.quibBackColor,
           header: () => <Logo />,
+          navigationBarHidden: true,
         }}
       />
       <Stack.Screen
@@ -52,6 +54,7 @@ export default function AuthStack() {
           headerShown: false,
           headerLeft: () => <BackIcon />,
           statusBarColor: Style.quibBackColor,
+          navigationBarHidden: true,
           // headerRight: () => <OnLandingButton text="Log In" onPress="Login" viewStyle={null} textStyle={null} />,
         }}
       />
@@ -60,6 +63,7 @@ export default function AuthStack() {
         component={LoginScreen}
         options={{
           headerShown: false,
+          navigationBarHidden: true,
           statusBarColor: Style.quibBackColor,
         }}
       />
@@ -68,6 +72,7 @@ export default function AuthStack() {
         component={ForgetPassword}
         options={{
           headerShown: false,
+          navigationBarHidden: true,
           statusBarColor: Style.quibBackColor,
         }}
       />

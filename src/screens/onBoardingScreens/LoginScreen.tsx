@@ -67,7 +67,10 @@ export default function LoginScreen(props: props) {
         return reset();
       }
     } catch (error) {
-      console.log(error);
+      setFail(true)
+      setActivity(false)
+      reset();
+      return console.log(error);
     }
   }
 
@@ -112,7 +115,7 @@ export default function LoginScreen(props: props) {
               rules={{
                 required: {
                   value: true,
-                  message: 'email is required!'
+                  message: 'Email is required!'
                 },
                 pattern: {
                   value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -170,10 +173,10 @@ export default function LoginScreen(props: props) {
           </View>
           <View style={{ justifyContent: 'space-evenly', alignItems: 'center', marginTop: vw(10), flexDirection: 'row' }}>
             <View style={{ paddingVertical: 10, }}>
-              <QuibButton text={'Join'} onPressed={() => { props.navigation.navigate('Register') }} viewStyle={styles.button} textStyle={styles.buttonTxt} />
+              <QuibButton text={'Join Us'} onPressed={() => { props.navigation.navigate('Register') }} viewStyle={styles.button} textStyle={styles.buttonTxt} />
             </View>
             <View style={{ paddingVertical: 10, }}>
-              <QuibButton text={'Visit'} onPressed={() => { props.navigation.navigate('Choose') }} viewStyle={styles.button} textStyle={styles.buttonTxt} />
+              <QuibButton text={'Visit'} onPressed={() => { props.navigation.navigate('Bottom') }} viewStyle={styles.button} textStyle={styles.buttonTxt} />
             </View>
           </View>
         </View>

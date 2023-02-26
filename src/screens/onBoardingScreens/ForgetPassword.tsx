@@ -75,7 +75,7 @@ export default function ForgetPassword(props: props) {
                             rules={{
                                 required: {
                                     value: true,
-                                    message: 'email is required!'
+                                    message: 'Email is required!'
                                 },
                                 pattern: {
                                     value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -96,14 +96,14 @@ export default function ForgetPassword(props: props) {
                             <Text style={{ paddingTop: vw(4), color: Style.forgetPass }}>Forgot the password?</Text>
                         </TouchableOpacity> */}
                     </View>
-                    <View style={{ justifyContent: 'space-evenly', alignItems: 'center', marginTop: vw(10), flexDirection: 'row' }}>
+                    {/* <View style={{ justifyContent: 'space-evenly', alignItems: 'center', marginTop: vw(10), flexDirection: 'row' }}>
                         <View style={{ paddingVertical: 10, }}>
                             <QuibButton text={'Join'} onPressed={() => { props.navigation.navigate('Register') }} viewStyle={styles.button} textStyle={styles.buttonTxt} />
                         </View>
                         <View style={{ paddingVertical: 10, }}>
                             <QuibButton text={'Visit'} onPressed={() => { props.navigation.navigate('Choose') }} viewStyle={styles.button} textStyle={styles.buttonTxt} />
                         </View>
-                    </View>
+                    </View> */}
                 </View>
             </KeyboardAwareScrollView>
             <Modal isVisible={Activity} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.6}

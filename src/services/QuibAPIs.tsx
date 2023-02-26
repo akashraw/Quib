@@ -165,7 +165,6 @@ export async function getUserProfile(id: any) {
 
 //add Bumb Quib
 export async function AddBump(Bump: BumpProp) {
-    console.log(Bump);
     const headerOptions = {
         method: 'POST',
         headers: {
@@ -173,9 +172,8 @@ export async function AddBump(Bump: BumpProp) {
             'Content-type': 'application/json'
         },
     }
-    Bump.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
-         await fetch(`${addBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
+        await fetch(`${addBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
         // let json = await response.json();
         // console.log(json)
     }
@@ -261,10 +259,12 @@ export async function AddQuib(Quib: PostQuibProp) {
             'Content-type': 'application/json'
         },
     }
+    console.log(Quib.body)
     // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // console.log(Quib.tim
     try {
         let json;
-        let response = await fetch(`${addQuibAPI}?body=${Quib.body}&UserId=${Quib.userId}=${Quib.MovieId}&isSeedQuib=false&isSeedQuibType=null&isScreenShot=false&Time=${Quib.time}`, headerOptions);
+        let response = await fetch(`${addQuibAPI}?body=${Quib.body}&UserId=${Quib.userId}&MovieId=${Quib.MovieId}&isSeedQuib=false&isSeedQuibType=null&isScreenShot=false&Time=${Quib.time}`, headerOptions);
         json = await response.json();
         console.log(json)
         // return json;
@@ -335,7 +335,6 @@ export async function getFolloweeByUserId(Quib: QuibUserIdProp) {
         let json;
         let response = await fetch(`${getFolloweeByUserIdAPI}?UserId=${Quib.userId}`, headerOptions);
         json = await response.json();
-        // console.log(json)
         return json;
     }
     catch (error) {
@@ -353,8 +352,8 @@ export async function getUserById(Quib: QuibUserIdProp) {
             'Content-type': 'application/json'
         },
     }
-    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
-    console.log(Quib.userId)
+
+
     try {
         let json;
         let response = await fetch(`${getUserByIdAPI}?UserId=${Quib.userId}`, headerOptions);
@@ -363,7 +362,6 @@ export async function getUserById(Quib: QuibUserIdProp) {
     }
     catch (error) {
         console.log('getUserById Api error ' + error);
-
     }
 
 }
@@ -377,7 +375,6 @@ export async function getOtherUserById(Quib: QuibUserIdProp) {
             'Content-type': 'application/json'
         },
     }
-    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     try {
         let json;
         let response = await fetch(`${getUserByIdAPI}?UserId=${Quib.userId}`, headerOptions);

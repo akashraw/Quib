@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { AuthContext } from '../../Auth'
 import { getUserById, getUserProfile } from '../../services/QuibAPIs'
 import FastImage from 'react-native-fast-image'
-import { image256API } from '../../constants/Api'
+import { image256API, UpdateUserAPI } from '../../constants/Api'
 
 interface props {
     navigation: any;
@@ -24,22 +24,54 @@ export default function ProfileEditScreen(props: props) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [Img, setImg] = useState('');
+    const [Password, setPassword] = useState('')
     const [Bio, setBio] = useState('');
 
     //==============================================================useEffect======================================================================\\
     React.useEffect(() => {
         Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)))
-        console.log(User.userName)
     }, [])
 
     //*******************************************//
     const Color = "#5555";
+    const Update = async () => {
+        const headerOption = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "id": User.id,
+                "userName": userName,
+                "firstName": firstName,
+                "lastName": lastName,
+                "about": Bio,
+                "passwordHash": null,
+                "avatarBase256ImagePath": Img
+            })
+        }
+        try {
+            let response = await fetch(`${UpdateUserAPI}`, headerOption);
+            let json = await response.json();
+            if (response.status == 200) {
+                if (json == true)
+                    return setIsUserFollowed(true)
+                else return setIsUserFollowed(false)
+            } else {
+
+            }
+            // return json;
+        } catch (error) {
+            console.log('isUserFollowed Api call: ' + error)
+        }
+    }
 
     const UserIcon = () => {
         if (!Img)
             return (
                 <TouchableOpacity onPress={launchImgLib}>
-                    <View style={{ borderRadius: vw(20), borderWidth:0, borderColor: Style.defaultRed, marginBottom: vw(1) }}>
+                    <View style={{ borderRadius: vw(20), borderWidth: 0, borderColor: Style.defaultRed, marginBottom: vw(1) }}>
                         {/* <MatComIcon name='account-edit' size={72} color={Style.defaultRed}/> */}
                         <FastImage
                             source={{
@@ -96,6 +128,12 @@ export default function ProfileEditScreen(props: props) {
                             value={lastName}
                             placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setLastName(text)} style={styles.inputTxt} />
+                    </View>
+                    <View style={styles.inputField}>
+                        <TextInput placeholder='Password'
+                            value={Password}
+                            placeholderTextColor={Color}
+                            onChangeText={(text) => setPassword(text)} style={styles.inputTxt} />
                     </View>
                     <View style={[styles.inputField, { height: vw(30), justifyContent: 'flex-start' }]}>
                         <TextInput placeholder={User.about}

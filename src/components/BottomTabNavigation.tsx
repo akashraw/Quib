@@ -27,7 +27,7 @@ const BackIcon = () => {
     const navigation = useNavigation();
     return (
         <View >
-            <TouchableOpacity style={{ flexDirection: 'row', paddingLeft: vw(4), justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('Choose' as never)}>
+            <TouchableOpacity style={{ flexDirection: 'row', paddingLeft: vw(4), justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.goBack()}>
                 <IonIcon name='arrow-back' size={26} color={Style.defaultRed} />
             </TouchableOpacity>
         </View>

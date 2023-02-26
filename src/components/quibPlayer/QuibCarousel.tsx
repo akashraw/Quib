@@ -1,12 +1,19 @@
 import { Text, TouchableOpacity, View } from 'react-native'
-import React, { memo } from 'react'
+import React, { memo, SetStateAction } from 'react'
 import FastImage from 'react-native-fast-image'
-import { LocalSvg } from 'react-native-svg'
 import { vw } from 'rxn-units'
 import { API } from '../../constants/Api'
 import { Style } from '../../constants/Styles'
 import { quibPlayerStyles } from './QuibPlayerStyle'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+interface props {
+    item: any,
+    index: number,
+    handlePresentModalPress: (p: number) => void,
+    isGuest: boolean,
+    setActive: React.Dispatch<SetStateAction<boolean>>,
+}
 
 const getFormattedTime = (time: number) => {
     const hours = Math.floor(time / 3600);
@@ -16,36 +23,29 @@ const getFormattedTime = (time: number) => {
 }
 
 
-function QuibCarousel({ item, index }: any) {
+function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive }: props) {
     let { hours, mintues, seconds } = getFormattedTime(item.time);
-    //Quib list quibs head in (profile image, name, timestamp and quib)
-    const QuibHead = ({ hours, mintues, seconds, isSS, image, name }: any) => {
+
+    const QuibHead = ({ hours, mintues, seconds, isSS }: any) => {
         if (isSS == true)
             return (
-                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row',}}>
-                        {/* <View style={{ justifyContent: 'flex-start', }}>
-                            <TouchableOpacity>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: vw(3) }}>
-                                    <FastImage source={{ uri: API + image }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
-                                    <Text style={{ color: Style.defaultTxtColor, fontSize: 12, fontWeight: 'bold' }} numberOfLines={1} >{name}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View> */}
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', }}>
+                    <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', }}>
                         <View style={{ justifyContent: 'center', position: 'absolute', }}>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => isGuest == true ?
+                                    setActive(true) : handlePresentModalPress(item.time)}>
                                 <View style={[...[quibPlayerStyles.timer], { width: vw(20), height: vw(5), marginBottom: vw(0) }]}>
                                     <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ right: vw(2), position: 'absolute',}}>
+                        <View style={{ right: vw(2), position: 'absolute', }}>
                             <TouchableOpacity>
-                                <LocalSvg
-                                    fill={'#00000000'}
-                                    width={vw(6)}
-                                    height={vw(6)}
-                                    asset={require('../../assets/bump.svg')}
+                                <Icon
+                                    name="heart-outline"
+                                    size={vw(5)}
+                                    color={Style.defaultRed}
                                 />
                             </TouchableOpacity>
                         </View>
@@ -53,9 +53,9 @@ function QuibCarousel({ item, index }: any) {
                 </View>
             )
         else return (
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                    <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', }}>
-                         <View style={{ justifyContent: 'center', position: 'absolute', }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', }}>
+                <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', }}>
+                    <View style={{ justifyContent: 'center', position: 'absolute', }}>
                         <TouchableOpacity>
                             <View style={[...[quibPlayerStyles.timer], { width: vw(20), height: vw(5), marginBottom: vw(0) }]}>
                                 <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
@@ -64,11 +64,10 @@ function QuibCarousel({ item, index }: any) {
                     </View>
                     <View style={{ right: vw(2), position: 'absolute' }}>
                         <TouchableOpacity>
-                            <LocalSvg
-                                fill={'#00000000'}
-                                width={vw(6)}
-                                height={vw(6)}
-                                asset={require('../../assets/bump.svg')}
+                            <Icon
+                                name="heart-outline"
+                                size={vw(5)}
+                                color={Style.defaultRed}
                             />
                         </TouchableOpacity>
                     </View>
@@ -83,18 +82,7 @@ function QuibCarousel({ item, index }: any) {
             return (
                 <View key={index} style={quibPlayerStyles.flatlistContainer}>
                     {/* <View style={{ flex: 1, flexDirection: 'row' }}> */}
-                        <QuibHead hours={hours} mintues={mintues} seconds={seconds} image={item.avatarBase32ImagePath} isSS={item.isScreenshot} name={null} />
-                    {/* </View> */}
-                    {/* <View style={[quibPlayerStyles.flatlistComps, { flex: 1, flexDirection: 'row', marginTop: vw(-35) }]}>
-                        <View style={{ flex: 1, justifyContent: 'flex-start', }}>
-                            <TouchableOpacity>
-                                <View style={{ flexDirection: 'row', position: 'absolute', justifyContent: 'center', alignItems: 'center', paddingTop: vw(20) }}>
-                                    <FastImage source={{ uri: API + item.avatarBase32ImagePath }} style={{ width: vw(8), height: vw(8), marginTop: vw(-2.5), borderRadius: vw(.5), marginRight: vw(1) }} />
-                                    <Text style={{ color: Style.defaultTxtColor, fontSize: 16, fontWeight: 'bold' }} numberOfLines={1} >{item.displayName}:</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View> */}
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
                     <View style={{ flex: 1, }}>
                         <Text style={{ flex: 1, color: Style.defaultTxtColor, fontSize: 14, fontWeight: '500', textAlign: 'left' }}>{item.body}</Text>
                     </View>
@@ -103,7 +91,7 @@ function QuibCarousel({ item, index }: any) {
 
         else return (
             <View key={index} style={quibPlayerStyles.flatlistContainer}>
-                <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} image={null} name={null} />
+                <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
                 <View style={quibPlayerStyles.flatlistComps}>
                     <FastImage
                         source={{
@@ -119,7 +107,7 @@ function QuibCarousel({ item, index }: any) {
         )
     }
     return (
-        <View style={{ marginLeft: vw(3), marginRight:vw(1) }}>
+        <View style={{ marginLeft: vw(3), marginRight: vw(1) }}>
             <QuibList />
         </View>
     )

@@ -52,9 +52,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             // let token = await AsyncStorage.getItem(TOKEN_KEY);
             // await AsyncStorage.clear()
             let user = await AsyncStorage.getItem(USER_KEY);
-            user != null ? JSON.parse(user) : null;
-
-            if (user != null) {
+            user !== null ? user : null;
+            console.log(user)
+            if (user !== null) {
                 return dispatch({
                     type: 'LOGIN',
                     isGuest: false,
@@ -66,7 +66,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
             }
         } catch (error) {
-            console.log('this '+error)
+            console.log('this ' + error)
         }
     };
 
@@ -75,8 +75,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         try {
             //STORE DATA
             // token = [TOKEN_KEY, token]
-            // let dataAsync = [[USER_KEY, JSON.stringify(user)], [TOKEN_KEY, token]];
-            await AsyncStorage.setItem(USER_KEY, JSON.stringify(data));
+            // let dataAsync = JSON.stringify(data);
+            await AsyncStorage.setItem(USER_KEY, data);
 
 
             //DISPATCH TO REDUCER

@@ -1,12 +1,12 @@
-export const StringData={   
+export const StringData = {
     onLandingHead: 'Share what you know and love about great movies',
-    registerHead:'Join Us',
-    loginHead:'Log In',    
-    agreeEula:'I Agree with Terms & Conditions',
+    registerHead: 'Join Us',
+    loginHead: 'Log In',
+    agreeEula: 'I Agree with Terms & Conditions',
 }
-export const Eula={
-    Terms:`Quib® terms of service:
-    
+export const Eula = {
+    head: 'Quib® terms of service:',
+    Terms: `
     Welcome to Quib, the website and online service of Quib Inc. By using our services, you are agreeing to these terms. Please read them carefully.
     
     Quib lets you create comments associated with any point along the timeline of a movie. Because the service is in beta, its capabilities are limited, and you might encounter bugs. Please alert us to issues, and please suggest improvements.

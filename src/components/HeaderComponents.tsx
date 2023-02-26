@@ -15,9 +15,7 @@ export const Logo = () => {
                     source={require('../assets/logo.png')}
                 />
             </TouchableOpacity>
-
         </View>
-
     )
 }
 export const Heading = (props: any) => {

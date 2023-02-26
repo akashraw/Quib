@@ -23,15 +23,15 @@ export default function ProfileScreen({ navigation }: props) {
     const [Followers, setFollowers] = useState<any[]>([]);
     const [QuibMovies, setQuibMovies] = useState<any[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const user = Auth.userName;
 
-
-    useEffect(() => {
+    useEffect(() => {+
         Promise.all([
-            getMovieByUserId({ userId: Auth.userName }).then((res) => { setQuibMovies(res) }),
-            getFollowersByUserId({ userId: Auth.userName }).then((res) => { setFollowers(res) }),
-            getFolloweeByUserId({ userId: Auth.userName }).then((res) => { setFollowings(res) }),
-            getUserById({ userId: Auth.userName }).then((res) => setUser(res))
-        ]).then(()=>setIsLoaded(true)).then(()=>console.log(User.avatarBase256ImagePath))
+            getMovieByUserId({ userId: user }).then((res) => { setQuibMovies(res) }),
+            getFollowersByUserId({ userId: user }).then((res) => { setFollowers(res) }),
+            getFolloweeByUserId({ userId: user }).then((res) => { setFollowings(res) }),
+            getUserById({ userId: user }).then((res) => setUser(res))
+        ]).then(() => setIsLoaded(true))
     }, [])
     return (
         <SafeAreaView style={{}}>
@@ -64,14 +64,6 @@ export default function ProfileScreen({ navigation }: props) {
                                         </View>
                                     </View>
                                 </View>
-                                {/* <View style={{ flex: 1, flexDirection: 'row', paddingBottom: vw(5),  alignSelf:'center' }}>
-                            <View style={{ padding: vw(2) }}>
-                                <QuibButton text='Edit Profile' onPress={'Join'} viewStyle={styles.button} textStyle={styles.buttonTxt as any} />
-                            </View>
-                            <View style={{ padding: vw(2) }}>
-                                <QuibButton text='Log Out' onPress={'Join'} viewStyle={styles.button} textStyle={styles.buttonTxt as any} />
-                            </View>
-                        </View> */}
                             </View>
                         </View>
                         <View style={{ height: vh(100), }}>

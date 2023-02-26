@@ -30,6 +30,7 @@ export default function RegisterScreen(props: props) {
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [Img, setImg] = useState('');
     const [Activity, setActivity] = useState(false);
+    const [ActivityEula, setActivityEula] = useState(false);
     const [selectImg, setSelectImg] = useState(false);
     const {
         control,
@@ -403,7 +404,12 @@ export default function RegisterScreen(props: props) {
                             tintColors={{ true: Style.defaultRed }}
                             onValueChange={(newValue) => setToggleCheckBox(newValue)}
                         />
-                        <Text style={{ color: '#333333', marginLeft: vw(2), fontWeight: '500' }}>{StringData.agreeEula}</Text>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={{ color: '#333333', marginLeft: vw(2), fontWeight: '500' }}>I Agree with </Text>
+                            <TouchableOpacity onPress={() => setActivityEula(true)}>
+                                <Text style={{ color: Style.defaultRed, fontWeight: '500', }}>Terms & Conditions</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: vw(2) }}>
                         <TouchableOpacity activeOpacity={.4} onPress={handleSubmit(onSubmit)}>
@@ -430,6 +436,16 @@ export default function RegisterScreen(props: props) {
                         {/* <QuibButton text={'Do it later'} onPressed={() => { setActivity(false) }} viewStyle={[[styles.button], { backgroundColor: Style.defaultGrey }]} textStyle={styles.buttonTxt} />
             <QuibButton text={'Ok, let dot it'} onPressed={() => { navigation.navigate('Login') }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> */}
                     </View>
+                </View>
+            </Modal>
+            <Modal isVisible={ActivityEula} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.6}
+                onBackdropPress={() => setActivityEula(false)} onBackButtonPress={() => setActivityEula(false)} useNativeDriver={true}
+                useNativeDriverForBackdrop={true} statusBarTranslucent={true} style={{ height: vh(100), }} deviceHeight={deviceHeight} >
+                <View style={{ backgroundColor: '#fff', height: vh(70), borderRadius: vw(2) }}>
+                    <ScrollView scrollEnabled={true} style={{ backgroundColor: '#fff', paddingHorizontal: vw(2), paddingVertical: vw(4), borderRadius: vw(2), height: vh(75), width: vw(90) }}>
+                        <Text style={{ color: 'black', fontWeight: '500', fontSize: vw(4) }}> {Eula.head}</Text>
+                        <Text style={{ color: 'black' }}> {Eula.Terms}</Text>
+                    </ScrollView>
                 </View>
             </Modal>
         </SafeAreaView >

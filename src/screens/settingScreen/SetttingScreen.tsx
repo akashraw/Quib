@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView } from 'react-native'
 import React, { useContext } from 'react'
 import QuibButton from '../../components/QuibButton'
 import { vh, vw } from 'rxn-units'
@@ -11,15 +11,19 @@ import { useNavigation } from '@react-navigation/native'
 import Modal from 'react-native-modal';
 import { getUserById } from '../../services/QuibAPIs'
 import { image256API } from '../../constants/Api'
+import { StringData } from '../../constants/Constant'
 const deviceHeight = Dimensions.get('screen').height;
 
 export default function SetttingScreen() {
     const [User, setUser] = React.useState<any>([])
     const navigation = useNavigation();
     const Auth = useContext(AuthContext);
+    const user = Auth.userName;
+    const [ActivityEula, setActivityEula] = React.useState(false);
+
     React.useEffect(() => {
         if (Auth.isGuest == false) {
-            Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)))
+            Promise.resolve(getUserById({ userId: user }).then((res) => setUser(res)))
         }
     }, [])
     const LoginModal = React.useCallback(() => {
@@ -166,16 +170,19 @@ export default function SetttingScreen() {
                             </TouchableOpacity>
                     }
                 </View>
-
-                {/* <QuibButton text={'Notifications Settings'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} />
-                <QuibButton text={'Terms and Conditions'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} />
-                <QuibButton text={'Privacy Policy'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} />
-                <QuibButton text={'Contact Us'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} />
-                <QuibButton text={'About'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} />
-                <QuibButton text={'Logout'} onPress={undefined} viewStyle={styles.viewStyle} textStyle={styles.txtStyle} /> */}
             </View>
             {/* Settting list ends here */}
             <LoginModal />
+            <Modal isVisible={ActivityEula} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.6}
+                onBackdropPress={() => setActivityEula(false)} onBackButtonPress={() => setActivityEula(false)} useNativeDriver={true}
+                useNativeDriverForBackdrop={true} statusBarTranslucent={true} style={{ height: vh(100), }} deviceHeight={deviceHeight} >
+                <ScrollView style={{
+                    flex: 1, justifyContent: 'center',
+                    alignItems: 'center', flexDirection: 'column',
+                }}>
+                    {StringData.agreeEula}
+                </ScrollView>
+            </Modal>
         </SafeAreaView>
     )
 }

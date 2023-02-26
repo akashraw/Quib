@@ -31,7 +31,8 @@ export default function AppStack() {
       screenOptions={{
         headerStyle: { backgroundColor: Style.quibHeader },
         statusBarColor: Style.quibHeader,
-        navigationBarHidden: true,
+        // navigationBarHidden: true,
+        navigationBarColor:'transparent'
       }}
       initialRouteName="Bottom">
       <Stack.Screen

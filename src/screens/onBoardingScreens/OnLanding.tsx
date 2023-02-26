@@ -93,7 +93,7 @@ export default function OnLanding({ navigation }: props) {
             marginTop: 40,
           }}>
           <QuibButton
-            text={'Join'}
+            text={'Join Us'}
             onPressed={() => { navigation.navigate("Register") }}
             viewStyle={styles.button}
             textStyle={styles.buttonTxt}

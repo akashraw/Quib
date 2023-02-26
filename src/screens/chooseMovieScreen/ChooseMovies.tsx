@@ -22,6 +22,7 @@ import SkeletonLoader from './SkeletonLoader';
 import SkeletonHorizontal from './SkeletonHorizontal';
 import SkeletonVertical from './SkeletonVertical';
 import { LogBox } from 'react-native';
+import Formatter from './Formatter';
 // import BottomTabNavigation from '../../components/BottomTabNavigation';
 const deviceHeight = Dimensions.get('screen').height;
 
@@ -52,7 +53,7 @@ export default function ChooseMovies(props: props) {
   const AllMovieRef = useRef<any>([]);
   // const [Star, setStar] = useState('star-o')
   LogBox.ignoreLogs(['FlashList']);
-
+  console.log(Auth.userName);
 
   useEffect(() => {
     console.log(Auth.isGuest)
@@ -122,17 +123,39 @@ export default function ChooseMovies(props: props) {
     const [value, setValue] = React.useState('A-Z');
     const Sorting = (params: string) => {
       setValue(params);
-      if (params == 'A-Z') {
-        setallMovieRes(AllMovieRef.current)
-        return console.log(allMovieRes)
-      } else if (params == 'Z-A') {
-        let temp = AllMovieRef.current
-        setallMovieRes(temp.reverse())
-        return console.log(temp)
-      } else if (params == 'acend') {
-        return
-      } else {
-        return
+      // if (params == 'A-Z') {
+      //   setallMovieRes(AllMovieRef.current)
+      //   return console.log(allMovieRes)
+      // } else if (params == 'Z-A') {
+      //   let temp = AllMovieRef.current
+      //   let rev = temp.reverse();
+      //   setallMovieRes(rev)
+      //   return console.log(temp)
+      // } else if (params == 'acend') {
+      //   return
+      // } 
+      switch (params) {
+        case 'A-Z':
+          {
+            setallMovieRes(AllMovieRef.current)
+            return console.log('A-Z' + AllMovieRef.current[1])
+          }
+        case 'Z-A':
+          {
+            var temp = AllMovieRef.current
+            setallMovieRes(() => temp.reverse())
+            return console.log('Z-A')
+          }
+        case 'ascend':
+          {
+            setallMovieRes(AllMovieRef.current)
+            return console.log('ascend')
+          }
+        case 'descend':
+          {
+            setallMovieRes(AllMovieRef.current)
+            return console.log('descend')
+          }
       }
     }
     // renders
@@ -142,10 +165,8 @@ export default function ChooseMovies(props: props) {
         index={0}
         snapPoints={snapPoints}
         onChange={handleSheetPositionChange}
-        // containerStyle={{ width: vw(100), height: vh(100), backgroundColor: 'grey' }}
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
-
       >
         <TouchableWithoutFeedback onPress={() => bottomSheetModalRef.current?.close()} style={{ width: vw(100), height: vh(100) }}>
           <View style={styles.contentContainer}>
@@ -191,12 +212,15 @@ export default function ChooseMovies(props: props) {
   const MovieBanner = ({ item, index }: any) => {
     const check: string = item.posterContentThumb;
     let FS = check.split('.').pop();
+    let length = item.length;
+    let a = 2;
+    let total = Formatter(length);
     return (
 
       <View style={{ flex: 1, margin: vw(2), flexDirection: 'row', justifyContent: 'center', }}>
         {/* bannner top */}
-        <View key={index} style={styles.movieBanner}>
-          <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
+        <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
+          <View key={index} style={styles.movieBanner}>
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
               {/* <Shadow distance={1} style={{ borderRadius: vw(2) }} > */}
               <FastImage
@@ -214,26 +238,26 @@ export default function ChooseMovies(props: props) {
                 <Text style={[...[styles.txt], { fontSize: vw(3) }]}>{item.director}</Text>
               </View>
             </View>
-          </TouchableOpacity>
-          <View style={{ alignItems: 'center', marginRight: vw(0) }}>
-            <View style={{ alignItems: 'center', alignSelf: 'flex-end', }}>
-              <View style={{ width: vw(16), height: vw(16), marginBottom: vw(1), }}>
-                <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Style.defaultRed, borderColor: Style.defaultRed, borderTopRightRadius: vw(4), borderTopLeftRadius: vw(4), borderBottomWidth: 0 }}>
-                  <Text style={{ color: '#fff', fontWeight: '500', fontSize: 14, alignSelf: 'center' }}>4.2k</Text>
-                </View>
-                <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', borderColor: Style.defaultRed, borderBottomLeftRadius: vw(4), borderBottomRightRadius: vw(4), borderTopWidth: 0 }}>
-                  <Text style={{ fontSize: 9, fontWeight: '500', color: Style.defaultTxtColor, textAlign: 'center', alignSelf: 'center' }}>Total Quibs</Text>
+            <View style={{ alignItems: 'center', marginRight: vw(0) }}>
+              <View style={{ alignItems: 'center', alignSelf: 'flex-end', }}>
+                <View style={{ width: vw(16), height: vw(16), marginBottom: vw(1), }}>
+                  <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Style.defaultRed, borderColor: Style.defaultRed, borderTopRightRadius: vw(4), borderTopLeftRadius: vw(4), borderBottomWidth: 0 }}>
+                    <Text style={{ color: '#fff', fontWeight: '500', fontSize: 14, alignSelf: 'center' }}>{total}</Text>
+                  </View>
+                  <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', borderColor: Style.defaultRed, borderBottomLeftRadius: vw(4), borderBottomRightRadius: vw(4), borderTopWidth: 0 }}>
+                    <Text style={{ fontSize: 9, fontWeight: '500', color: Style.defaultTxtColor, textAlign: 'center', alignSelf: 'center' }}>Total Quibs</Text>
+                  </View>
                 </View>
               </View>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     )
 
   }
 
-  const SectionHeading = useCallback((section: any) => {
+  const SectionHeading = (section: any) => {
     if (!section.sort) {
       if (!section.recent) {
         return (
@@ -293,7 +317,7 @@ export default function ChooseMovies(props: props) {
         <AllMovies />
       </View>
     )
-  }, [allMovieRes])
+  };
 
   const MovieCards = ({ item, index }: any) => {
 

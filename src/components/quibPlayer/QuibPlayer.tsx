@@ -4,13 +4,11 @@ import {
   Text,
   View,
   TouchableOpacity,
-  FlatList,
   Dimensions,
   SafeAreaView,
   StatusBar,
 } from 'react-native';
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-// import { SafeAreaView } from 'react-native-safe-area-context';
 import { Style } from '../../constants/Styles';
 import { vmax, vw, vh } from 'rxn-units';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -78,6 +76,7 @@ export default function QuibPlayer({ navigation, route }: props) {
   const quibPlayIndexRef = useRef<number>(0);
   const resMap = useRef<any[]>([]);
   const [isVisble, setIsVisble] = useState(false);
+  const CarouselOnRef = useRef<boolean>(false);
   const [Time, setTime] = useState(0);
   // const [isVisbleModal, setIsVisbleModal] = useState(false);
   const TimeRefer = useRef(0);
@@ -88,6 +87,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     useBottomSheetBackHandler(bottomSheetModalRef);
   // const [MyStreamQuibs, setMyStreamQuibs] = useState<any[]>([]);
   const Auth = React.useContext(AuthContext);
+  const ScurbIndexCarRef = useRef(0);
 
   //Api calls
 
@@ -172,7 +172,7 @@ export default function QuibPlayer({ navigation, route }: props) {
       isTapped.current = false;
       return bottomSheetModalRef.current?.present();
     }
-  }, [isTapped.current, Time]);
+  }, [isTapped.current]);
 
   //file check
   const FileCheck = () => {
@@ -234,7 +234,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     time,
     userId,
   }: any) => {
-    console.log(`${API}Images/User32/${image}`);
+    // console.log(`${API}Images/User32/${image}`);
     return (
       <View style={{ flex: 1, flexDirection: 'row' }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -462,22 +462,34 @@ export default function QuibPlayer({ navigation, route }: props) {
           showsHorizontalScrollIndicator={false}
           data={resMap.current}
           renderItem={({ item, index }) => (
-            <QuibCarousel item={item} index={index} />
+            <QuibCarousel item={item} index={index} handlePresentModalPress={() => handlePresentModalPress} isGuest={Auth.isGuest} setActive={setActive} />
           )}
           showsVerticalScrollIndicator={false}
           keyExtractor={(_, index) => index.toString()}
-          initialScrollIndex={0}
+          initialScrollIndex={ScurbIndexCarRef.current}
           ref={QuibCarRef}
+          snapToAlignment='start'
           estimatedItemSize={vw(90)}
         />
       </View>
     )
   }, [])
 
+  //-======================== 
+  const CarouselPress = () => {
+    if (isVisble == false) {
+      CarouselOnRef.current = true;
+      setIsVisble(!isVisble);
+    } else {
+      CarouselOnRef.current = false;
+      setIsVisble(!isVisble);
+    }
+  }
+
   const QuibCarouselModal = (ref: any) => {
-    const [QuibCarTime, setQuibCarTime] = useState(QuibCarTimeRef.current);
+    // const [QuibCarTime, setQuibCarTime] = useState(QuibCarTimeRef.current);
     // const QuibCarRef = useRef<any>(null);
-    const { hours, mintues, seconds } = getFormattedTime(QuibCarTime);
+    // const { hours, mintues, seconds } = getFormattedTime(QuibCarTime);
     // setQuibCarTime(QuibCarTimeRef.current)
 
     return (
@@ -509,12 +521,8 @@ export default function QuibPlayer({ navigation, route }: props) {
 
   // callbacks
   const handlePresentModalPress = (time: number) => {
-    if (time == Time) {
-      bottomSheetModalRef.current?.present();
-    } else {
-      setTime(time);
-      isTapped.current = true;
-    }
+    setTime(time);
+    bottomSheetModalRef.current?.present();
   };
 
   const renderBackdrop = useCallback(
@@ -597,8 +605,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         index={0}
         snapPoints={snapPoints}
         onChange={handleSheetPositionChange}
-        // containerStyle={{ width: vw(100), height: vh(100), backgroundColor: 'grey' }}
-        // backdropComponent={renderBackdrop}
+        backdropComponent={renderBackdrop}
         backgroundStyle={{
           backgroundColor: Style.quibBackColor,
           shadowColor: '#000',
@@ -692,6 +699,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                 ref={flatRef}
                 estimatedItemSize={200}
                 contentContainerStyle={{ paddingHorizontal: vw(5) }}
+                ListFooterComponent={<></>}
+                ListFooterComponentStyle={{ paddingBottom: vh(15) }}
               />
             </View>
           </View>
@@ -836,10 +845,11 @@ export default function QuibPlayer({ navigation, route }: props) {
                         // maximumTrackTintColor={Style.defaultTxtColor}
                         containerStyle={{ width: vw(85) }}
                         value={QuibTime}
-                        onSlidingStart={(value) => {
+                        onSlidingStart={() => {
+                          // CarouselOnRef.current = true;
                           isActive.current = false;
                           setIsVisble(true);
-                          value = Array.isArray(value) ? value[0] : value;
+
                         }}
                         onValueChange={(value) => {
                           value = Array.isArray(value) ? value[0] : value;
@@ -854,17 +864,15 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 : accumulator;
                             },
                           );
-                          const ScurbIndex = resMap.current.findIndex(
+                          ScurbIndexCarRef.current = resMap.current.findIndex(
                             (item, index) => {
                               if (item.time == Reduce.time) {
-                                console.log(Reduce.time);
-                                console.log(index);
                                 // quibScrubIndexRef.current = index;
                                 return index;
                               }
                             },
                           );
-                          if (ScurbIndex < 0) {
+                          if (ScurbIndexCarRef.current < 0) {
                             QuibCarRef.current?.scrollToOffset({
                               animated: true,
                               offset: 0,
@@ -873,17 +881,15 @@ export default function QuibPlayer({ navigation, route }: props) {
                             toggle;
                             QuibCarRef.current?.scrollToIndex({
                               animated: true,
-                              index: ScurbIndex,
+                              index: ScurbIndexCarRef.current,
                             });
                           }
                         }}
-                        ref={QuibScurbCarRef}
                         trackClickable={false}
                         step={1}
                         onSlidingComplete={value => {
                           value = Array.isArray(value) ? value[0] : value;
                           setQuibTime(value);
-                          setIsVisble(false);
                           const Reduce = movieQuib.reduce(
                             (accumulator, current) => {
                               const val = Array.isArray(value)
@@ -898,9 +904,6 @@ export default function QuibPlayer({ navigation, route }: props) {
                           const ScurbIndex = movieQuib.findIndex(
                             (item, index) => {
                               if (item.time == Reduce.time) {
-                                console.log(Reduce.time);
-                                console.log(index);
-                                // quibScrubIndexRef.current = index;
                                 return index;
                               }
                             },
@@ -916,6 +919,10 @@ export default function QuibPlayer({ navigation, route }: props) {
                               animated: true,
                               index: ScurbIndex,
                             });
+                          }
+                          // +++++++++++Carousel on ++++++++++++++\\
+                          if (CarouselOnRef.current == false) {
+                            setIsVisble(false);
                           }
                         }}
                         renderThumbComponent={() => {
@@ -980,7 +987,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                     leftNode={
                       <View>
                         <TouchableOpacity
-                          onPress={() => setIsVisble(!isVisble)}>
+                          onPress={CarouselPress}>
                           <LocalSvg
                             style={{ alignSelf: 'center' }}
                             width={vw(15)}
