@@ -100,17 +100,24 @@ export default function RegisterScreen(props: props) {
         data.append('Password', formData.Password);
         data.append('AvatarBase256ImagePath', Img);
         data.append('Username', formData.DisplayName);
+        data.append('IsEnabled', true)
+        data.append('About', 'hi')
+
         const headerOption = {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
+                'Accept': 'text/plain',
                 'Content-Type': 'multipart/form-data'
             },
             body: data,
         }
         try {
+            // console.log(response.status)
             let response = await fetch(`${RegisterAPI}`, headerOption);
+            console.log(response)
+            let json = response.json();
             if (response.status == 200) {
+                console.log('hi')
                 return props.navigation.navigate('Login')
             }
         } catch (error) {
@@ -317,7 +324,6 @@ export default function RegisterScreen(props: props) {
                                         placeholderTextColor={Color}
                                         onBlur={onBlur}
                                         onChangeText={value => onChange(value)}
-                                        // onChangeText={(text) => setEmail(text)}
                                         style={styles.inputTxt}
                                     />
                                     <TouchableOpacity onPress={togglePass} >
@@ -336,9 +342,9 @@ export default function RegisterScreen(props: props) {
                                     message: ' Password is too short ',
                                 },
                                 pattern: {
-                                    value: /^\w+(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                                    message: 'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
-                                    // /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+                                    // value: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8, 32}/,
+                                    value: /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{8,32}$/,
+                                    message: 'Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character',
                                 }
                             }}
                         />
@@ -372,14 +378,6 @@ export default function RegisterScreen(props: props) {
                                 required: {
                                     value: true,
                                     message: 'Confirm password is required!'
-                                },
-                                // pattern:{
-                                //     value:,
-                                //     message:,
-                                // },
-                                minLength: {
-                                    value: 8,
-                                    message: ' Password is too short ',
                                 },
                                 validate: {
                                     value: value => value === getValues('Password') || 'Password does not match',

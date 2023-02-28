@@ -191,16 +191,18 @@ export default function ChooseMovies(props: props) {
   const AllMovies = useCallback(() => {
 
     return (
-      < FlatList
+      < FlashList
         // bounces={false}
         style={{ width: vw(100), flex: 1 }
         }
         showsVerticalScrollIndicator={false}
-        keyExtractor={(_, index) => index.toString()}
+        // keyExtractor={(_, index) => index.toString()}
         data={allMovieRes}
         renderItem={({ item, index }: any) => <MovieBanner item={item} index={index} />
         }
-        // estimatedItemSize={vh(12)}
+        ListFooterComponent={<></>}
+        ListFooterComponentStyle={{paddingBottom:vw(10)}}
+        estimatedItemSize={vh(12)}
         ListEmptyComponent={() => <SkeletonVertical />}
       />
 
@@ -307,12 +309,12 @@ export default function ChooseMovies(props: props) {
           paddingLeft: vw(2), flex: 1, flexDirection: 'row',
         }}>
           <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
-          <TouchableOpacity activeOpacity={.4} onPress={handlePresentModalPress} >
-            <View style={styles.button}>
+          {/* <TouchableOpacity activeOpacity={.4} onPress={handlePresentModalPress} >
+            <View style={styles.button}> */}
               {/* <Text style={styles.buttonTxt}>Sort </Text> */}
-              <Icon name='sort' size={22} color={Style.defaultRed} />
+              {/* <Icon name='sort' size={22} color={Style.defaultRed} />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <AllMovies />
       </View>

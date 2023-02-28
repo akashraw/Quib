@@ -53,7 +53,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             // await AsyncStorage.clear()
             let user = await AsyncStorage.getItem(USER_KEY);
             user !== null ? user : null;
-            console.log(user)
             if (user !== null) {
                 return dispatch({
                     type: 'LOGIN',
@@ -73,11 +72,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     // Handle Login
     const handleLogin = async (data: any) => {
         try {
-            //STORE DATA
-            // token = [TOKEN_KEY, token]
-            // let dataAsync = JSON.stringify(data);
             await AsyncStorage.setItem(USER_KEY, data);
-
 
             //DISPATCH TO REDUCER
             dispatch({
@@ -89,14 +84,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         } catch (error) {
             // throw new Error(error);
             console.log(error)
-
         }
     };
 
     // Handle Logout
     const handleLogout = async () => {
         try {
-
             //REMOVE DATA
             await AsyncStorage.clear()
 

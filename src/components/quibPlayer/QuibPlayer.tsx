@@ -78,6 +78,7 @@ export default function QuibPlayer({ navigation, route }: props) {
   const [isVisble, setIsVisble] = useState(false);
   const CarouselOnRef = useRef<boolean>(false);
   const [Time, setTime] = useState(0);
+  const TimeRef = useRef(0)
   // const [isVisbleModal, setIsVisbleModal] = useState(false);
   const TimeRefer = useRef(0);
   const QuibCarRef = useRef<any>(null);
@@ -172,7 +173,7 @@ export default function QuibPlayer({ navigation, route }: props) {
       isTapped.current = false;
       return bottomSheetModalRef.current?.present();
     }
-  }, [isTapped.current]);
+  }, [Time]);
 
   //file check
   const FileCheck = () => {
@@ -222,13 +223,35 @@ export default function QuibPlayer({ navigation, route }: props) {
       return navigation.navigate('OtherProfile', { userId: userId });
     } else return navigation.navigate('Profile');
   };
-
+  // const HandlePress = (time: number) => {
+  //   console.log(time)
+  //   console.log(Time)
+  //   if (time == Time) {
+  //     isTapped.current = true;
+  //     // console.log(time)
+  //   } else {
+  //     console.log(time)
+  //     setTime(time);
+  //     isTapped.current = true;
+  //   }
+  // }
+  const HandlePress = (time: number) => {
+    if (time != Time) {
+      setTime(time);
+      isTapped.current = true;
+    } else {
+      // setTime(0);
+      console.log('same : ' + Time)
+      // bottomSheetModalRef.current?.present
+      // setTime(time);
+      // isTapped.current = true;
+    }
+  }
   //Quib list quibs head in (profile image, name, timestamp and quib)
   const QuibHead = ({
     hours,
     mintues,
     seconds,
-    image,
     name,
     quibId,
     time,
@@ -284,7 +307,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               onPress={() =>
                 Auth.isGuest == true
                   ? setActive(true)
-                  : handlePresentModalPress(time)
+                  : HandlePress(time)
               }>
               <View
                 style={[
@@ -315,7 +338,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                   : AddBump({
                     quibId: quibId,
                     MovieId: MovieId.MovieId,
-                    userId: '',
+                    userId: Auth.userName,
                   }).then(() =>
                     Toast.show({
                       visibilityTime: 5000,
@@ -519,9 +542,12 @@ export default function QuibPlayer({ navigation, route }: props) {
   // variables
   const snapPoints = useMemo(() => ['70%', '90%'], []);
 
+
   // callbacks
-  const handlePresentModalPress = (time: number) => {
-    setTime(time);
+  const handlePresentModalPress = () => {
+    // TimeRef.current = data;
+    // console.log(TimeRef.current)
+    // setTime(data)
     bottomSheetModalRef.current?.present();
   };
 
@@ -598,7 +624,6 @@ export default function QuibPlayer({ navigation, route }: props) {
   }, [Active]);
 
   const QuibComposeModal = () => {
-    // console.log('modal');
     return (
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -615,19 +640,18 @@ export default function QuibPlayer({ navigation, route }: props) {
           },
           shadowOpacity: 0.58,
           shadowRadius: 16.0,
-
           elevation: 24,
         }}>
         <QuibCompose
           MovieId={MovieId.MovieId}
           userId={Auth.userName}
-          hour={hours}
-          mins={mintues}
-          secs={seconds}
+          // hour={hours}
+          // mins={mintues}
+          // secs={seconds}
           time={Time}
+          // time={Time}
           movieLength={MovieLen.current}
         />
-        {/* <QuibComposeTabView/> */}
       </BottomSheetModal>
     );
   };
@@ -644,12 +668,7 @@ export default function QuibPlayer({ navigation, route }: props) {
           }}>
           {/* Quibs flatlist */}
           {/* Quibs flatlist */}
-          {/* Quibs flatlist */}
-          {/* Quibs flatlist */}
-          {/* Quibs flatlist */}
           <View style={styles.container}>
-            {/*modal*/}
-            {/*modal*/}
             {/*modal*/}
             {/*modal*/}
             <QuibCarouselModal />
@@ -1048,7 +1067,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                             onPress={() =>
                               Auth.isGuest == true
                                 ? setActive(true)
-                                : handlePresentModalPress(MovieTime)
+                                : handlePresentModalPress()
+                              // : handlePresentModalPress(MovieTime)
                             }>
                             <View style={[...[styles.timer], { height: vw(7) }]}>
                               <Text

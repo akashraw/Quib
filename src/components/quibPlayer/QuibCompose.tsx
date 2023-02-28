@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, useWindowDimensions, TouchableWithoutFeedback, StatusBar, Animated, Alert, Dimensions, Keyboard } from 'react-native'
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { vh, vw } from 'rxn-units';
 import { FlatList } from 'react-native-gesture-handler';
 import { Style } from '../../constants/Styles';
@@ -24,9 +24,9 @@ type FD = {
 interface props {
   movieLength: number,
   MovieId: number,
-  hour: number,
-  mins: number,
-  secs: number,
+  // hour: number,
+  // mins: number,
+  // secs: number,
   time: number,
   userId: string,
 }
@@ -44,11 +44,11 @@ type Route = {
 type State = NavigationState<Route>;
 
 
-function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: props) {
+function QuibCompose({ MovieId, time, movieLength, userId }: props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [QuibInput, setQuibInput] = useState<string>('');
   const [FlatData, setFlatData] = useState<any[]>([]);
-  const DataRef = useRef<FD[]>([]);
+  const [FD, setFD] = useState<any[]>([]);
   const layout = useWindowDimensions();
   const [Refresh, setRefresh] = useState(false);
   const [index, setIndex] = React.useState(0);
@@ -59,7 +59,8 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
     { key: 'second', title: 'Saved Quib' },
 
   ]);
-  const [isModalVisible, setModalVisible] = useState(false);
+  // const [isModalVisible, setModalVisible] = useState(false);
+
 
   const CountDown = [
     { id: "hours", label: "hr", min: 0, max: 24 },
@@ -68,8 +69,9 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
   ]
 
   useEffect(() => {
+    console.log('compose '+ time)
     QuibByMovieAndUserId({ MovieId, userId })
-      .then((res: any) => setFlatData(res))
+      .then((res: any) => {setFlatData(res.filter((item:any)=> item.newUserId == userId)); setFD(res)})
   }, []);
 
 
@@ -109,7 +111,7 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
           onBackdropPress={() => setModalVisible(false)} onBackButtonPress={() => setModalVisible(false)} useNativeDriver={true}
           useNativeDriverForBackdrop={true} statusBarTranslucent={true} deviceHeight={deviceHeight}>
           <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(20), borderRadius: vw(2) }}>
-            <Text>Select the time(HH:MM:SS)</Text>
+            <Text>Select time(HH:MM:SS)</Text>
             <NumberPlease
               pickers={CountDown}
               values={quibTime}
@@ -162,8 +164,8 @@ function QuibCompose({ MovieId, hour, mins, secs, time, movieLength, userId }: p
         showsHorizontalScrollIndicator={false}
         style={{ alignSelf: 'center', marginHorizontal: vw(0) }}
         contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
-        data={FlatData}
-        extraData={FlatData}
+        data={FD}
+        extraData={FD}
         renderItem={({ item, index }) => < Quibs item={item} index={index} />}
         initialNumToRender={10}
         windowSize={5}
@@ -544,4 +546,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default memo(QuibCompose);
+export default QuibCompose;

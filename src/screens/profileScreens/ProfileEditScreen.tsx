@@ -26,46 +26,81 @@ export default function ProfileEditScreen(props: props) {
     const [Img, setImg] = useState('');
     const [Password, setPassword] = useState('')
     const [Bio, setBio] = useState('');
+    const [Eye, setEye] = useState('eye-off');
+    const [SeePassword, setSeePassword] = useState(true)
 
     //==============================================================useEffect======================================================================\\
     React.useEffect(() => {
-        Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)))
+        Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)).then(() => {
+            setUserName(User.userName); setFirstName(User.firstName); setLastName(User.lastName); setBio(User.about);
+        }))
     }, [])
+    //**********************************************************************************/
+    const togglePass = () => {
+        if (!Password) {
+            setEye('eye-off');
+            return setSeePassword(!SeePassword);
+        } else {
+            setEye('eye');
+            return setSeePassword(!SeePassword);
+        }
+    }
 
     //*******************************************//
     const Color = "#5555";
     const Update = async () => {
+        var data = new FormData();
+        data.append('Id', User.id);
+        data.append('FirstName', firstName);
+        data.append('LastName', lastName);
+        data.append('PasswordHash', Password);
+        data.append('AvatarBase256ImagePath', Img);
+        data.append('UserName', userName);
+        data.append('About', Bio)
         const headerOption = {
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Accept': 'text/plain',
+                'Content-Type': 'multipart/form-data'
             },
-            body: JSON.stringify({
-                "id": User.id,
-                "userName": userName,
-                "firstName": firstName,
-                "lastName": lastName,
-                "about": Bio,
-                "passwordHash": null,
-                "avatarBase256ImagePath": Img
-            })
+            body: data,
         }
         try {
             let response = await fetch(`${UpdateUserAPI}`, headerOption);
             let json = await response.json();
+            console.log(json)
             if (response.status == 200) {
-                if (json == true)
-                    return setIsUserFollowed(true)
-                else return setIsUserFollowed(false)
-            } else {
-
+                return props.navigation.goBack();
             }
-            // return json;
         } catch (error) {
-            console.log('isUserFollowed Api call: ' + error)
+            console.log(error);
         }
+
     }
+    // const Update = async () => {
+    //     const headerOption = {
+    //         method: 'POST',
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //             "id": User.id,
+    //             "userName": userName,
+    //             "firstName": firstName,
+    //             "lastName": lastName,
+    //             "about": Bio,
+    //             "passwordHash": null,
+    //             "avatarBase256ImagePath": Img
+    //         })
+    //     }
+    //     try {
+    //         await fetch(`${UpdateUserAPI}`, headerOption);
+    //         // console.log(response.json());
+    //     } catch (error) {
+    //         console.log('isUserFollowed Api call: ' + error)
+    //     }
+    // }
 
     const UserIcon = () => {
         if (!Img)
@@ -130,10 +165,16 @@ export default function ProfileEditScreen(props: props) {
                             onChangeText={(text) => setLastName(text)} style={styles.inputTxt} />
                     </View>
                     <View style={styles.inputField}>
-                        <TextInput placeholder='Password'
-                            value={Password}
-                            placeholderTextColor={Color}
-                            onChangeText={(text) => setPassword(text)} style={styles.inputTxt} />
+                        <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                            <TextInput placeholder='Password'
+                                value={Password}
+                                placeholderTextColor={Color}
+                                secureTextEntry={SeePassword}
+                                onChangeText={(text) => setPassword(text)} style={styles.inputTxt} />
+                            <TouchableOpacity onPress={togglePass} >
+                                <Icon name={Eye} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <View style={[styles.inputField, { height: vw(30), justifyContent: 'flex-start' }]}>
                         <TextInput placeholder={User.about}
@@ -142,7 +183,7 @@ export default function ProfileEditScreen(props: props) {
                             onChangeText={(text) => setBio(text)} style={styles.inputTxt} />
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: vw(5) }}>
-                        <TouchableOpacity activeOpacity={.4} onPress={() => props.navigation.goBack()}>
+                        <TouchableOpacity activeOpacity={.4} onPress={() => Update()}>
                             <View style={styles.button}>
                                 <Text style={styles.buttonTxt}>Update</Text>
                             </View>

@@ -186,7 +186,7 @@ export async function AddBump(Bump: BumpProp) {
 
 //Delete Bumb Quib
 export async function DeleteBump(Bump: BumpProp) {
-    Bump.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // Bump.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     console.log(Bump.MovieId, Bump.quibId, Bump.userId);
 
     const headerOptions = {
