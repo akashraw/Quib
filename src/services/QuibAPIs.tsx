@@ -209,6 +209,7 @@ export async function DeleteBump(Bump: BumpProp) {
 
 //Delete Quib by id
 export async function DeleteQuib(QuibId: number) {
+    console.log(QuibId)
     const headerOptions = {
         method: 'DELETE',
         headers: {
@@ -217,8 +218,10 @@ export async function DeleteQuib(QuibId: number) {
         },
     }
     try {
-        await fetch(`${deleteQuibAPI}?quibId=${QuibId}`, headerOptions);
-        // json = await response.json();
+        // let response = 
+        await fetch(`${deleteQuibAPI}?Id=${QuibId}`, headerOptions);
+        // let json = response.json();
+        // console.log(json)
         // return;
     }
     catch (error) {

@@ -28,7 +28,7 @@ export default function RegisterScreen(props: props) {
     const [Name, setName] = useState('eye-off');
     const [CName, setCName] = useState('eye-off');
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
-    const [Img, setImg] = useState('');
+    const [Img, setImg] = useState<any>([]);
     const [Activity, setActivity] = useState(false);
     const [ActivityEula, setActivityEula] = useState(false);
     const [selectImg, setSelectImg] = useState(false);
@@ -59,18 +59,8 @@ export default function RegisterScreen(props: props) {
             return (
                 <TouchableOpacity onPress={lunchImgLib}>
                     <View style={{ borderColor: Style.defaultRed, marginBottom: vw(1) }}>
-                        {/* <MatComIcon name='account-edit' size={72} color={Style.defaultRed}/> */}
                         <Image source={require('../../assets/profile.png')} style={{ width: vw(25), height: vw(25), alignSelf: 'center', }} />
-                        {/* <View style={{ paddingTop: vw(0), backgroundColor: '#00000060', width: vw(25), height: vw(25), borderRadius: vw(20), justifyContent: 'center', alignItems: 'center' }}>
-                                <Icon name='pencil-sharp' size={vw(10)} color={Style.defaultTxtColor} />
-                            </View> */}
-                        {/* <MatComIcon name='upload-outline' size={vw(10)} color={Style.defaultRed}/>     */}
-                        {/* </ImageBackground> */}
-                        {/* <Icon name='user-circle-o' size={64} color={Style.defaultRed} >
-                            <MatIcon name='edit' size={24} color='black' style={{zIndex:2}} />
-                        </Icon> */}
                     </View>
-                    {/* <Text style={{fontSize:12, color:Style.defaultLightGrey, textAlign:'center', fontWeight:'500'}}>Upload a profile picture</Text> */}
                 </TouchableOpacity>
             )
         else return (
@@ -86,22 +76,33 @@ export default function RegisterScreen(props: props) {
                         shadowRadius: vw(1.5),
                     }}
                 >
-                    <Image style={{ width: vw(25), height: vw(25), resizeMode: 'contain', borderWidth: vw(.5), borderColor: Style.defaultRed, borderRadius: vw(13), }} source={{ uri: Img }} />
+                    <Image style={{ width: vw(25), height: vw(25), resizeMode: 'contain', borderWidth: vw(.5), borderColor: Style.defaultRed, borderRadius: vw(13), }} source={{ uri: Img.path }} />
                 </DropShadow>
             </TouchableOpacity>
         )
     }
 
     const Register = async (formData: any) => {
+        let pathParts = Img.path.split('/');
+
         var data = new FormData();
         data.append('Email', formData.Email);
         data.append('FirstName', formData.FirstName);
         data.append('LastName', formData.LastName);
         data.append('Password', formData.Password);
-        data.append('AvatarBase256ImagePath', Img);
+        data.append('ConfirmPassword', formData.ConfirmPassword);
+        // data.append('AvatarBase256ImagePath', Img);
+        data.append('AvatarBase256ImagePath', { 
+            uri:
+            Platform.OS === "android"
+                ? Img.path
+                : Img.path.replace("file://", ""),
+            type: Img.mime,
+            name: pathParts[pathParts.length - 1]
+        });
         data.append('Username', formData.DisplayName);
         data.append('IsEnabled', true)
-        data.append('About', 'hi')
+        data.append('About', '')
 
         const headerOption = {
             method: 'POST',
@@ -114,13 +115,14 @@ export default function RegisterScreen(props: props) {
         try {
             // console.log(response.status)
             let response = await fetch(`${RegisterAPI}`, headerOption);
-            console.log(response)
-            let json = response.json();
+            // console.log(response)
+            // let json = response.json();
             if (response.status == 200) {
                 console.log('hi')
                 return props.navigation.navigate('Login')
-            }
+            } else setActivity(false)
         } catch (error) {
+            setActivity(false);
             console.log(error);
         }
 
@@ -132,7 +134,7 @@ export default function RegisterScreen(props: props) {
             height: 256,
             cropping: true,
             includeBase64: true,
-        }).then(image => setImg(image.path))
+        }).then(image => setImg(image))
             .catch(e => { console.log(e) });
         setSelectImg(true);
     }
@@ -402,7 +404,7 @@ export default function RegisterScreen(props: props) {
                             tintColors={{ true: Style.defaultRed }}
                             onValueChange={(newValue) => setToggleCheckBox(newValue)}
                         />
-                        <View style={{flexDirection:'row'}}>
+                        <View style={{ flexDirection: 'row' }}>
                             <Text style={{ color: '#333333', marginLeft: vw(2), fontWeight: '500' }}>I Agree with </Text>
                             <TouchableOpacity onPress={() => setActivityEula(true)}>
                                 <Text style={{ color: Style.defaultRed, fontWeight: '500', }}>Terms & Conditions</Text>

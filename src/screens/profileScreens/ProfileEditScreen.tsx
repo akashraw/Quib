@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground, Platform } from 'react-native'
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ImagePicker from 'react-native-image-crop-picker'
@@ -23,7 +23,7 @@ export default function ProfileEditScreen(props: props) {
     const [userName, setUserName] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [Img, setImg] = useState('');
+    const [Img, setImg] = useState<any>([]);
     const [Password, setPassword] = useState('')
     const [Bio, setBio] = useState('');
     const [Eye, setEye] = useState('eye-off');
@@ -31,6 +31,7 @@ export default function ProfileEditScreen(props: props) {
 
     //==============================================================useEffect======================================================================\\
     React.useEffect(() => {
+        console.log(Auth.userName)
         Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)).then(() => {
             setUserName(User.userName); setFirstName(User.firstName); setLastName(User.lastName); setBio(User.about);
         }))
@@ -49,12 +50,20 @@ export default function ProfileEditScreen(props: props) {
     //*******************************************//
     const Color = "#5555";
     const Update = async () => {
+        let pathParts = Img.path.split('/');
+        // console.log('name: ' + pathParts[pathParts.length - 1] + ' type: ' + Img.mime + ' uri: ' + Img.path)
+
+        console.log(Img)
         var data = new FormData();
         data.append('Id', User.id);
         data.append('FirstName', firstName);
         data.append('LastName', lastName);
         data.append('PasswordHash', Password);
-        data.append('AvatarBase256ImagePath', Img);
+        data.append('AvatarBase256ImagePath', { 
+            uri:Img.data,
+            type: Img.mime,
+            name: pathParts[pathParts.length - 1]
+        });
         data.append('UserName', userName);
         data.append('About', Bio)
         const headerOption = {
@@ -122,7 +131,7 @@ export default function ProfileEditScreen(props: props) {
             )
         else return (
             <TouchableOpacity onPress={launchImgLib}>
-                <Image style={{ width: 100, height: 100, resizeMode: 'contain', borderWidth: 3, borderColor: Style.defaultRed, borderRadius: 64, }} source={{ uri: Img }} />
+                <Image style={{ width: 100, height: 100, resizeMode: 'contain', borderWidth: 3, borderColor: Style.defaultRed, borderRadius: 64, }} source={{ uri: Img.path }} />
             </TouchableOpacity>
         )
     }
@@ -130,11 +139,11 @@ export default function ProfileEditScreen(props: props) {
 
     const launchImgLib = () => {
         ImagePicker.openPicker({
-            width: 200,
-            height: 200,
+            width: 256,
+            height: 256,
             cropping: true,
-            includeBase64: true,
-        }).then(image => setImg(image.path))
+            includeBase64: false,
+        }).then(image => setImg(image))
             .catch(e => { console.log(e) });
         // setSelectImg(true);
     }

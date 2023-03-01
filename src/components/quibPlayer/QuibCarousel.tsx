@@ -6,6 +6,8 @@ import { API } from '../../constants/Api'
 import { Style } from '../../constants/Styles'
 import { quibPlayerStyles } from './QuibPlayerStyle'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AddBump } from '../../services/QuibAPIs'
+import Toast from 'react-native-toast-message'
 
 interface props {
     item: any,
@@ -13,6 +15,8 @@ interface props {
     handlePresentModalPress: (p: number) => void,
     isGuest: boolean,
     setActive: React.Dispatch<SetStateAction<boolean>>,
+    MovieId:number,
+    userId: string,
 }
 
 const getFormattedTime = (time: number) => {
@@ -23,9 +27,10 @@ const getFormattedTime = (time: number) => {
 }
 
 
-function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive }: props) {
-    let { hours, mintues, seconds } = getFormattedTime(item.time);
 
+function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive, MovieId, userId }: props) {
+    let { hours, mintues, seconds } = getFormattedTime(item.time);
+    // console.log(handlePresentModalPress(item.time))
     const QuibHead = ({ hours, mintues, seconds, isSS }: any) => {
         if (isSS == true)
             return (
@@ -41,7 +46,24 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
                             </TouchableOpacity>
                         </View>
                         <View style={{ right: vw(2), position: 'absolute', }}>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    isGuest == true
+                                        ? setActive(true)
+                                        : AddBump({
+                                            quibId: item.id,
+                                            MovieId: MovieId,
+                                            userId: userId,
+                                        }).then(() =>
+                                            Toast.show({
+                                                visibilityTime: 5000,
+                                                autoHide: true,
+                                                type: 'success',
+                                                text1: 'Bumped!',
+                                                text2: 'Quib has been add to your stream successfully.',
+                                            }),
+                                        )
+                                }>
                                 <Icon
                                     name="heart-outline"
                                     size={vw(5)}
@@ -56,14 +78,33 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', }}>
                 <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', }}>
                     <View style={{ justifyContent: 'center', position: 'absolute', }}>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => isGuest == true ?
+                                setActive(true) : handlePresentModalPress(item.time)}>
                             <View style={[...[quibPlayerStyles.timer], { width: vw(20), height: vw(5), marginBottom: vw(0) }]}>
                                 <Text style={{ textAlign: 'center', color: '#fff', fontSize: vw(3), }}>{(hours < 10) ? `0${hours}` : `${hours}`}:{(mintues < 10) ? (`0${mintues}`) : `${mintues}`}:{(seconds < 10) ? (`0${seconds}`) : `${seconds}`}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
                     <View style={{ right: vw(2), position: 'absolute' }}>
-                        <TouchableOpacity>
+                    <TouchableOpacity
+                                onPress={() =>
+                                    isGuest == true
+                                        ? setActive(true)
+                                        : AddBump({
+                                            quibId: item.id,
+                                            MovieId: MovieId,
+                                            userId: userId,
+                                        }).then(() =>
+                                            Toast.show({
+                                                visibilityTime: 5000,
+                                                autoHide: true,
+                                                type: 'success',
+                                                text1: 'Bumped!',
+                                                text2: 'Quib has been add to your stream successfully.',
+                                            }),
+                                        )
+                                }>
                             <Icon
                                 name="heart-outline"
                                 size={vw(5)}
