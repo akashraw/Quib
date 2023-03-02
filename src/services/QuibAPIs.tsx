@@ -22,6 +22,11 @@ type PostQuibProp = {
     userId: string,
     time: number,
 }
+type PostProp = {
+    body: string,
+    quibId: number,
+    time: number,
+}
 type QuibUnfollow = {
     FollowerId: string,
     FolloweeId: string,
@@ -197,8 +202,8 @@ export async function DeleteBump(Bump: BumpProp) {
         },
     }
     try {
-        await fetch(`${deleteBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
-        // json = await response.json();
+       let res = await fetch(`${deleteBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
+        console.log(res)
         // return;
     }
     catch (error) {
@@ -209,7 +214,7 @@ export async function DeleteBump(Bump: BumpProp) {
 
 //Delete Quib by id
 export async function DeleteQuib(QuibId: number) {
-    console.log(QuibId)
+    // console.log(QuibId)
     const headerOptions = {
         method: 'DELETE',
         headers: {
@@ -447,6 +452,33 @@ export async function GetMovieById(Quib: QuibProp) {
     }
     catch (error) {
         console.log('GetMovieById api error ' + error);
+
+    }
+
+}
+
+//========================Post Quib
+
+export async function PostQuib(Quib: PostProp) {
+    const headerOptions = {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+    }
+    // console.log(Quib.body)
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // console.log(Quib.tim
+    try {
+        let json;
+        let response = await fetch(`${addQuibAPI}?body=${Quib.body}&QuibId=${Quib.quibId}&Time=${Quib.time}`, headerOptions);
+        json = await response.json();
+        console.log(json)
+        // return json;
+    }
+    catch (error) {
+        console.log('AddQuib API error: ' + error);
 
     }
 

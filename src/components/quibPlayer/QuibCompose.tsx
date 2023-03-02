@@ -30,8 +30,9 @@ import {
   AddQuib,
   QuibByMovieAndUserId,
   DeleteQuib,
+  PostQuib,
 } from '../../services/QuibAPIs';
-import { API } from '../../constants/Api';
+import { API, PostQuibAPI } from '../../constants/Api';
 import DropShadow from 'react-native-drop-shadow';
 import Modal from 'react-native-modal';
 import { Button } from 'react-native-paper';
@@ -193,7 +194,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
         }}
         data={FlatData}
         extraData={FlatData}
-        renderItem={({ item, index }) => <Quibs item={item} index={index} heart={false} />}
+        renderItem={({ item, index }) => <MyStreamQuibs item={item} index={index} heart={false} />}
         initialNumToRender={10}
         windowSize={5}
         maxToRenderPerBatch={10}
@@ -217,7 +218,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
         }}
         data={FD}
         extraData={FD}
-        renderItem={({ item, index }) => <Quibs item={item} index={index} heart={true} />}
+        renderItem={({ item, index }) => <SavedQuibs item={item} index={index} heart={true} />}
         initialNumToRender={10}
         windowSize={5}
         maxToRenderPerBatch={10}
@@ -316,22 +317,63 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
         userId: userId,
         time: Times,
         body: QuibInput,
-      } as PostQuibProp).then(() => setRefresh(true)).then(() => Input.current?.clear()).then(()=>console.log(time));
+      } as PostQuibProp).then(() => setRefresh(true)).then(() => Input.current?.clear())
+        .then(() =>
+          Toast.show({
+            visibilityTime: 3000,
+            autoHide: true,
+            type: 'success',
+            text1: 'Quib Added',
+            text2: 'Quib is added to your stream'
+          })
+        )
+        .then(() =>
+          QuibByMovieAndUserId({ MovieId, userId }).then((res: any) => {
+            setFlatData(res.filter((item: any) => item.newUserId == userId));
+          }));
   };
+  async function Post({ quibId, time, body }: any) {
+    const headerOptions = {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
+      },
+    }
+    try {
+      let response = await fetch(`${PostQuibAPI}?body=${body}&QuibId=${quibId}&Time=${time}`, headerOptions);
+      if (response.status == 200) {
+        return QuibByMovieAndUserId({ MovieId, userId }).then((res: any) => {
+          setFlatData(res.filter((item: any) => item.newUserId == userId));
+        }).then(() => Toast.show({
+          visibilityTime: 3000,
+          autoHide: true,
+          type: 'success',
+          text1: 'Quib Posted',
+          text2: 'Quib is successfully posted.'
+        }))
+      }
+    }
+    catch (error) {
+      console.log('AddQuib API error: ' + error);
+
+    }
+
+  }
 
   const deleteBump = ({ id, movieId, index }: any) => {
     console.log('bump');
     Promise.resolve(DeleteBump({ quibId: id, MovieId: movieId, userId: userId }))
-      .then(() => handleRemoveItem(index))
+      .then(() => handleRemoveBumpItem(index))
       .then(() => console.log('deleted'));
   };
   const deletePost = ({ id, index }: any) => {
-    console.log('post');
+    console.log('post' + id);
     Promise.resolve(DeleteQuib(id))
-      .then(() => handleRemoveItem(index))
+      .then(() => handleRemovePostItem(index))
   };
 
-  const handleRemoveItem = (idx: number) => {
+  const handleRemovePostItem = (idx: number) => {
     // assigning the list to temp variable
     const temp = [...FlatData];
 
@@ -341,8 +383,194 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
     // updating the list
     setFlatData(temp);
   };
+  const handleRemoveBumpItem = (idx: number) => {
+    // assigning the list to temp variable
+    const temp = [...FD];
 
-  const Quibs = ({ item, index, heart }: any) => {
+    // removing the element using splice
+    temp.splice(idx, 1);
+
+    // updating the list
+    setFD(temp);
+  };
+  const MyStreamQuibs = ({ item, index, heart }: any) => {
+    let { hours, mintues, seconds } = getFormattedTime(item.time);
+
+    if (item.isPosted == true)
+      return (
+        <View style={{ width: vw(100) }} key={index}>
+          <DropShadow
+            style={{
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 0,
+              },
+              shadowOpacity: 0.5,
+              shadowRadius: vw(0.5),
+            }}>
+            <View style={styles.quibCard}>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: vw(1),
+                }}>
+
+                <View
+                  style={[
+                    ...[quibPlayerStyles.timer],
+                    { width: vw(14), height: vw(4) },
+                  ]}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      color: '#fff',
+                      fontSize: vw(2.6),
+                    }}>
+                    {hours < 10 ? `0${hours}` : `${hours}`}:
+                    {mintues < 10 ? `0${mintues}` : `${mintues}`}:
+                    {seconds < 10 ? `0${seconds}` : `${seconds}`}
+                  </Text>
+                </View>
+                {heart == true ?
+                  <View style={{ right: vw(3), position: 'absolute' }}>
+                    <Icon
+                      name="heart"
+                      size={vw(5)}
+                      color={Style.defaultRed}
+                    />
+                  </View>
+                  :
+                  null
+                }
+              </View>
+              <View style={styles.quibTxtBody}>
+                <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>
+                  {' '}
+                  {item.body}
+                </Text>
+              </View>
+              <View
+                style={{
+                  justifyContent: 'flex-start',
+                  flexDirection: 'row',
+                  paddingLeft: vw(8),
+                }}>
+                {/* <TouchableOpacity
+                  activeOpacity={0.4}
+                  disabled={false}
+                  onPress={() =>
+                    deleteBump({
+                      id: item.id,
+                      movieId: item.movieId,
+                      index: index,
+                    })
+                  }>
+                  <View
+                    style={[
+                      ...[styles.button],
+                      { width: vw(16), height: vw(6) },
+                    ]}>
+                    <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                      Delete
+                    </Text>
+                  </View>
+                </TouchableOpacity> */}
+              </View>
+            </View>
+          </DropShadow>
+        </View>
+      );
+    else return (
+      <View style={{ width: vw(100) }} key={index}>
+        <DropShadow
+          style={{
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 0,
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: vw(0.5),
+          }}>
+          <View style={styles.quibCard}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <View
+                style={[
+                  ...[quibPlayerStyles.timer],
+                  { width: vw(14), height: vw(4), marginBottom: vw(1) },
+                ]}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: '#fff',
+                    fontSize: vw(2.6),
+                  }}>
+                  {hours < 10 ? `0${hours}` : `${hours}`}:
+                  {mintues < 10 ? `0${mintues}` : `${mintues}`}:
+                  {seconds < 10 ? `0${seconds}` : `${seconds}`}
+                </Text>
+              </View>
+              {heart == true ?
+                <View style={{ right: vw(3), position: 'absolute' }}>
+                  <Icon
+                    name="heart"
+                    size={vw(5)}
+                    color={Style.defaultRed}
+                  />
+                </View>
+                :
+                null
+              }
+            </View>
+            <View style={styles.quibTxtBody}>
+              <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>
+                {item.body}
+              </Text>
+            </View>
+            <View
+              style={{
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                paddingHorizontal: vw(8),
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.4}
+                disabled={false}
+                onPress={() =>
+                  deletePost({ id: item.id, index })
+                }>
+                <View
+                  style={[
+                    ...[styles.button],
+                    { width: vw(16), height: vw(6) },
+                  ]}>
+                  <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                    Delete
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.4} disabled={false}
+                onPress={() => Post({ quibId: item.id, body: item.body, time: item.time })}
+              >
+                <View
+                  style={[
+                    ...[styles.button],
+                    { width: vw(16), height: vw(6) },
+                  ]}>
+                  <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                    Post
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </DropShadow>
+      </View>
+    );
+  }
+  const SavedQuibs = ({ item, index, heart }: any) => {
     let { hours, mintues, seconds } = getFormattedTime(item.time);
 
     if (item.isSeedQuib == true && item.isScreenshot == false)
@@ -365,7 +593,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                   alignItems: 'center',
                   marginBottom: vw(1),
                 }}>
-               
+
                 <View
                   style={[
                     ...[quibPlayerStyles.timer],
@@ -421,7 +649,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                       ...[styles.button],
                       { width: vw(16), height: vw(6) },
                     ]}>
-                    <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>
+                    <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
                       Delete
                     </Text>
                   </View>
@@ -525,7 +753,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                       ...[styles.button],
                       { width: vw(16), height: vw(6) },
                     ]}>
-                    <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>
+                    <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
                       Delete
                     </Text>
                   </View>
@@ -593,26 +821,15 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                   activeOpacity={0.4}
                   disabled={false}
                   onPress={() =>
-                    deletePost({ id: item.id, index })
+                    deleteBump({ id: item.id, movieId: item.movieId, index })
                   }>
                   <View
                     style={[
                       ...[styles.button],
                       { width: vw(16), height: vw(6) },
                     ]}>
-                    <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>
+                    <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
                       Delete
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.4} disabled={false}>
-                  <View
-                    style={[
-                      ...[styles.button],
-                      { width: vw(16), height: vw(6) },
-                    ]}>
-                    <Text style={[...[styles.buttonTxt], { fontSize: 12 }]}>
-                      Post
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -723,7 +940,7 @@ const styles = StyleSheet.create({
   },
   buttonTxt: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: vw(3.5),
     color: '#fff',
     fontWeight: '500',
   },

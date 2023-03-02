@@ -29,6 +29,11 @@ const authReducer = (prevState: any, action: any) => {
         isGuest: action.isGuest,
         Modal: action.modal,
       };
+    case 'NETINFO':
+      return {
+        ...prevState,
+        net: action.net
+      }
   }
 };
 

@@ -7,7 +7,7 @@ import { vh, vw } from 'rxn-units';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useForm, Controller } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { ForgetPasswordAPI, LoginAPI } from '../../constants/Api';
+import { LoginAPI, ResetPasswordAPI } from '../../constants/Api';
 import { AuthContext, useAuth } from '../../Auth';
 import Modal from "react-native-modal";
 
@@ -18,11 +18,15 @@ interface props {
     navigation: any;
 }
 
-export default function ForgetPassword(props: props) {
+export default function ResetPassword(props: props) {
     const Color = "#5555";
     const [Fail, setFail] = useState<boolean>(false);
     const [Activity, setActivity] = useState(false);
-    const [RecoverStatus, setRecoverStatus] = useState(false)
+    const [RecoverStatus, setRecoverStatus] = useState(false);
+    const [Password, setPassword] = useState(true);
+    const [ConfirmPassword, setConfirmPassword] = useState(true);
+    const [Name, setName] = useState('eye-off');
+    const [CName, setCName] = useState('eye-off');
     const auth = useContext(AuthContext);
     const {
         control,
@@ -35,14 +39,33 @@ export default function ForgetPassword(props: props) {
     const onSubmit = (data: any) => {
         setActivity(true);
         if (isValid == true) {
-            return Forget(data);
+            return Reset(data);
+
         }
         else return (
             setActivity(false)
         )
 
     }
-    const Forget = async (data: any) => {
+    const togglePass = () => {
+        if (!Password) {
+            setName('eye-off');
+            return setPassword(!Password);
+        } else {
+            setName('eye');
+            return setPassword(!Password);
+        }
+    }
+    const toggleConfirmPass = () => {
+        if (!ConfirmPassword) {
+            setCName('eye-off');
+            return setConfirmPassword(!ConfirmPassword)
+        } else {
+            setCName('eye');
+            return setConfirmPassword(!ConfirmPassword)
+        }
+    }
+    const Reset = async (data: any) => {
         // console.log(encodeURI(data.Email)+' '+data.Password);
         const headerOption = {
             method: 'POST',
@@ -52,12 +75,11 @@ export default function ForgetPassword(props: props) {
             }
         }
         try {
-            let response = await fetch(`${ForgetPasswordAPI}?Email=${encodeURIComponent(data.Email)}`, headerOption);
+            let response = await fetch(`${ResetPasswordAPI}?Email=${encodeURIComponent(data.Email)}&Password=${encodeURIComponent(data.Password)}&ConfirmPassword=${encodeURIComponent(data.ConfirmPassword)}`, headerOption);
             let json = await response.json();
             if (response.status == 200) {
                 setActivity(false)
-                return setRecoverStatus(true);
-                 
+                setRecoverStatus(true);
             } else {
                 setFail(true)
                 setActivity(false)
@@ -72,7 +94,7 @@ export default function ForgetPassword(props: props) {
     }
     const HandleOk = () => {
         setRecoverStatus(false);
-        props.navigation.navigate('Reset');
+        props.navigation.navigate('Login');
     }
 
     return (
@@ -84,8 +106,8 @@ export default function ForgetPassword(props: props) {
                         resizeMode={'contain'}
                         source={require('../../assets/logo.png')}
                     />
-                    <Text style={{ fontSize: 24, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>Forgot Password</Text>
-                    {Fail ? <Text style={{ fontSize: 14, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter correct email</Text> : null}
+                    <Text style={{ fontSize: 24, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>Reset your Password</Text>
+                    {Fail ? <Text style={{ fontSize: 14, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter a new password</Text> : null}
                 </View>
                 <View style={{ marginTop: vw(1) }}>
                     <View style={styles.inputField}>
@@ -116,6 +138,83 @@ export default function ForgetPassword(props: props) {
                         />
                     </View>
                     {errors?.Email && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.Email.message?.toString()}</Text>)}
+                    {/* Password Field */}
+                    <View style={styles.inputField}>
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                                    <TextInput
+                                        placeholder='Password'
+                                        value={value}
+                                        secureTextEntry={Password}
+                                        placeholderTextColor={Color}
+                                        onBlur={onBlur}
+                                        onChangeText={value => onChange(value)}
+                                        style={styles.inputTxt}
+                                    />
+                                    <TouchableOpacity onPress={togglePass} >
+                                        <Icon name={Name} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            name={'Password'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'Password is required!'
+                                },
+                                minLength: {
+                                    value: 8,
+                                    message: ' Password is too short ',
+                                },
+                                pattern: {
+                                    // value: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8, 32}/,
+                                    value: /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{8,32}$/,
+                                    message: 'Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character',
+                                }
+                            }}
+                        />
+                    </View>
+                    {errors?.Password && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.Password?.message?.toString()}</Text>)}
+
+
+                    {/* Confirm Password Field */}
+                    <View style={styles.inputField}>
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                                    <TextInput
+                                        placeholder='Confirm Password'
+                                        value={value}
+                                        secureTextEntry={ConfirmPassword}
+                                        placeholderTextColor={Color}
+                                        onBlur={onBlur}
+                                        onChangeText={value => onChange(value)}
+                                        // onChangeText={(text) => setEmail(text)}
+                                        style={styles.inputTxt}
+                                    />
+                                    <TouchableOpacity onPress={toggleConfirmPass} >
+                                        <Icon name={CName} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            name={'ConfirmPassword'}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: 'Confirm password is required!'
+                                },
+                                validate: {
+                                    value: value => value === getValues('Password') || 'Password does not match',
+                                }
+
+
+                            }}
+                        />
+                    </View>
+                    {errors?.ConfirmPassword && (<Text style={{ fontSize: vw(3), color: Style.defaultRed, marginHorizontal: vw(9), }}>{errors?.ConfirmPassword?.message?.toString()}</Text>)}
 
                     <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: vw(15), marginBottom: vw(2), }}>
                         <TouchableOpacity activeOpacity={.4} onPress={handleSubmit(onSubmit)}>
@@ -160,7 +259,7 @@ export default function ForgetPassword(props: props) {
                     flex: 1, justifyContent: 'center',
                     alignItems: 'center', flexDirection: 'column',
                 }}>
-                    <Text style={{ color: '#fff', fontSize: vw(5), fontWeight: '400' }}>Recovery code has been sent to your email</Text>
+                    <Text style={{ color: '#fff', fontSize: vw(5), fontWeight: '400' }}>Password is successfully reset</Text>
                     <View style={{
                         justifyContent: 'center',
                         alignItems: 'center', flexDirection: 'row'

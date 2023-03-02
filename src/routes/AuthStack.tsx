@@ -18,6 +18,7 @@ import { vw } from 'rxn-units';
 import GuestProfileScreen from '../screens/profileScreens/GuestProfileScreen';
 import ForgetPassword from '../screens/onBoardingScreens/ForgetPassword';
 import RNBootSplash from "react-native-bootsplash";
+import ResetPassword from '../screens/onBoardingScreens/ResetPassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +71,15 @@ export default function AuthStack() {
        <Stack.Screen
         name="Forget"
         component={ForgetPassword}
+        options={{
+          headerShown: false,
+          navigationBarHidden: true,
+          statusBarColor: Style.quibBackColor,
+        }}
+      />
+      <Stack.Screen
+        name="Reset"
+        component={ResetPassword}
         options={{
           headerShown: false,
           navigationBarHidden: true,

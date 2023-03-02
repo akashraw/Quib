@@ -22,6 +22,7 @@ import {
   getMovieLength,
   getMoviePoster,
   GetQuibsById,
+  QuibByMovieAndUserId,
 } from '../../services/QuibAPIs';
 import { LocalSvg } from 'react-native-svg';
 import QuibCarousel from './QuibCarousel';
@@ -49,6 +50,11 @@ const deviceWidth = Dimensions.get('screen').width;
 interface props {
   navigation: any;
   route: any;
+}
+interface BumpProp {
+  quibId: number,
+  movieId: number,
+  userId: string,
 }
 
 export default function QuibPlayer({ navigation, route }: props) {
@@ -89,7 +95,9 @@ export default function QuibPlayer({ navigation, route }: props) {
   // const [MyStreamQuibs, setMyStreamQuibs] = useState<any[]>([]);
   const Auth = React.useContext(AuthContext);
   const ScurbIndexCarRef = useRef(0);
-  const [True, setTrue] = useState(false)
+  const [True, setTrue] = useState(false);
+  const [BumpData, setBumpData] = useState<any[]>([]);
+  const BumpDataRef = useRef<any[]>([])
 
   //Api calls
 
@@ -110,8 +118,11 @@ export default function QuibPlayer({ navigation, route }: props) {
       }),
       getMovieLength(MovieId).then(
         (res: any) => (MovieLen.current = res.map((res: any) => res.length)),
-      ),
-    ]).then(() => setIsLoading(false));
+      ), QuibByMovieAndUserId({ MovieId: MovieId.MovieId, userId: Auth.userName }).then((res: any) => BumpDataRef.current = res)
+    ]).then(() => setIsLoading(false)).then(() => setTimeout(() => {
+      isActive.current = true;
+      return setPlayPause('pause-circle-outline');
+    }, 1000));
   }, []);
 
   //UseEffect use to scroll
@@ -120,7 +131,6 @@ export default function QuibPlayer({ navigation, route }: props) {
       timer.current = setInterval(() => {
         setQuibTime(MovieTime + 1);
         setMovieTime(MovieTime => MovieTime + 1);
-        // quibPlayIndexRef.current = MovieTime;
       }, 1000);
     } else {
       clearInterval(timer.current);
@@ -194,6 +204,38 @@ export default function QuibPlayer({ navigation, route }: props) {
       return setPlayPause('play-circle-outline');
     }
   };
+  const CheckBump = (Bump: number) => {
+    // console.log(Bump)
+    let Index = BumpDataRef.current.findIndex((Id) => Id.id == Bump);
+
+    // console.log(Index)
+    if (Index != -1) {
+      return (
+        Toast.show({
+          visibilityTime: 2000,
+          autoHide: true,
+          type: 'info',
+          text1: 'Already Bumped',
+          text2: 'Quib is already in  your stream.',
+        })
+      )
+    } else return (
+      AddBump({
+        quibId: Bump,
+        MovieId: MovieId.MovieId,
+        userId: Auth.userName,
+      }).then(() =>
+        Toast.show({
+          visibilityTime: 3000,
+          autoHide: true,
+          type: 'success',
+          text1: 'Bumped!',
+          text2: 'Quib has been add to your stream successfully.',
+        }),
+      ).then(() => BumpDataRef.current.push({ 'id': Bump })
+      )
+    )
+  }
 
   //Inc and dec on timer
   const IncSecond = () => {
@@ -248,6 +290,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     quibId,
     time,
     userId,
+    image
   }: any) => {
     // console.log(`${API}Images/User32/${image}`);
     return (
@@ -268,7 +311,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                 }}>
                 <FastImage
                   source={{
-                    uri: `${API}Images/User32/60642bde-fe76-48ba-a1e6-8dc96a91fde3.jpeg`,
+                    uri: `data:image/png;base64,${image}`,
                   }}
                   style={{
                     width: vw(8),
@@ -326,19 +369,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               onPress={() =>
                 Auth.isGuest == true
                   ? setActive(true)
-                  : AddBump({
-                    quibId: quibId,
-                    MovieId: MovieId.MovieId,
-                    userId: Auth.userName,
-                  }).then(() =>
-                    Toast.show({
-                      visibilityTime: 5000,
-                      autoHide: true,
-                      type: 'success',
-                      text1: 'Bumped!',
-                      text2: 'Quib has been add to your stream successfully.',
-                    }),
-                  )
+                  : CheckBump(quibId)
               }>
               <Icon
                 name="heart-outline"

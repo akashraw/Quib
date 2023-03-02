@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authReducer from './Reducer';
 import { useNavigation } from '@react-navigation/native';
+import NetInfo from "@react-native-community/netinfo";
 
 // import {AuthData, authService} from '../services/authService';
 type AuthData = {
@@ -16,6 +17,7 @@ type AuthContextData = {
     getAuthState: () => {};
     handleLogout: () => {};
     dispatch: (p: object) => {};
+    net: boolean;
 };
 
 const initialState = {
@@ -44,7 +46,31 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         getAuthState();
     }, [])
 
+    React.useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            console.log("Connection type", state.type);
+            console.log("Is connected?", state.isConnected);
+            ConnectionInfo(state.isConnected);
+        });
 
+        // Unsubscribe
+        return () => {
+            unsubscribe();
+        };
+    }, [])
+
+    //===========net info===========\\
+    const ConnectionInfo = (isConnected: any) => {
+        if (isConnected == false) {
+            return dispatch({
+                type: 'NETINFO',
+                net: false
+            })
+        } else return dispatch({
+            type: 'NETINFO',
+            net: true
+        })
+    }
     // Get Auth state
     const getAuthState = async () => {
         try {
