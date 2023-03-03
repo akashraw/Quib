@@ -22,7 +22,6 @@ interface props {
 
 export default function RegisterScreen(props: props) {
 
-    const [Email, setEmail] = useState('');
     const [Password, setPassword] = useState(true);
     const [ConfirmPassword, setConfirmPassword] = useState(true);
     const [Name, setName] = useState('eye-off');
@@ -55,7 +54,7 @@ export default function RegisterScreen(props: props) {
     const Color = "#5555";
 
     const UserIcon = () => {
-        if (!Img)
+        if (Img.path == null)
             return (
                 <TouchableOpacity onPress={lunchImgLib}>
                     <View style={{ borderColor: Style.defaultRed, marginBottom: vw(1) }}>
@@ -92,11 +91,11 @@ export default function RegisterScreen(props: props) {
         data.append('Password', formData.Password);
         data.append('ConfirmPassword', formData.ConfirmPassword);
         // data.append('AvatarBase256ImagePath', Img);
-        data.append('AvatarBase256ImagePath', { 
+        data.append('AvatarBase256ImagePath', {
             uri:
-            Platform.OS === "android"
-                ? Img.path
-                : Img.path.replace("file://", ""),
+                Platform.OS === "android"
+                    ? Img.path
+                    : Img.path.replace("file://", ""),
             type: Img.mime,
             name: pathParts[pathParts.length - 1]
         });

@@ -12,6 +12,7 @@ import { Style } from '../constants/Styles';
 import { vh, vw } from 'rxn-units';
 import QuibButton from './QuibButton';
 import { AuthContext } from '../Auth';
+import Net from '../Net';
 
 
 const Tab = createBottomTabNavigator();
@@ -39,37 +40,37 @@ export default function BottomTabNavigation(navigation: any) {
     const Auth = React.useContext(AuthContext)
     const navi = useNavigation();
     return (
+        <>
+            <Tab.Navigator
+                initialRouteName='Choose'
+                screenOptions={{
+                    tabBarActiveTintColor: Style.defaultRed,
+                    tabBarStyle: { paddingHorizontal: vw(5), backgroundColor: Style.quibHeader },
+                    headerStyle: { backgroundColor: Style.quibHeader },
 
-        <Tab.Navigator
-            initialRouteName='Choose'
-            screenOptions={{
-                tabBarActiveTintColor: Style.defaultRed,
-                tabBarStyle: { paddingHorizontal: vw(5), backgroundColor: Style.quibHeader },
-                headerStyle: { backgroundColor: Style.quibHeader },
-
-            }}
-
-        >
-            <Tab.Screen
-                name='Choose'
-                component={ChooseMovies}
-                options={{
-                    tabBarLabel: 'Movies',
-                    tabBarShowLabel: false,
-                    headerTitleAlign: 'center',
-                    // headerTitleStyle:{marginLeft:vw(2)},
-                    headerTitle: () => <Heading title={`What we're quibbing`} />,
-                    headerLeft: () => Auth.isGuest == true ? <BackIcon /> : null,
-                    headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPressed={() => { navi.navigate('Login' as never) }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
-                    tabBarIcon: ({ focused }) => {
-                        if (focused) return < IonIcon name='home' color={Style.defaultRed} size={24} />
-                        else return < IonIcon name='home-outline' size={24} color={Style.defaultRed} />
-                    }
                 }}
 
-            />
+            >
+                <Tab.Screen
+                    name='Choose'
+                    component={ChooseMovies}
+                    options={{
+                        tabBarLabel: 'Movies',
+                        tabBarShowLabel: false,
+                        headerTitleAlign: 'center',
+                        // headerTitleStyle:{marginLeft:vw(2)},
+                        headerTitle: () => <Heading title={`What we're quibbing`} />,
+                        headerLeft: () => Auth.isGuest == true ? <BackIcon /> : null,
+                        headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPressed={() => { navi.navigate('Login' as never) }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
+                        tabBarIcon: ({ focused }) => {
+                            if (focused) return < IonIcon name='home' color={Style.defaultRed} size={24} />
+                            else return < IonIcon name='home-outline' size={24} color={Style.defaultRed} />
+                        }
+                    }}
 
-            {/* <Tab.Screen
+                />
+
+                {/* <Tab.Screen
                 name='Notification'
                 component={NotificationScreen}
                 options={{
@@ -85,59 +86,61 @@ export default function BottomTabNavigation(navigation: any) {
                     }
                 }}
             /> */}
-            <Tab.Screen
-                name='Profile'
-                listeners={({ navigation }) => ({
-                    tabPress: (e) => {
-                        if (Auth.isGuest == true) {
-                            // Prevent default action
-                            e.preventDefault();
-                            Auth.dispatch({
-                                type: 'MODAL',
-                                name: null,
-                                isGuest: true,
-                                modal: true,
-                            })
+                <Tab.Screen
+                    name='Profile'
+                    listeners={({ navigation }) => ({
+                        tabPress: (e) => {
+                            if (Auth.isGuest == true) {
+                                // Prevent default action
+                                e.preventDefault();
+                                Auth.dispatch({
+                                    type: 'MODAL',
+                                    name: null,
+                                    isGuest: true,
+                                    modal: true,
+                                })
+                            }
+                        },
+                    })}
+                    component={ProfileScreen}
+                    options={{
+                        // tabBarButton: props => (Auth.isGuest == false ? ProfileScreen : PleaseLogin),
+                        tabBarLabel: 'Profile',
+                        tabBarShowLabel: false,
+                        headerTitleAlign: 'center',
+                        headerTitle: () => <Heading title={`Profile`} />,
+                        headerLeft: () => <BackIcon />,
+                        headerRight: () => <TouchableOpacity onPress={() => navi.navigate('Edit' as never)}>
+                            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} />
+                        </TouchableOpacity>,
+                        tabBarIcon: ({ focused }) => {
+                            if (focused) return < IonIcon name='person' color={Style.defaultRed} size={24} />
+                            else return < IonIcon name='person-outline' size={24} color={Style.defaultRed} />
                         }
-                    },
-                })}
-                component={ProfileScreen}
-                options={{
-                    // tabBarButton: props => (Auth.isGuest == false ? ProfileScreen : PleaseLogin),
-                    tabBarLabel: 'Profile',
-                    tabBarShowLabel: false,
-                    headerTitleAlign: 'center',
-                    headerTitle: () => <Heading title={`Profile`} />,
-                    headerLeft: () => <BackIcon />,
-                    headerRight: () => <TouchableOpacity onPress={() => navi.navigate('Edit' as never)}>
-                                            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} />
-                                        </TouchableOpacity>,
-                    tabBarIcon: ({ focused }) => {
-                        if (focused) return < IonIcon name='person' color={Style.defaultRed} size={24} />
-                        else return < IonIcon name='person-outline' size={24} color={Style.defaultRed} />
-                    }
-                }}
-            />
-            <Tab.Screen
-                name='Setting'
-                component={SetttingScreen}
-                options={{
-                    tabBarLabel: 'Setting',
-                    tabBarShowLabel: false,
-                    headerTitleAlign: 'center',
-                    headerTitle: () => <Heading title={`Settings`} />,
-                    headerLeft: () => <BackIcon />,
-                    // headerRight: () => <QuibButton text="Log In" onPress="Test" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
-                    tabBarIcon: ({ focused }) => {
-                        if (focused) return <IonIcon name='settings' color={Style.defaultRed} size={24} />
-                        else return <IonIcon name='settings-outline' size={24} color={Style.defaultRed} />
-                    }
-                }}
-            />
-            {/* <Tab.Screen
+                    }}
+                />
+                <Tab.Screen
+                    name='Setting'
+                    component={SetttingScreen}
+                    options={{
+                        tabBarLabel: 'Setting',
+                        tabBarShowLabel: false,
+                        headerTitleAlign: 'center',
+                        headerTitle: () => <Heading title={`Settings`} />,
+                        headerLeft: () => <BackIcon />,
+                        // headerRight: () => <QuibButton text="Log In" onPress="Test" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
+                        tabBarIcon: ({ focused }) => {
+                            if (focused) return <IonIcon name='settings' color={Style.defaultRed} size={24} />
+                            else return <IonIcon name='settings-outline' size={24} color={Style.defaultRed} />
+                        }
+                    }}
+                />
+                {/* <Tab.Screen
 
             /> */}
-        </Tab.Navigator>
+            </Tab.Navigator>
+            {/* <Net /> */}
+        </>
     )
 }
 

@@ -19,6 +19,7 @@ import GuestProfileScreen from '../screens/profileScreens/GuestProfileScreen';
 import ForgetPassword from '../screens/onBoardingScreens/ForgetPassword';
 import RNBootSplash from "react-native-bootsplash";
 import ResetPassword from '../screens/onBoardingScreens/ResetPassword';
+import Net from '../Net';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,111 +29,114 @@ export default function AuthStack() {
   }, []);
 
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: Style.quibHeader },
-        statusBarColor: Style.quibHeader,
-        // navigationBarHidden: true,
-        // navigationBarColor:'transparent'
-      }}
-      initialRouteName="Home">
-      <Stack.Screen
-        name="Home"
-        component={OnLanding}
-        options={{
-          headerShown: false,
-          statusBarColor: Style.quibBackColor,
-          header: () => <Logo />,
-          navigationBarHidden: true,
+    <>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: Style.quibHeader },
+          statusBarColor: Style.quibHeader,
+          // navigationBarHidden: true,
+          // navigationBarColor:'transparent'
         }}
-      />
-      <Stack.Screen
-        name="Register"
-        component={RegisterScreen}
-        options={{
-          header: () => <Logo />,
-          headerBackVisible: false,
-          headerShown: false,
-          headerLeft: () => <BackIcon />,
-          statusBarColor: Style.quibBackColor,
-          navigationBarHidden: true,
-          // headerRight: () => <OnLandingButton text="Log In" onPress="Login" viewStyle={null} textStyle={null} />,
-        }}
-      />
-      <Stack.Screen
-        name="Login"
-        component={LoginScreen}
-        options={{
-          headerShown: false,
-          navigationBarHidden: true,
-          statusBarColor: Style.quibBackColor,
-        }}
-      />
-       <Stack.Screen
-        name="Forget"
-        component={ForgetPassword}
-        options={{
-          headerShown: false,
-          navigationBarHidden: true,
-          statusBarColor: Style.quibBackColor,
-        }}
-      />
-      <Stack.Screen
-        name="Reset"
-        component={ResetPassword}
-        options={{
-          headerShown: false,
-          navigationBarHidden: true,
-          statusBarColor: Style.quibBackColor,
-        }}
-      />
-      <Stack.Screen
-        name="Guest"
-        component={GuestProfileScreen}
-        options={{
-          headerShown: false,
-          statusBarColor: Style.quibBackColor,
-        }}
-      />
-      <Stack.Screen
-        name="Bottom"
-        component={BottomTabNavigation}
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="Qplayer"
-        component={QuibPlayer}
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-          statusBarTranslucent: true,
-          statusBarColor: 'transparent'
-        }}
-      />
-      <Stack.Screen
-        name="OtherProfile"
-        component={OtherProfileScreen}
-        options={{
-          headerTitleAlign: 'center',
-          headerTitle: () => <Heading title={`Profile`} />,
-          headerLeft: () => <BackIcon />,
-          headerBackVisible: false,
-        }}
-      />
-      <Stack.Screen
-        name="Stream"
-        component={ProfileStream}
-        options={{
-          headerTitleAlign: 'center',
-          headerTitle: () => <Heading title={'Quib Stack'} />,
-          headerLeft: () => <BackIcon />,
-          headerBackVisible: false,
-        }}
-      />
-    </Stack.Navigator>
+        initialRouteName="Home">
+        <Stack.Screen
+          name="Home"
+          component={OnLanding}
+          options={{
+            headerShown: false,
+            statusBarColor: Style.quibBackColor,
+            header: () => <Logo />,
+            navigationBarHidden: true,
+          }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{
+            header: () => <Logo />,
+            headerBackVisible: false,
+            headerShown: false,
+            headerLeft: () => <BackIcon />,
+            statusBarColor: Style.quibBackColor,
+            navigationBarHidden: true,
+            // headerRight: () => <OnLandingButton text="Log In" onPress="Login" viewStyle={null} textStyle={null} />,
+          }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            headerShown: false,
+            navigationBarHidden: true,
+            statusBarColor: Style.quibBackColor,
+          }}
+        />
+        <Stack.Screen
+          name="Forget"
+          component={ForgetPassword}
+          options={{
+            headerShown: false,
+            navigationBarHidden: true,
+            statusBarColor: Style.quibBackColor,
+          }}
+        />
+        <Stack.Screen
+          name="Reset"
+          component={ResetPassword}
+          options={{
+            headerShown: false,
+            navigationBarHidden: true,
+            statusBarColor: Style.quibBackColor,
+          }}
+        />
+        <Stack.Screen
+          name="Guest"
+          component={GuestProfileScreen}
+          options={{
+            headerShown: false,
+            statusBarColor: Style.quibBackColor,
+          }}
+        />
+        <Stack.Screen
+          name="Bottom"
+          component={BottomTabNavigation}
+          options={{
+            gestureEnabled: false,
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Qplayer"
+          component={QuibPlayer}
+          options={{
+            gestureEnabled: false,
+            headerShown: false,
+            statusBarTranslucent: true,
+            statusBarColor: 'transparent'
+          }}
+        />
+        <Stack.Screen
+          name="OtherProfile"
+          component={OtherProfileScreen}
+          options={{
+            headerTitleAlign: 'center',
+            headerTitle: () => <Heading title={`Profile`} />,
+            headerLeft: () => <BackIcon />,
+            headerBackVisible: false,
+          }}
+        />
+        <Stack.Screen
+          name="Stream"
+          component={ProfileStream}
+          options={{
+            headerTitleAlign: 'center',
+            headerTitle: () => <Heading title={'Quib Stack'} />,
+            headerLeft: () => <BackIcon />,
+            headerBackVisible: false,
+          }}
+        />
+      </Stack.Navigator>
+      <Net />
+    </>
   );
 }
 

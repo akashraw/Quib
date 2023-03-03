@@ -25,7 +25,8 @@ export default function ProfileScreen({ navigation }: props) {
     const [isLoaded, setIsLoaded] = useState(false);
     const user = Auth.userName;
 
-    useEffect(() => {+
+    useEffect(() => {
+        +
         Promise.all([
             getMovieByUserId({ userId: user }).then((res) => { setQuibMovies(res) }),
             getFollowersByUserId({ userId: user }).then((res) => { setFollowers(res) }),
@@ -33,6 +34,10 @@ export default function ProfileScreen({ navigation }: props) {
             getUserById({ userId: user }).then((res) => setUser(res))
         ]).then(() => setIsLoaded(true))
     }, [])
+
+    const check: string = User.avatarBase256ImagePath;
+    
+
     return (
         <SafeAreaView style={{}}>
             <View style={{ paddingVertical: vw(3), backgroundColor: Style.quibBackColor }}>
@@ -44,7 +49,7 @@ export default function ProfileScreen({ navigation }: props) {
                                     <View style={{ paddingHorizontal: vw(2) }}>
                                         <FastImage
                                             source={{
-                                                uri: `${image256API}${User.avatarBase256ImagePath}`,
+                                                uri: (( check.split('.').pop() == 'jpeg' || check.split('.').pop() == 'jpg' || check.split('.').pop() == 'png') ? `${image256API}${check}` : `data:image/png;base64,${User.avatarBase256ImagePath}`),
                                                 priority: FastImage.priority.high,
                                                 cache: FastImage.cacheControl.immutable,
                                             }}

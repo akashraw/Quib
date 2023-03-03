@@ -31,9 +31,8 @@ export default function ProfileEditScreen(props: props) {
 
     //==============================================================useEffect======================================================================\\
     React.useEffect(() => {
-        console.log(Auth.userName)
-        Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => setUser(res)).then(() => {
-            setUserName(User.userName); setFirstName(User.firstName); setLastName(User.lastName); setBio(User.about);
+        Promise.resolve(getUserById({ userId: Auth.userName }).then((res) => {
+            setUserName(res.userName); setFirstName(res.firstName); setLastName(res.lastName); setBio(res.about); setUser(res);
         }))
     }, [])
     //**********************************************************************************/
@@ -59,8 +58,8 @@ export default function ProfileEditScreen(props: props) {
         data.append('FirstName', firstName);
         data.append('LastName', lastName);
         data.append('PasswordHash', Password);
-        data.append('AvatarBase256ImagePath', { 
-            uri:Img.data,
+        data.append('AvatarBase256ImagePath', {
+            uri: Img.data,
             type: Img.mime,
             name: pathParts[pathParts.length - 1]
         });
@@ -112,7 +111,7 @@ export default function ProfileEditScreen(props: props) {
     // }
 
     const UserIcon = () => {
-        if (!Img)
+        if (Img.path == null)
             return (
                 <TouchableOpacity onPress={launchImgLib}>
                     <View style={{ borderRadius: vw(20), borderWidth: 0, borderColor: Style.defaultRed, marginBottom: vw(1) }}>
@@ -156,19 +155,19 @@ export default function ProfileEditScreen(props: props) {
                 </View>
                 <View >
                     <View style={styles.inputField}>
-                        <TextInput placeholder={User.userName}
+                        <TextInput placeholder={userName}
                             value={userName}
                             placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setUserName(text)} style={styles.inputTxt} />
                     </View>
                     <View style={styles.inputField}>
-                        <TextInput placeholder={User.firstName}
+                        <TextInput placeholder={firstName}
                             value={firstName}
                             placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setFirstName(text)} style={styles.inputTxt} />
                     </View>
                     <View style={styles.inputField}>
-                        <TextInput placeholder={User.lastName}
+                        <TextInput placeholder={lastName}
                             value={lastName}
                             placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setLastName(text)} style={styles.inputTxt} />
@@ -186,7 +185,7 @@ export default function ProfileEditScreen(props: props) {
                         </View>
                     </View>
                     <View style={[styles.inputField, { height: vw(30), justifyContent: 'flex-start' }]}>
-                        <TextInput placeholder={User.about}
+                        <TextInput placeholder={Bio}
                             value={Bio}
                             placeholderTextColor={Style.defaultTxtColor}
                             onChangeText={(text) => setBio(text)} style={styles.inputTxt} />

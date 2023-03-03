@@ -12,7 +12,7 @@ import {
   Dimensions,
   Keyboard,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { vh, vw } from 'rxn-units';
 import { FlatList } from 'react-native-gesture-handler';
 import { Style } from '../../constants/Styles';
@@ -1023,4 +1023,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QuibCompose;
+export default memo(QuibCompose);

@@ -6,9 +6,10 @@ import OtherProfileScreenTabViews from './OtherProfileScreensTabViews'
 import { Shadow } from 'react-native-shadow-2'
 import { FollowUser, getFolloweeByUserId, getFollowersByUserId, getMovieByUserId, getOtherUserById, getUserById } from '../../services/QuibAPIs'
 import { AuthContext } from '../../Auth'
-import { FollowUserAPI, isUserFollowedAPI, UnFollowUserAPI } from '../../constants/Api'
+import { FollowUserAPI, image256API, isUserFollowedAPI, UnFollowUserAPI } from '../../constants/Api'
 import Toast from 'react-native-toast-message'
 import { Wave } from 'react-native-animated-spinkit'
+import FastImage from 'react-native-fast-image'
 
 interface props {
     navigation: any,
@@ -41,6 +42,8 @@ export default function OtherProfileScreen({ navigation, route }: props) {
             getUserById({ userId: userId }).then((res) => setUser(res))
         ]).then(() => setIsLoaded(true)).then(() => console.log(User.id))
     }, [IsUserFollowed])
+
+    const check: string = User.avatarBase256ImagePath;
 
     //*********************************************************************************************\\
     async function isUserFollowed(Quib: QuibFollow) {
@@ -143,10 +146,15 @@ export default function OtherProfileScreen({ navigation, route }: props) {
                                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: vw(2) }}>
                                     <View style={{ paddingHorizontal: vw(2) }}>
                                         <Shadow distance={5}>
-                                            <Image
-                                                source={require('../../assets/Movie/arrival.jpeg')}
-                                                style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
-                                            />
+                                        <FastImage
+                                            source={{
+                                                uri: (( check.split('.').pop() == 'jpeg' || check.split('.').pop() == 'jpg' || check.split('.').pop() == 'png') ? `${image256API}${check}` : `data:image/png;base64,${User.avatarBase256ImagePath}`),
+                                                priority: FastImage.priority.high,
+                                                cache: FastImage.cacheControl.immutable,
+                                            }}
+                                            resizeMode="contain"
+                                            style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
+                                        />
                                         </Shadow>
                                     </View>
                                     <View style={{ alignSelf: 'center', justifyContent: 'center', paddingHorizontal: vw(2) }}>

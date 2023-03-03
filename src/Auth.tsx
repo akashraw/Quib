@@ -48,7 +48,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     React.useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
-            console.log("Connection type", state.type);
+            // console.log("Connection type", state.type);
+            // console.log("Is connected?", state.isConnected);
             console.log("Is connected?", state.isConnected);
             ConnectionInfo(state.isConnected);
         });
@@ -64,11 +65,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         if (isConnected == false) {
             return dispatch({
                 type: 'NETINFO',
-                net: false
+                net: true
             })
         } else return dispatch({
             type: 'NETINFO',
-            net: true
+            net: false
         })
     }
     // Get Auth state
@@ -80,15 +81,16 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             let user = await AsyncStorage.getItem(USER_KEY);
             user !== null ? user : null;
             if (user !== null) {
-                return dispatch({
+                dispatch({
                     type: 'LOGIN',
                     isGuest: false,
                     name: user,
                     modal: false
-                });
+                })
+                return true;
             } else {
-                return await handleLogout();
-
+                await handleLogout();
+                return false
             }
         } catch (error) {
             console.log('this ' + error)
@@ -148,14 +150,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
 //A simple hooks to facilitate the access to the AuthContext
 // and permit components to subscribe to AuthContext updates
-const useAuth = () => {
-    useContext(AuthContext)
-    // console.log(AuthContext)
-    if (AuthContext === undefined) {
-        throw new Error("useTheme must be used within a ThemeProvider");
-    }
-    return AuthContext;
-};
 
 
-export { AuthContext, useAuth };
+
+export { AuthContext };

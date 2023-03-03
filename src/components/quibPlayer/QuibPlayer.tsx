@@ -125,7 +125,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     }, 1000));
   }, []);
 
-  //UseEffect use to scroll
+  // movie timer  stopwatch
   useEffect(() => {
     if (isActive.current && MovieTime < MovieLen.current) {
       timer.current = setInterval(() => {
@@ -141,9 +141,8 @@ export default function QuibPlayer({ navigation, route }: props) {
     return () => clearInterval(timer.current);
   }, [isActive.current, MovieTime]);
 
-  // movie timer  stopwatch
+  //UseEffect use to scroll
   useEffect(() => {
-    // console.log('index: ' + quibPlayIndexRef.current + ' Quib: ' + QuibTimeRef[quibPlayIndexRef.current] + ' movie: ' + MovieTime)
     if (QuibTimeRef[quibPlayIndexRef.current] == MovieTime) {
       // console.log('if')
       flatRef.current?.scrollToIndex({
@@ -179,10 +178,6 @@ export default function QuibPlayer({ navigation, route }: props) {
     return () => { };
   }, [isActive.current, MovieTime]);
 
-  useEffect(() => {
-    console.log(Time)
-    // bottomSheetModalRef.current?.present();
-  }, [True]);
 
   //file check
   const FileCheck = () => {
@@ -260,12 +255,15 @@ export default function QuibPlayer({ navigation, route }: props) {
   // }
 
   const Profile = (userId: string) => {
+    if (isActive.current == true) {
+      isActive.current = false;
+      return setPlayPause('play-circle-outline');
+    }
     if (userId != 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c') {
       return navigation.navigate('OtherProfile', { userId: userId });
     } else return navigation.navigate('Profile');
   };
   const HandlePress = (time: number) => {
-    console.log('hi')
     let Temp = Time;
     setTime(time);
     if (time == Temp) {
@@ -527,7 +525,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         />
       </View>
     );
-  }, []);
+  }, [resMap.current]);
 
   //-========================
   const CarouselPress = () => {
@@ -540,7 +538,7 @@ export default function QuibPlayer({ navigation, route }: props) {
     }
   };
 
-  const QuibCarouselModal = () => {
+  const QuibCarouselModal = useCallback(() => {
     // const [QuibCarTime, setQuibCarTime] = useState(QuibCarTimeRef.current);
     // const QuibCarRef = useRef<any>(null);
     // const { hours, mintues, seconds } = getFormattedTime(QuibCarTime);
@@ -573,7 +571,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         <Flash />
       </Modal>
     );
-  };
+  }, [isVisble])
 
   // variables
   const snapPoints = useMemo(() => ['50%', '90%'], []);
