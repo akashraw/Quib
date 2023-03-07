@@ -82,26 +82,43 @@ export default function RegisterScreen(props: props) {
     }
 
     const Register = async (formData: any) => {
-        let pathParts = Img.path.split('/');
-
         var data = new FormData();
-        data.append('Email', formData.Email);
-        data.append('FirstName', formData.FirstName);
-        data.append('LastName', formData.LastName);
-        data.append('Password', formData.Password);
-        data.append('ConfirmPassword', formData.ConfirmPassword);
-        // data.append('AvatarBase256ImagePath', Img);
-        data.append('AvatarBase256ImagePath', {
-            uri:
-                Platform.OS === "android"
-                    ? Img.path
-                    : Img.path.replace("file://", ""),
-            type: Img.mime,
-            name: pathParts[pathParts.length - 1]
-        });
-        data.append('Username', formData.DisplayName);
-        data.append('IsEnabled', true)
-        data.append('About', '')
+        let pathParts: string;
+        if (Img.path == undefined) {
+            // pathParts = Img.path.split('/');
+
+            data.append('Email', formData.Email);
+            data.append('FirstName', formData.FirstName);
+            data.append('LastName', formData.LastName);
+            data.append('Password', formData.Password);
+            data.append('ConfirmPassword', formData.ConfirmPassword);
+            // data.append('AvatarBase256ImagePath', Img);
+            data.append('AvatarBase256ImagePath', null);
+            data.append('Username', formData.DisplayName);
+            data.append('IsEnabled', true);
+            data.append('About', '');
+        } else {
+
+            pathParts = Img.path.split('/');
+
+            data.append('Email', formData.Email);
+            data.append('FirstName', formData.FirstName);
+            data.append('LastName', formData.LastName);
+            data.append('Password', formData.Password);
+            data.append('ConfirmPassword', formData.ConfirmPassword);
+            // data.append('AvatarBase256ImagePath', Img);
+            data.append('AvatarBase256ImagePath', {
+                uri:
+                    Platform.OS === "android"
+                        ? Img.path
+                        : Img.path.replace("file://", ""),
+                type: Img.mime,
+                name: pathParts[pathParts.length - 1]
+            });
+            data.append('Username', formData.DisplayName);
+            data.append('IsEnabled', true)
+            data.append('About', '')
+        }
 
         const headerOption = {
             method: 'POST',
@@ -117,7 +134,7 @@ export default function RegisterScreen(props: props) {
             // console.log(response)
             // let json = response.json();
             if (response.status == 200) {
-                console.log('hi')
+                setActivity(false);
                 return props.navigation.navigate('Login')
             } else setActivity(false)
         } catch (error) {
@@ -165,7 +182,7 @@ export default function RegisterScreen(props: props) {
                         resizeMode={'contain'}
                         source={require('../../assets/logo.png')}
                     />
-                    <Text style={{ fontSize: 28, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(2) }}>{StringData.registerHead}</Text>
+                    <Text style={{ fontSize: vw(7.2), textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(2) }}>{StringData.registerHead}</Text>
                 </View>
                 {/* upload */}
                 <View style={styles.upPhotoWrap}>
@@ -470,12 +487,13 @@ const styles = StyleSheet.create({
         marginHorizontal: vw(5),
         justifyContent: 'center',
         borderRadius: vw(2),
+        height: vw(8)
     },
     inputTxt: {
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: vw(4),
-        fontSize: 16,
+        fontSize: vw(4),
         flex: 1,
         // paddingBottom: -2,
         // paddingTop: 20,
@@ -516,7 +534,7 @@ const styles = StyleSheet.create({
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: vw(3.6),
         color: '#fff',
         fontWeight: 'bold'
     },

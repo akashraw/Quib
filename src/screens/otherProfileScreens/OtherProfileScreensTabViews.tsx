@@ -163,14 +163,14 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
                     source={require('../../assets/Movie/arrival.jpeg')}
                   />
                   <View>
-                    <Text style={[styles.title, styles.txt, { fontSize: 14 }]}>
+                    <Text style={[styles.title, styles.txt, { fontSize: vw(3.6) }]}>
                       {item.userName}
                     </Text>
                     <Text
                       style={[
                         styles.year,
                         styles.txt,
-                        { fontSize: 12, textAlign: 'center' },
+                        { fontSize: vw(3), textAlign: 'center' },
                       ]}>
                       {item.firstName} {item.lastName}
                     </Text>
@@ -247,7 +247,7 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
                       style={[
                         styles.year,
                         styles.txt,
-                        { fontSize: 12, textAlign: 'center' },
+                        { fontSize: vw(3), textAlign: 'center' },
                       ]}>
                       {item.firstName} {item.lastName}
                     </Text>
@@ -311,11 +311,11 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
           <View style={styles.tab}>
             <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
               <Text style={[styles.label, styles.inactive]}>{route.total}</Text>
-              <Text style={[...[styles.label, styles.inactive], { fontSize: 14 }]}>{route.title}</Text>
+              <Text style={[...[styles.label, styles.inactive], { fontSize: vw(3.6) }]}>{route.title}</Text>
             </Animated.View>
             <Animated.View style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}>
               <Text style={[styles.label, styles.active]}>{route.total}</Text>
-              <Text style={[[styles.label, styles.active], { fontSize: 14 }]}>{route.title}</Text>
+              <Text style={[[styles.label, styles.active], { fontSize: vw(3.6) }]}>{route.title}</Text>
             </Animated.View>
           </View>
         );
@@ -393,11 +393,11 @@ const styles = StyleSheet.create({
     color: '#939393',
   },
   icon: {
-    height: 26,
-    width: 26,
+    height: vw(6.5),
+    width: vw(6.5),
   },
   label: {
-    fontSize: 18,
+    fontSize: vw(4.6),
     marginTop: vw(1),
     backgroundColor: 'transparent',
     fontWeight: 'bold',
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   txt: {
-    fontSize: 14,
+    fontSize: vw(3.6),
     color: Style.defaultTxtColor,
     fontWeight: 'bold',
     // textAlign: 'center'
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
   },
   buttonTxt: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: vw(3.6),
     color: '#fff',
     fontWeight: '500',
   },

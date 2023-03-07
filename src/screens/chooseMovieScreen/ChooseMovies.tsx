@@ -201,7 +201,7 @@ export default function ChooseMovies(props: props) {
         renderItem={({ item, index }: any) => <MovieBanner item={item} index={index} />
         }
         ListFooterComponent={<></>}
-        ListFooterComponentStyle={{paddingBottom:vw(10)}}
+        ListFooterComponentStyle={{ paddingBottom: vw(10) }}
         estimatedItemSize={vh(12)}
         ListEmptyComponent={() => <SkeletonVertical />}
       />
@@ -213,9 +213,11 @@ export default function ChooseMovies(props: props) {
   // for rending movie card list 
   const MovieBanner = ({ item, index }: any) => {
     const check: string = item.posterContentThumb;
-    let FS = check.split('.').pop();
+    let FS: any;
+    if (check != null) {
+      FS = check.split('.').pop();
+    } else{ FS = null}
     let length = item.length;
-    let a = 2;
     let total = Formatter(length);
     return (
 
@@ -311,8 +313,8 @@ export default function ChooseMovies(props: props) {
           <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
           {/* <TouchableOpacity activeOpacity={.4} onPress={handlePresentModalPress} >
             <View style={styles.button}> */}
-              {/* <Text style={styles.buttonTxt}>Sort </Text> */}
-              {/* <Icon name='sort' size={22} color={Style.defaultRed} />
+          {/* <Text style={styles.buttonTxt}>Sort </Text> */}
+          {/* <Icon name='sort' size={22} color={Style.defaultRed} />
             </View>
           </TouchableOpacity> */}
         </View>

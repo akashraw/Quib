@@ -20,7 +20,10 @@ import ForgetPassword from '../screens/onBoardingScreens/ForgetPassword';
 import RNBootSplash from "react-native-bootsplash";
 import ResetPassword from '../screens/onBoardingScreens/ResetPassword';
 import Net from '../Net';
-
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 const Stack = createNativeStackNavigator();
 
 export default function AuthStack() {
@@ -29,13 +32,13 @@ export default function AuthStack() {
   }, []);
 
   return (
-    <>
+    <SafeAreaProvider>
       <Stack.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: Style.quibHeader },
           statusBarColor: Style.quibHeader,
           // navigationBarHidden: true,
-          // navigationBarColor:'transparent'
+          navigationBarColor:'transparent'
         }}
         initialRouteName="Home">
         <Stack.Screen
@@ -46,6 +49,7 @@ export default function AuthStack() {
             statusBarColor: Style.quibBackColor,
             header: () => <Logo />,
             navigationBarHidden: true,
+            
           }}
         />
         <Stack.Screen
@@ -136,7 +140,7 @@ export default function AuthStack() {
         />
       </Stack.Navigator>
       <Net />
-    </>
+    </SafeAreaProvider>
   );
 }
 

@@ -82,13 +82,13 @@ export default function SetttingScreen() {
                     {
                         Auth.isGuest == false ?
                             <View style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(4), justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>{User.userName}</Text>
-                                <Text style={{ fontSize: 14, fontWeight: '500', color: Style.defaultLightGrey }}>{User.firstName} {User.lastName}</Text>
+                                <Text style={{ fontSize: vw(5.1), fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>{User.userName}</Text>
+                                <Text style={{ fontSize: vw(3.6), fontWeight: '500', color: Style.defaultLightGrey }}>{User.firstName} {User.lastName}</Text>
                             </View>
                             :
                             <View style={{ alignItems: 'center', height: vw(20), paddingLeft: vw(4), justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>@guestuser</Text>
-                                <Text style={{ fontSize: 14, fontWeight: '500', color: Style.defaultLightGrey }}>Guest User</Text>
+                                <Text style={{ fontSize: vw(5.1), fontWeight: '500', paddingBottom: vw(2), color: Style.defaultGrey }}>@guestuser</Text>
+                                <Text style={{ fontSize: vw(3.6), fontWeight: '500', color: Style.defaultLightGrey }}>Guest User</Text>
                             </View>
                     }
                 </View>
@@ -199,12 +199,12 @@ const styles = StyleSheet.create({
     },
     txtStyle: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: vw(4.1),
         color: '#fff',
         fontWeight: 'bold'
     },
     settingTxt: {
-        fontSize: 14,
+        fontSize: vw(3.6),
         fontWeight: '500',
         paddingLeft: vw(6),
         paddingBottom: vw(0),
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     },
     buttonTxtModal: {
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: vw(3.6),
         color: '#fff',
         fontWeight: 'bold'
     },

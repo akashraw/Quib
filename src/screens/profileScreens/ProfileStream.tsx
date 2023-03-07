@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     },
     heading: {
         alignSelf:'center',
-        fontSize: 24,
+        fontSize: vw(6.1),
         fontWeight: 'bold',
         // marginBottom:-80,
         paddingTop: vw(2),

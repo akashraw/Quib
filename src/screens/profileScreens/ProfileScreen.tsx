@@ -59,13 +59,13 @@ export default function ProfileScreen({ navigation }: props) {
                                     </View>
                                     <View style={{ alignSelf: 'center', justifyContent: 'center', paddingHorizontal: vw(2) }}>
                                         <View style={{ paddingBottom: vw(1) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 16 }}>{User.userName}</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: vw(4.1) }}>{User.userName}</Text>
                                         </View>
                                         <View style={{ paddingBottom: vw(1) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 14 }}>{User.firstName} {User.lastName}</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: vw(3.6) }}>{User.firstName} {User.lastName}</Text>
                                         </View>
                                         <View style={{ paddingBottom: vw(0) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: 12, marginRight: vw(2), width: vw(60), }} numberOfLines={3} >{User.about}</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: vw(3.1), marginRight: vw(2), width: vw(60), }} numberOfLines={3} >{User.about}</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 12,
+        fontSize: vw(3.1),
         color: '#fff',
         fontWeight: 'bold'
     },

@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useForm, Controller } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { LoginAPI, ResetPasswordAPI } from '../../constants/Api';
-import { AuthContext, useAuth } from '../../Auth';
+import { AuthContext } from '../../Auth';
 import Modal from "react-native-modal";
 
 const deviceHeight = Dimensions.get('screen').height;
@@ -106,8 +106,8 @@ export default function ResetPassword(props: props) {
                         resizeMode={'contain'}
                         source={require('../../assets/logo.png')}
                     />
-                    <Text style={{ fontSize: 24, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>Reset your Password</Text>
-                    {Fail ? <Text style={{ fontSize: 14, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter a new password</Text> : null}
+                    <Text style={{ fontSize: vw(6.2), textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>Reset your Password</Text>
+                    {Fail ? <Text style={{ fontSize: vw(3.6), textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter a new password</Text> : null}
                 </View>
                 <View style={{ marginTop: vw(1) }}>
                     <View style={styles.inputField}>
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: vw(4),
-        fontSize: 16,
+        fontSize: vw(4.2),
         flex: 1,
         // paddingBottom: -2,
         // paddingTop: 20,
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: vw(4.2),
         color: '#fff',
         fontWeight: 'bold'
     },

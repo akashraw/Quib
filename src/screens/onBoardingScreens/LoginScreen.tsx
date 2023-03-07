@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useForm, Controller } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { LoginAPI } from '../../constants/Api';
-import { AuthContext, useAuth } from '../../Auth';
+import { AuthContext } from '../../Auth';
 import Modal from "react-native-modal";
 
 const deviceHeight = Dimensions.get('screen').height;
@@ -92,8 +92,8 @@ export default function LoginScreen(props: props) {
             resizeMode={'contain'}
             source={require('../../assets/logo.png')}
           />
-          <Text style={{ fontSize: 24, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>{StringData.loginHead}</Text>
-          {Fail ? <Text style={{ fontSize: 14, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter correct email and password</Text> : null}
+          <Text style={{ fontSize: vw(6.1), textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>{StringData.loginHead}</Text>
+          {Fail ? <Text style={{ fontSize: vw(3.6), textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter correct email and password</Text> : null}
         </View>
         <View style={{ marginTop: vw(1) }}>
           <View style={styles.inputField}>
@@ -218,41 +218,20 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(5),
     justifyContent: 'center',
     borderRadius: vw(2),
+    height: vw(8)
   },
   inputTxt: {
     justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: vw(4),
-    fontSize: 16,
+    fontSize: vw(4),
     flex: 1,
     // paddingBottom: -2,
     // paddingTop: 20,
     color: Style.defaultTxtColor
   },
-  upPhotoWrap: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  upButton: {
-    width: 140,
-    height: 30,
-    backgroundColor: "#990000",
-    borderRadius: 10,
-  },
-  upTxt: {
-    textAlign: 'center',
-    paddingTop: 4,
-    color: '#fff',
-  },
-  scrollWrap: {
-    marginVertical: 20,
-    marginHorizontal: 16,
-    height: 200,
-    backgroundColor: '#dcdcdc',
-    padding: 15,
-  },
+ 
+ 
   button: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -260,11 +239,11 @@ const styles = StyleSheet.create({
     width: vw(30),
     height: vw(10),
     borderRadius: vw(2),
-    marginBottom: 10,
+    marginBottom: vw(2.5),
   },
   buttonTxt: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: vw(4.2),
     color: '#fff',
     fontWeight: 'bold'
   },

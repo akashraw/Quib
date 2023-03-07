@@ -37,6 +37,7 @@
     "react-native-animated-pagination-dots": "^0.1.73",
     "react-native-animated-spinkit": "^1.5.2",
     "react-native-bootsplash": "^4.4.1",
+    "react-native-device-info": "^10.4.0",
     "react-native-drop-shadow": "^0.0.6",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.8.0",

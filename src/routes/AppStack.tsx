@@ -22,12 +22,13 @@ import QuibButton from '../components/QuibButton';
 import { AuthContext } from '../Auth';
 import { useNavigation } from '@react-navigation/native';
 import Net from '../Net';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 function ModalScreen({ navigation }: any) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+      <Text style={{ fontSize: vw(7.7) }}>This is a modal!</Text>
       <QuibButton text={''} onPressed={() => null} textStyle={undefined} />
     </View>
   );
@@ -42,13 +43,13 @@ export default function AppStack() {
   }, []);
 
   return (
-    <>
+    <SafeAreaProvider>
       <Stack.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: Style.quibHeader },
           statusBarColor: Style.quibHeader,
           // navigationBarHidden: true,
-          navigationBarColor: 'transparent'
+          navigationBarColor: 'transparent',
         }}
         initialRouteName="Bottom">
         <Stack.Screen
@@ -139,7 +140,7 @@ export default function AppStack() {
         />
       </Stack.Navigator>
       <Net />
-    </>
+    </SafeAreaProvider>
   );
 }
 
@@ -152,11 +153,11 @@ const styles = StyleSheet.create({
     width: vw(25),
     height: vw(8),
     borderRadius: vw(2),
-    marginBottom: 10,
+    marginBottom: vw(2.5),
   },
   buttonTxt: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: vw(3.6),
     color: '#fff',
     fontWeight: 'bold',
   },

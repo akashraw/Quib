@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authReducer from './Reducer';
 import { useNavigation } from '@react-navigation/native';
 import NetInfo from "@react-native-community/netinfo";
+import DeviceInfo from 'react-native-device-info';
 
 // import {AuthData, authService} from '../services/authService';
 type AuthData = {
@@ -39,12 +40,16 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     // useREDUCER =================================================
     const [state, dispatch] = useReducer(authReducer, initialState);
-
+    
     //=======================useEffect FOR GETTING THE LAST USER STATE=========================\\
     React.useEffect(() => {
         // handleLogout();
+        let type = DeviceInfo.getDeviceType();
         getAuthState();
+        console.log(type);
+        // return()=> type='';
     }, [])
+
 
     React.useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {

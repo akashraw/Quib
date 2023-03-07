@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: vw(4),
-        fontSize: 16,
+        fontSize: vw(4.1),
         color: Style.defaultTxtColor
     },
     upPhotoWrap: {
@@ -234,22 +234,22 @@ const styles = StyleSheet.create({
         marginVertical: vw(3),
     },
     upButton: {
-        width: 140,
-        height: 30,
+        width: vw(36),
+        height: vw(7.5),
         backgroundColor: "#990000",
-        borderRadius: 10,
+        borderRadius: vw(2.5),
     },
     upTxt: {
         textAlign: 'center',
-        paddingTop: 4,
+        paddingTop: vw(1),
         color: '#fff',
     },
     scrollWrap: {
-        marginVertical: 20,
-        marginHorizontal: 16,
-        height: 200,
+        marginVertical: vw(52),
+        marginHorizontal: vw(4.1),
+        height: vw(51.2),
         backgroundColor: '#dcdcdc',
-        padding: 15,
+        padding: vw(3.8),
     },
     button: {
         alignItems: 'center',
@@ -258,11 +258,11 @@ const styles = StyleSheet.create({
         width: vw(30),
         height: vw(10),
         borderRadius: vw(2),
-        marginBottom: 10,
+        marginBottom: vw(2.5),
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: vw(4.1),
         color: '#fff',
         fontWeight: 'bold'
     },

@@ -159,13 +159,13 @@ export default function OtherProfileScreen({ navigation, route }: props) {
                                     </View>
                                     <View style={{ alignSelf: 'center', justifyContent: 'center', paddingHorizontal: vw(2) }}>
                                         <View style={{ paddingBottom: vw(1) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 16 }}>{User.userName}</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: vw(4.2) }}>{User.userName}</Text>
                                         </View>
                                         <View style={{ paddingBottom: vw(1) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: 14 }}>{User.firstName} {User.lastName}</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: vw(3.6) }}>{User.firstName} {User.lastName}</Text>
                                         </View>
                                         <View style={{ paddingBottom: vw(0) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: 12, marginRight: vw(2), width: vw(60), }} numberOfLines={3} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Leo in vitae turpis massa sed elementum tempus.</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: vw(3), marginRight: vw(2), width: vw(60), }} numberOfLines={3} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Leo in vitae turpis massa sed elementum tempus.</Text>
                                         </View>
                                         <View style={{ flex: 1, flexDirection: 'row', paddingBottom: vw(5), alignSelf: 'flex-start' , marginTop:vw(2)}}>
                                             {/* <View style={{ padding) }}> */}
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     },
     buttonTxtFollow: {
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: vw(3.6),
         color: '#fff',
         fontWeight: '500'
     },
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     },
     buttonTxtFollowing: {
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: vw(3.6),
         color: Style.defaultRed,
         fontWeight: '500'
     },

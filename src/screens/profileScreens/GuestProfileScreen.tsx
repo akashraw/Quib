@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: vw(3.6),
         color: '#fff',
         fontWeight: 'bold'
     },

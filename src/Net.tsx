@@ -8,6 +8,9 @@ import { GestureResponderEvent } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Style } from './constants/Styles';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import DeviceInfo from 'react-native-device-info';
+
 // import { SafeAreaView } from 'react-native-safe-area-context'
 const deviceHeight = Dimensions.get('screen').height;
 
@@ -15,17 +18,27 @@ export default function Net() {
     const Connect = useContext(AuthContext);
     const [Try, setTry] = React.useState<boolean>(false)
     const netInfo = useNetInfo();
+    const insets = useSafeAreaInsets();
+    const Auth = useContext(AuthContext);
 
     const CheckNet = () => {
         setTry(true);
         setTimeout(() => {
-            if (netInfo.isConnected == true) setTry(false)
+            if (netInfo.isConnected == true) {
+                Auth.dispatch({
+                    type: 'NETINFO',
+                    net: true,
+                })
+                setTry(false);
+            }
             else setTry(false)
         }, 2000)
 
     }
     return (
-        <SafeAreaView>
+        <View style={{
+            backgroundColor: Style.quibBackColor,
+        }}>
             <Modal isVisible={Connect.net} coverScreen={true} hasBackdrop={true} backdropColor='black' backdropOpacity={.7}
                 onBackdropPress={() => null} onBackButtonPress={() => null} useNativeDriver={true}
                 useNativeDriverForBackdrop={true} statusBarTranslucent={true} style={{ height: vh(100), }} deviceHeight={deviceHeight} >
@@ -54,7 +67,7 @@ export default function Net() {
                     }
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View >
     )
 }
 
