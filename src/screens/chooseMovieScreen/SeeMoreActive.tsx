@@ -7,8 +7,9 @@ import { API } from '../../constants/Api'
 import { Style } from '../../constants/Styles'
 import { useNavigation } from '@react-navigation/native'
 
-export default function SeeMoreActive(route: any) {
-    const Data = route.route.params.Data
+export default function SeeMoreRecent(route: any) {
+    const Data = route.route.params.Data;
+    const Device =  route.route.params.Auth;
     const navigation = useNavigation();
     const MovieBanner = useCallback(({ item, index }: any) => {
         const check: string = item.posterContentThumb;
@@ -22,7 +23,7 @@ export default function SeeMoreActive(route: any) {
                         <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                             {/* <Shadow distance={1} style={{ borderRadius: vw(2) }} > */}
                             <FastImage
-                                style={{ width: vw(15), height: vw(20), marginRight: vw(2), borderRadius: vw(1) }}
+                                style={{ width: vw(15), height: vw(20), marginRight: vw(2), borderRadius: vw(1), marginVertical:vw(2)}}
                                 // resizeMode={FastImage.resizeMode.contain}
                                 source={{
                                     uri: ((FS == 'jpeg' || FS == 'jpg') ? `${API}${item.posterContentThumb}` : `data:image/png;base64,${item.posterContentThumb}`),
@@ -41,10 +42,10 @@ export default function SeeMoreActive(route: any) {
                         <View style={{ alignItems: 'center', alignSelf: 'flex-end', }}>
                             <View style={{ width: vw(16), height: vw(16), marginBottom: vw(1), }}>
                                 <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Style.defaultRed, borderColor: Style.defaultRed, borderTopRightRadius: vw(4), borderTopLeftRadius: vw(4), borderBottomWidth: 0 }}>
-                                    <Text style={{ color: '#fff', fontWeight: '500', fontSize: 14, alignSelf: 'center' }}>4.2k</Text>
+                                    <Text style={{ color: '#fff', fontWeight: '500', fontSize: (Device ? vw(3) : vw(3.6)), alignSelf: 'center' }}>4.2k</Text>
                                 </View>
                                 <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', borderColor: Style.defaultRed, borderBottomLeftRadius: vw(4), borderBottomRightRadius: vw(4), borderTopWidth: 0 }}>
-                                    <Text style={{ fontSize: 9, fontWeight: '500', color: Style.defaultTxtColor, textAlign: 'center', alignSelf: 'center' }}>Total Quibs</Text>
+                                    <Text style={{ fontSize: (Device ? vw(2.2) : vw(3.6)), fontWeight: '500', color: Style.defaultTxtColor, textAlign: 'center', alignSelf: 'center' }}>Total Quibs</Text>
                                 </View>
                             </View>
                         </View>
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderRadius: vw(2),
         width: vw(95),
-        height: vh(12),
+        // height: vh(12),
         flexDirection: 'row',
         backgroundColor: '#EEEEEE',
         paddingHorizontal: vw(2),

@@ -17,6 +17,7 @@ interface props {
     setActive: React.Dispatch<SetStateAction<boolean>>,
     MovieId:number,
     userId: string,
+    device: boolean,
 }
 
 const getFormattedTime = (time: number) => {
@@ -28,7 +29,7 @@ const getFormattedTime = (time: number) => {
 
 
 
-function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive, MovieId, userId }: props) {
+function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive, MovieId, userId, device }: props) {
     let { hours, mintues, seconds } = getFormattedTime(item.time);
     // console.log(handlePresentModalPress(item.time))
     const QuibHead = ({ hours, mintues, seconds, isSS }: any) => {
@@ -125,7 +126,7 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
                     {/* <View style={{ flex: 1, flexDirection: 'row' }}> */}
                     <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
                     <View style={{ flex: 1, }}>
-                        <Text style={{ flex: 1, color: Style.defaultTxtColor, fontSize: 14, fontWeight: '500', textAlign: 'left' }}>{item.body}</Text>
+                        <Text style={{ flex: 1, color: Style.defaultTxtColor, fontSize: device? vw(2.5):vw(3.6), fontWeight: '500', textAlign: 'left' }}>{item.body}</Text>
                     </View>
                 </View>
             )

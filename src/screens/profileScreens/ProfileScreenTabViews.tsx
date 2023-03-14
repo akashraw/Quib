@@ -28,7 +28,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { vh, vw } from 'rxn-units';
 import { AuthContext } from '../../Auth';
 import QuibButton from '../../components/QuibButton';
-import { API } from '../../constants/Api';
+import { API, image256API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
 import { getMovieByUserId, getFollowersByUserId, getFolloweeByUserId, UnFollowUser } from '../../services/QuibAPIs';
 import MovieCard from '../chooseMovieScreen/MovieCard';
@@ -46,11 +46,12 @@ type Prop = {
   follower: Array<any>;
   navi: any;
   followerId: string;
+  device: boolean;
 }
 
 type State = NavigationState<Route>;
 
-export default function ProfileScreenTabViews({ quib, followee, follower, navi, followerId }: Prop) {
+export default function ProfileScreenTabViews({ quib, followee, follower, navi, followerId, device }: Prop) {
   const navigation = useNavigation();
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
@@ -61,11 +62,12 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
   // const Follow = useRef<any[]>([]);
   // const QuibMovies = useRef<any[]>([]);
   const Auth = React.useContext(AuthContext);
+  const styles = device ? stylesTab : style;
   useEffect(() => {
     Promise.all([
       setQuib(quib),
       setFollowee(followee),
-      setFollower(follower),      
+      setFollower(follower),
     ])
   }, [])
 
@@ -96,7 +98,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
   const Quibbed = React.useCallback(() => {
 
     return (
-      <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100), height:vh(100) }}>
+      <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100), height: vh(100) }}>
         <FlashList
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
@@ -109,21 +111,22 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
             <View
               style={{ justifyContent: 'center', alignItems: 'center' }}>
               <TouchableOpacity
-                onPress={() => { navigation.navigate('Stream' as never, { id: followerId, movieId: item.id } as never) }}
+                onPress={() => { navigation.navigate('Stream' as never, { id: followerId, movieId: item.id, device: device } as never) }}
               >
                 <MovieCard
                   key={index}
                   title={item.title}
                   year={item.releaseYear}
                   director={item.director}
-                  viewStyle={undefined}
-                  textStyle={undefined}
+                  viewStyle={styles.viewStyle}
+                  textStyle={styles.txtStyle}
                   linearGradStyle={undefined}
                   imgSrc={item.posterContentThumb}
                 />
               </TouchableOpacity>
             </View>
           )}
+          
         />
       </View>
     );
@@ -134,6 +137,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
 
     const RenderItem = ({ item, index }: any) => {
       let followeeId = item.newFolloweeId;
+
       return (
         <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
           <View
@@ -156,29 +160,40 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
-                    width:vw(70)
+                    width: vw(70)
                   }}>
                   <Image
-                    style={{
-                      width: vw(14),
-                      height: vw(14),
-                      borderRadius: vw(8),
-                      marginRight: vw(2),
-                      resizeMode: 'contain',
-                      alignSelf: 'center',
-                    }}
+                    style={
+                      device ?
+                        {
+                          width: vw(8),
+                          height: vw(8),
+                          borderRadius: vw(4),
+                          marginRight: vw(2),
+                          resizeMode: 'contain',
+                          alignSelf: 'center',
+                        }
+                        :
+                        {
+                          width: vw(14),
+                          height: vw(14),
+                          borderRadius: vw(8),
+                          marginRight: vw(2),
+                          resizeMode: 'contain',
+                          alignSelf: 'center',
+                        }}
                     //   resizeMode={FastImage.resizeMode.contain}
-                    source={require('../../assets/Movie/arrival.jpeg')}
+                    source={{ uri: `${image256API}${item.avatarBase256ImagePath}` }}
                   />
-                  <View>
-                    <Text style={[styles.title, styles.txt, { fontSize: vw(3.6) }]}>
+                  <View >
+                    <Text style={[styles.title, styles.txt, { fontSize: device ? vw(3) : vw(3.6) }]}>
                       {item.userName}
                     </Text>
                     <Text
                       style={[
                         styles.year,
                         styles.txt,
-                        { fontSize: vw(3.1), textAlign: 'center' },
+                        { fontSize: device ? vw(2.5) : vw(3.1), textAlign: 'center' },
                       ]}>
                       {item.firstName} {item.lastName}
                     </Text>
@@ -213,6 +228,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
 
   const Followers = React.useCallback(() => {
     const RenderItem = ({ item, index }: any) => {
+      console.log(item)
       return (
         <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
           <TouchableOpacity onPress={() => Profile(item.newFollowerId)} key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
@@ -234,26 +250,37 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
                     alignItems: 'center',
                   }}>
                   <Image
-                    style={{
-                      width: vw(14),
-                      height: vw(14),
-                      borderRadius: vw(8),
-                      marginRight: vw(2),
-                      resizeMode: 'contain',
-                      alignSelf: 'center',
-                    }}
+                    style={
+                      device ?
+                        {
+                          width: vw(8),
+                          height: vw(8),
+                          borderRadius: vw(4),
+                          marginRight: vw(2),
+                          resizeMode: 'contain',
+                          alignSelf: 'center',
+                        }
+                        :
+                        {
+                          width: vw(14),
+                          height: vw(14),
+                          borderRadius: vw(8),
+                          marginRight: vw(2),
+                          resizeMode: 'contain',
+                          alignSelf: 'center',
+                        }}
                     //   resizeMode={FastImage.resizeMode.contain}
-                    source={require('../../assets/Movie/arrival.jpeg')}
+                    source={{ uri: `${image256API}${item.avatarBase256ImagePath}` }}
                   />
                   <View>
-                    <Text style={[styles.title, styles.txt, { fontSize: vw(3.6) }]}>
+                    <Text style={[styles.title, styles.txt, { fontSize: device ? vw(3) : vw(3.6) }]}>
                       {item.userName}
                     </Text>
                     <Text
                       style={[
                         styles.year,
                         styles.txt,
-                        { fontSize: vw(3.1), textAlign: 'center' },
+                        { fontSize: device ? vw(2.5) : vw(3.1), textAlign: 'center' },
                       ]}>
                       {item.firstName} {item.lastName}
                     </Text>
@@ -315,11 +342,11 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
           <View style={styles.tab}>
             <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
               <Text style={[styles.label, styles.inactive]}>{route.total}</Text>
-              <Text style={[...[styles.label, styles.inactive], { fontSize: vw(3.6) }]}>{route.title}</Text>
+              <Text style={[...[styles.label, styles.inactive], { fontSize: device ? vw(3) : vw(3.5), paddingBottom: vw(1) }]}>{route.title}</Text>
             </Animated.View>
             <Animated.View style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}>
               <Text style={[styles.label, styles.active]}>{route.total}</Text>
-              <Text style={[[styles.label, styles.active], { fontSize: vw(3.6) }]}>{route.title}</Text>
+              <Text style={[[styles.label, styles.active], { fontSize: device ? vw(3) : vw(3.5), paddingBottom: vw(1) }]}>{route.title}</Text>
             </Animated.View>
           </View>
         );
@@ -353,7 +380,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
     />
   );
 }
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   tabbar: {
     borderRadius: vw(1),
     marginBottom: vw(2),
@@ -458,4 +485,130 @@ const styles = StyleSheet.create({
     top: vw(16),
     borderRadius: vw(2),
   },
+  viewStyle: {
+
+  },
+  txtStyle: {
+
+  }
+});
+const stylesTab = StyleSheet.create({
+  tabbar: {
+    borderRadius: vw(1),
+    marginBottom: vw(2),
+    marginHorizontal: vw(1),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Style.quibPlayColor,
+    elevation: 2,
+    shadowColor: 'black',
+    shadowOpacity: 0.1,
+    shadowRadius: StyleSheet.hairlineWidth,
+    shadowOffset: {
+      height: StyleSheet.hairlineWidth,
+      width: 0,
+    },
+    zIndex: 1,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(0, 0, 0, .2)',
+  },
+  item: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 0,
+  },
+  activeItem: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  active: {
+    color: Style.defaultRed,
+  },
+  inactive: {
+    color: '#939393',
+  },
+  icon: {
+    height: vw(6.5),
+    width: vw(6.5),
+  },
+  label: {
+    fontSize: vw(3.6),
+    marginTop: vw(1),
+    backgroundColor: 'transparent',
+    fontWeight: 'bold',
+  },
+  followFollowers: {
+    paddingHorizontal: vw(3),
+    // paddingTop:vw(1),
+    justifyContent: 'space-between',
+    alignSelf: 'center',
+    width: vw(95),
+    height: vw(10),
+    flexDirection: 'row',
+    paddingTop: vw(0.5),
+    // justifyContent: 'flex-start',
+    alignItems: 'center',
+    alignContent: 'center',
+    // elevation: 2,
+    zIndex: 2,
+  },
+  txt: {
+    fontSize: vw(3.6),
+    color: Style.defaultTxtColor,
+    fontWeight: 'bold',
+    // textAlign: 'center'
+  },
+  title: {},
+  year: {},
+  director: {},
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Style.defaultRed,
+    width: vw(18),
+    height: vw(6),
+    borderRadius: vw(2),
+    // marginBottom: 10,
+  },
+  buttonTxt: {
+    textAlign: 'center',
+    fontSize: vw(3),
+    color: '#fff',
+    fontWeight: '500',
+  },
+  movieCardViewStyleProp: {
+    width: vw(25),
+    height: vw(32),
+    borderColor: '#fff',
+    borderRadius: vw(2),
+  },
+  movieCardGradStleProp: {
+    width: vw(25),
+    height: vw(16),
+    justifyContent: 'flex-end',
+    top: vw(16),
+    borderRadius: vw(2),
+  },
+  viewStyle: {
+    width: vw(28),
+    height: vw(40),
+    borderColor: '#fff',
+    borderRadius: vw(2)
+  },
+  txtStyle: {
+    bottom: 0,
+    fontSize: vw(3),
+    // fontFamily: 'Roboto',
+    // textAlign: 'center',
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  }
 });

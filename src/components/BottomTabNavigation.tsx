@@ -20,16 +20,16 @@ const Tab = createBottomTabNavigator();
 const Heading = (props: any) => {
     return (
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
-            <Text style={{ fontSize: 22, fontWeight: '500', color: Style.defaultRed }}>{props.title}</Text>
+            <Text style={{ fontSize: (props.device?vw(4):vw(6)), fontWeight: '500', color: Style.defaultRed }}>{props.title}</Text>
         </View>
     )
 }
-const BackIcon = () => {
+const BackIcon = (props: any) => {
     const navigation = useNavigation();
     return (
         <View >
             <TouchableOpacity style={{ flexDirection: 'row', paddingLeft: vw(4), justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.goBack()}>
-                <IonIcon name='arrow-back' size={26} color={Style.defaultRed} />
+                <IonIcon name='arrow-back' size={(props.device?vw(4):vw(6))} color={Style.defaultRed} />
             </TouchableOpacity>
         </View>
     )
@@ -39,6 +39,7 @@ const BackIcon = () => {
 export default function BottomTabNavigation(navigation: any) {
     const Auth = React.useContext(AuthContext)
     const navi = useNavigation();
+    const styles = (Auth.DeviceType ? stylesTab : style)
     return (
         <>
             <Tab.Navigator
@@ -47,7 +48,6 @@ export default function BottomTabNavigation(navigation: any) {
                     tabBarActiveTintColor: Style.defaultRed,
                     tabBarStyle: { paddingHorizontal: vw(5), backgroundColor: Style.quibHeader },
                     headerStyle: { backgroundColor: Style.quibHeader },
-
                 }}
 
             >
@@ -59,12 +59,12 @@ export default function BottomTabNavigation(navigation: any) {
                         tabBarShowLabel: false,
                         headerTitleAlign: 'center',
                         // headerTitleStyle:{marginLeft:vw(2)},
-                        headerTitle: () => <Heading title={`What we're quibbing`} />,
-                        headerLeft: () => Auth.isGuest == true ? <BackIcon /> : null,
+                        headerTitle: () => <Heading device={Auth.DeviceType} title={`What we're quibbing`} />,
+                        headerLeft: () => Auth.isGuest == true ? <BackIcon device={Auth.DeviceType} /> : null,
                         headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPressed={() => { navi.navigate('Login' as never) }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
                         tabBarIcon: ({ focused }) => {
-                            if (focused) return < IonIcon name='home' color={Style.defaultRed} size={24} />
-                            else return < IonIcon name='home-outline' size={24} color={Style.defaultRed} />
+                            if (focused) return < IonIcon name='home' color={Style.defaultRed} size={vw(3.2)} />
+                            else return < IonIcon name='home-outline' size={vw(3.3)} color={Style.defaultRed} />
                         }
                     }}
 
@@ -81,8 +81,8 @@ export default function BottomTabNavigation(navigation: any) {
                     headerLeft: () => <BackIcon />,
                     // headerRight: () => (<TouchableOpacity onPress={undefined}><IonIcon style={{paddingRight:vw(2)}} name='create-outline' size={20} color={Style.defaultRed}/></TouchableOpacity>),
                     tabBarIcon: ({ focused }) => {
-                        if (focused) return <IonIcon name='notifications' color={Style.defaultRed} size={24} />
-                        else return <IonIcon name='notifications-outline' size={24} color={Style.defaultRed} />
+                        if (focused) return <IonIcon name='notifications' color={Style.defaultRed} size={vw(3.3)} />
+                        else return <IonIcon name='notifications-outline' size={vw(3.3)} color={Style.defaultRed} />
                     }
                 }}
             /> */}
@@ -108,14 +108,14 @@ export default function BottomTabNavigation(navigation: any) {
                         tabBarLabel: 'Profile',
                         tabBarShowLabel: false,
                         headerTitleAlign: 'center',
-                        headerTitle: () => <Heading title={`Profile`} />,
-                        headerLeft: () => <BackIcon />,
+                        headerTitle: () => <Heading device={Auth.DeviceType} title={`Profile`} />,
+                        headerLeft: () => <BackIcon device={Auth.DeviceType}/>,
                         headerRight: () => <TouchableOpacity onPress={() => navi.navigate('Edit' as never)}>
-                            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} />
+                            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={vw(3.3)} color={Style.defaultRed} />
                         </TouchableOpacity>,
                         tabBarIcon: ({ focused }) => {
-                            if (focused) return < IonIcon name='person' color={Style.defaultRed} size={24} />
-                            else return < IonIcon name='person-outline' size={24} color={Style.defaultRed} />
+                            if (focused) return < IonIcon name='person' color={Style.defaultRed} size={vw(3.3)} />
+                            else return < IonIcon name='person-outline' size={vw(3.3)} color={Style.defaultRed} />
                         }
                     }}
                 />
@@ -126,12 +126,12 @@ export default function BottomTabNavigation(navigation: any) {
                         tabBarLabel: 'Setting',
                         tabBarShowLabel: false,
                         headerTitleAlign: 'center',
-                        headerTitle: () => <Heading title={`Settings`} />,
-                        headerLeft: () => <BackIcon />,
+                        headerTitle: () => <Heading device={Auth.DeviceType} title={`Settings`} />,
+                        headerLeft: () => <BackIcon device={Auth.DeviceType} />,
                         // headerRight: () => <QuibButton text="Log In" onPress="Test" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
                         tabBarIcon: ({ focused }) => {
-                            if (focused) return <IonIcon name='settings' color={Style.defaultRed} size={24} />
-                            else return <IonIcon name='settings-outline' size={24} color={Style.defaultRed} />
+                            if (focused) return <IonIcon name='settings' color={Style.defaultRed} size={vw(3.3)} />
+                            else return <IonIcon name='settings-outline' size={vw(3.3)} color={Style.defaultRed} />
                         }
                     }}
                 />
@@ -144,7 +144,7 @@ export default function BottomTabNavigation(navigation: any) {
     )
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
     button: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -153,11 +153,30 @@ const styles = StyleSheet.create({
         height: vw(7),
         borderRadius: vw(1),
         alignSelf: 'center',
-        marginRight: vw(3)
+        marginRight: vw(4)
     },
     buttonTxt: {
         textAlign: 'center',
         fontSize: 14,
+        color: '#fff',
+        fontWeight: 'bold'
+    },
+})
+const stylesTab = StyleSheet.create({
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Style.defaultRed,
+        width: vw(12),
+        height: vw(4.5),
+        borderRadius: vw(1),
+        alignSelf: 'center',
+        marginRight: vw(4),
+        marginBottom:vw(.5)
+    },
+    buttonTxt: {
+        textAlign: 'center',
+        fontSize: vw(2.5),
         color: '#fff',
         fontWeight: 'bold'
     },

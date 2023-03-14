@@ -216,7 +216,7 @@ export default function ChooseMovies(props: props) {
     let FS: any;
     if (check != null) {
       FS = check.split('.').pop();
-    } else{ FS = null}
+    } else { FS = null }
     let length = item.length;
     let total = Formatter(length);
     return (
@@ -228,7 +228,7 @@ export default function ChooseMovies(props: props) {
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
               {/* <Shadow distance={1} style={{ borderRadius: vw(2) }} > */}
               <FastImage
-                style={{ width: vw(15), height: vw(20), marginRight: vw(2), borderRadius: vw(1) }}
+                style={{ width: vw(15), height: vw(20), marginRight: vw(2), borderRadius: vw(1), marginVertical: vw(2) }}
                 // resizeMode={FastImage.resizeMode.contain}
                 source={{
                   uri: ((FS == 'jpeg' || FS == 'jpg') ? `${API}${item.posterContentThumb}` : `data:image/png;base64,${item.posterContentThumb}`),
@@ -242,14 +242,14 @@ export default function ChooseMovies(props: props) {
                 <Text style={[...[styles.txt], { fontSize: vw(3) }]}>{item.director}</Text>
               </View>
             </View>
-            <View style={{ alignItems: 'center', marginRight: vw(0) }}>
+            <View style={{ alignItems: 'center', marginRight: vw(0), justifyContent: 'center' }}>
               <View style={{ alignItems: 'center', alignSelf: 'flex-end', }}>
                 <View style={{ width: vw(16), height: vw(16), marginBottom: vw(1), }}>
                   <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Style.defaultRed, borderColor: Style.defaultRed, borderTopRightRadius: vw(4), borderTopLeftRadius: vw(4), borderBottomWidth: 0 }}>
-                    <Text style={{ color: '#fff', fontWeight: '500', fontSize: 14, alignSelf: 'center' }}>{total}</Text>
+                    <Text style={{ color: '#fff', fontWeight: '500', fontSize: (Auth.DeviceType ? vw(3) : vw(3.6)), alignSelf: 'center' }}>{total}</Text>
                   </View>
                   <View style={{ width: vw(16), height: vw(8), borderWidth: 1, alignItems: 'center', justifyContent: 'center', borderColor: Style.defaultRed, borderBottomLeftRadius: vw(4), borderBottomRightRadius: vw(4), borderTopWidth: 0 }}>
-                    <Text style={{ fontSize: 9, fontWeight: '500', color: Style.defaultTxtColor, textAlign: 'center', alignSelf: 'center' }}>Total Quibs</Text>
+                    <Text style={{ fontSize: (Auth.DeviceType ? vw(2.2) : vw(2.5)), fontWeight: '500', color: Style.defaultTxtColor, textAlign: 'center', alignSelf: 'center' }}>Total Quibs</Text>
                   </View>
                 </View>
               </View>
@@ -268,7 +268,7 @@ export default function ChooseMovies(props: props) {
           <View style={{
             justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2),
           }}>
-            <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
+            <Text style={{ color: Style.defaultRed, fontSize: (Auth.DeviceType ? vw(3.8) : vw(5.2)), fontWeight: 'bold' }}>{section.title}</Text>
             <FlatList
               horizontal
               style={{ width: vw(100) }}
@@ -278,8 +278,8 @@ export default function ChooseMovies(props: props) {
               ListEmptyComponent={() => <SkeletonHorizontal />}
             // estimatedItemSize={vw(40)}
             />
-            <TouchableOpacity onPress={() => props.navigation.navigate('SeeMostActive', { Data: section.data })} >
-              <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
+            <TouchableOpacity onPress={() => props.navigation.navigate('SeeMostActive', { Data: section.data, Auth:Auth.DeviceType })} >
+              <Text style={{ color: Style.defaultRed, fontSize: vw(2.5), fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
             </TouchableOpacity>
           </View>
         )
@@ -287,7 +287,7 @@ export default function ChooseMovies(props: props) {
         <View style={{
           justifyContent: 'center', marginTop: vw(2), paddingLeft: vw(2),
         }}>
-          <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
+          <Text style={{ color: Style.defaultRed, fontSize: (Auth.DeviceType ? vw(3.8) : vw(5.2)), fontWeight: 'bold' }}>{section.title}</Text>
           <FlatList
             horizontal
             style={{ width: vw(100) }}
@@ -297,8 +297,8 @@ export default function ChooseMovies(props: props) {
             ListEmptyComponent={() => <SkeletonHorizontal />}
           // estimatedItemSize={vw(40)}
           />
-          <TouchableOpacity onPress={() => props.navigation.navigate('SeeRecent', { Data: section.data })} >
-            <Text style={{ color: Style.defaultRed, fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
+          <TouchableOpacity onPress={() => props.navigation.navigate('SeeRecent', { Data: section.data, Auth:Auth.DeviceType})} >
+            <Text style={{ color: Style.defaultRed, fontSize: vw(2.5), fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
           </TouchableOpacity>
         </View>
       )
@@ -310,7 +310,7 @@ export default function ChooseMovies(props: props) {
           justifyContent: 'space-between', alignItems: 'center',
           paddingLeft: vw(2), flex: 1, flexDirection: 'row',
         }}>
-          <Text style={{ color: Style.defaultRed, fontSize: 20, fontWeight: 'bold' }}>{section.title}</Text>
+          <Text style={{ color: Style.defaultRed, fontSize: (Auth.DeviceType ? vw(3.8) : vw(5.2)), fontWeight: 'bold' }}>{section.title}</Text>
           {/* <TouchableOpacity activeOpacity={.4} onPress={handlePresentModalPress} >
             <View style={styles.button}> */}
           {/* <Text style={styles.buttonTxt}>Sort </Text> */}
@@ -327,7 +327,11 @@ export default function ChooseMovies(props: props) {
 
     return (
       <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
-        <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} viewStyle={undefined} textStyle={undefined} linearGradStyle={undefined} imgSrc={item.posterContentThumb} />
+        <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} 
+        viewStyle={Auth.DeviceType ? styles.viewStyle : undefined} 
+        textStyle={Auth.DeviceType ? styles.txtStyle : undefined} 
+        linearGradStyle={undefined} 
+        imgSrc={item.posterContentThumb} />
       </TouchableOpacity>
 
     )
@@ -405,7 +409,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderRadius: vw(2),
     width: vw(95),
-    height: vh(12),
+    // height: vh(12),
     flexDirection: 'row',
     backgroundColor: '#EEEEEE',
     paddingHorizontal: vw(2),
@@ -416,26 +420,6 @@ const styles = StyleSheet.create({
     fontSize: vw(3.5),
     color: Style.quibText,
     fontWeight: 'bold'
-  },
-  button: {
-    marginRight: vw(4),
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // borderWidth: 1,
-    borderColor: Style.defaultRed,
-    // backgroundColor: Style.defaultRed,
-    width: vw(8),
-    height: vw(8),
-    borderRadius: vw(2),
-    // marginBottom: 10,
-  },
-  buttonTxt: {
-    textAlign: 'center',
-    fontSize: 14,
-    // color: '#EDEDED',
-    fontWeight: '500'
   },
   title: {
 
@@ -462,4 +446,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold'
   },
+  viewStyle: {
+    width: vw(28),
+    height: vw(40),
+    borderColor: '#fff',
+    borderRadius: vw(2)
+  },
+  txtStyle: {
+      bottom: 0,
+      fontSize: vw(3),
+      // fontFamily: 'Roboto',
+      // textAlign: 'center',
+      color: '#ffffff',
+      backgroundColor: 'transparent',
+  }
 })

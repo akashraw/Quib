@@ -19,6 +19,7 @@ type AuthContextData = {
     handleLogout: () => {};
     dispatch: (p: object) => {};
     net: boolean;
+    DeviceType: boolean;
 };
 
 const initialState = {
@@ -40,22 +41,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     // useREDUCER =================================================
     const [state, dispatch] = useReducer(authReducer, initialState);
-    
+
     //=======================useEffect FOR GETTING THE LAST USER STATE=========================\\
     React.useEffect(() => {
         // handleLogout();
-        let type = DeviceInfo.getDeviceType();
         getAuthState();
-        console.log(type);
         // return()=> type='';
     }, [])
 
 
     React.useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
-            // console.log("Connection type", state.type);
-            // console.log("Is connected?", state.isConnected);
-            console.log("Is connected?", state.isConnected);
             ConnectionInfo(state.isConnected);
         });
 
@@ -79,6 +75,18 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
     // Get Auth state
     const getAuthState = async () => {
+        let type = DeviceInfo.getDeviceType();
+        if (type != 'Handset') {
+            dispatch({
+                type: 'DEVICE',
+                DeviceType: true,
+            })
+        } else {
+            dispatch({
+                type: 'DEVICE',
+                DeviceType: false,
+            })
+        }
         try {
             //GET TOKEN && USER
             // let token = await AsyncStorage.getItem(TOKEN_KEY);

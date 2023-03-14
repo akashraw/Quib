@@ -22,25 +22,25 @@ export const Heading = (props: any) => {
     const navigation = useNavigation();
     return (
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
-            <Text style={{ fontSize: 22, fontWeight: '500', paddingLeft: vw(2), color: Style.defaultRed }}>{props.title}</Text>
+            <Text style={{ fontSize: (props.device?vw(4):vw(6)), fontWeight: '500', paddingLeft: vw(2), color: Style.defaultRed }}>{props.title}</Text>
         </View>
     )
 }
-export const BackIcon = () => {
+export const BackIcon = (props: any) => {
     const navigation = useNavigation();
     return (
         <View >
             <TouchableOpacity style={{ flexDirection: 'row', paddingLeft: vw(0), justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.goBack()}>
-                <IonIcon name='arrow-back' size={26} color={Style.defaultRed} />
+                <IonIcon name='arrow-back' size={(props.device?vw(4):vw(6))} color={Style.defaultRed} />
             </TouchableOpacity>
         </View>
     )
 }
-export const EditIcon = () => {
+export const EditIcon = (props: any) => {
     const navigation = useNavigation();
     return (
         <TouchableOpacity onPress={() => navigation.navigate("Edit" as never)}>
-            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={24} color={Style.defaultRed} />
+            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={(props.device?vw(4):vw(6))} color={Style.defaultRed} />
         </TouchableOpacity>
     )
 }

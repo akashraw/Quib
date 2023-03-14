@@ -153,19 +153,19 @@ export default function OtherProfileScreen({ navigation, route }: props) {
                                                 cache: FastImage.cacheControl.immutable,
                                             }}
                                             resizeMode="contain"
-                                            style={{ width: vw(25), height: vw(25), borderRadius: vw(15) }}
+                                            style={Auth.DeviceType ? { width: vw(20), height: vw(20), borderRadius: vw(10) } : { width: vw(25), height: vw(25), borderRadius: vw(15) }}
                                         />
                                         </Shadow>
                                     </View>
                                     <View style={{ alignSelf: 'center', justifyContent: 'center', paddingHorizontal: vw(2) }}>
                                         <View style={{ paddingBottom: vw(1) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: vw(4.2) }}>{User.userName}</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: Auth.DeviceType ? vw(3.5) : vw(4.2) }}>{User.userName}</Text>
                                         </View>
                                         <View style={{ paddingBottom: vw(1) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: vw(3.6) }}>{User.firstName} {User.lastName}</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: 'bold', fontSize: Auth.DeviceType ? vw(3) : vw(3.6) }}>{User.firstName} {User.lastName}</Text>
                                         </View>
                                         <View style={{ paddingBottom: vw(0) }}>
-                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: vw(3), marginRight: vw(2), width: vw(60), }} numberOfLines={3} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Leo in vitae turpis massa sed elementum tempus.</Text>
+                                            <Text style={{ color: Style.defaultTxtColor, fontWeight: '500', fontSize: Auth.DeviceType ? vw(2.5) : vw(3), marginRight: vw(2), width: vw(60), }} numberOfLines={3} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Leo in vitae turpis massa sed elementum tempus.</Text>
                                         </View>
                                         <View style={{ flex: 1, flexDirection: 'row', paddingBottom: vw(5), alignSelf: 'flex-start' , marginTop:vw(2)}}>
                                             {/* <View style={{ padding) }}> */}
@@ -194,8 +194,8 @@ export default function OtherProfileScreen({ navigation, route }: props) {
 
                             </View>
                         </View>
-                        <View style={{ height: vh(100), }}>
-                            <OtherProfileScreenTabViews quib={QuibMovies} followee={Followings} follower={Followers} navi={navigation} followerId={User.id} />
+                        <View style={{ height: vh(100), paddingTop:vw(4)}}>
+                            <OtherProfileScreenTabViews quib={QuibMovies} followee={Followings} follower={Followers} navi={navigation} followerId={User.id} device={Auth.DeviceType}/>
                         </View>
                     </View>
                     :

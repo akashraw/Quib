@@ -33,7 +33,12 @@ const authReducer = (prevState: any, action: any) => {
       return {
         ...prevState,
         net: action.net
-      }
+      };
+      case 'DEVICE':
+        return {
+          ...prevState,
+          DeviceType: action.DeviceType
+        }
   }
 };
 

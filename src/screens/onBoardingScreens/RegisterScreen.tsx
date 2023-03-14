@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Alert, Image, ImageBackground, KeyboardAvoidingView, Platform, ActivityIndicator, Dimensions } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Eula, StringData } from '../../constants/Constant'
 import Icon from 'react-native-vector-icons/Ionicons'
 import ImagePicker from 'react-native-image-crop-picker'
@@ -13,6 +13,7 @@ import { Controller, useForm } from 'react-hook-form'
 import DropShadow from 'react-native-drop-shadow'
 import { API, RegisterAPI } from '../../constants/Api'
 import Modal from "react-native-modal";
+import { AuthContext } from '../../Auth'
 
 const deviceHeight = Dimensions.get('screen').height;
 
@@ -21,7 +22,7 @@ interface props {
 }
 
 export default function RegisterScreen(props: props) {
-
+    const Auth = useContext(AuthContext);
     const [Password, setPassword] = useState(true);
     const [ConfirmPassword, setConfirmPassword] = useState(true);
     const [Name, setName] = useState('eye-off');
@@ -31,6 +32,7 @@ export default function RegisterScreen(props: props) {
     const [Activity, setActivity] = useState(false);
     const [ActivityEula, setActivityEula] = useState(false);
     const [selectImg, setSelectImg] = useState(false);
+    const styles = (Auth.DeviceType ? stylesTab : style)
     const {
         control,
         handleSubmit,
@@ -58,7 +60,7 @@ export default function RegisterScreen(props: props) {
             return (
                 <TouchableOpacity onPress={lunchImgLib}>
                     <View style={{ borderColor: Style.defaultRed, marginBottom: vw(1) }}>
-                        <Image source={require('../../assets/profile.png')} style={{ width: vw(25), height: vw(25), alignSelf: 'center', }} />
+                        <Image source={require('../../assets/profile.png')} style={styles.avatarIcon} />
                     </View>
                 </TouchableOpacity>
             )
@@ -75,7 +77,7 @@ export default function RegisterScreen(props: props) {
                         shadowRadius: vw(1.5),
                     }}
                 >
-                    <Image style={{ width: vw(25), height: vw(25), resizeMode: 'contain', borderWidth: vw(.5), borderColor: Style.defaultRed, borderRadius: vw(13), }} source={{ uri: Img.path }} />
+                    <Image style={styles.avatarImg} source={{ uri: Img.path }} />
                 </DropShadow>
             </TouchableOpacity>
         )
@@ -178,11 +180,11 @@ export default function RegisterScreen(props: props) {
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
                 <View style={styles.headWrap}>
                     <Image
-                        style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
+                        style={styles.quibsLogo}
                         resizeMode={'contain'}
                         source={require('../../assets/logo.png')}
                     />
-                    <Text style={{ fontSize: vw(7.2), textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(2) }}>{StringData.registerHead}</Text>
+                    <Text style={styles.headTxt}>{StringData.registerHead}</Text>
                 </View>
                 {/* upload */}
                 <View style={styles.upPhotoWrap}>
@@ -197,6 +199,7 @@ export default function RegisterScreen(props: props) {
                             control={control}
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextInput
+                                    autoCapitalize='none'
                                     placeholder='Email'
                                     value={value}
                                     placeholderTextColor={Color}
@@ -228,6 +231,7 @@ export default function RegisterScreen(props: props) {
                             control={control}
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextInput
+                                    autoCapitalize='none'
                                     placeholder='User name'
                                     value={value}
                                     placeholderTextColor={Color}
@@ -336,6 +340,7 @@ export default function RegisterScreen(props: props) {
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
                                     <TextInput
+                                        autoCapitalize='none'
                                         placeholder='Password'
                                         value={value}
                                         secureTextEntry={Password}
@@ -345,7 +350,7 @@ export default function RegisterScreen(props: props) {
                                         style={styles.inputTxt}
                                     />
                                     <TouchableOpacity onPress={togglePass} >
-                                        <Icon name={Name} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                                        <Icon name={Name} size={Auth.DeviceType ? vw(4.2) : vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
                                     </TouchableOpacity>
                                 </View>
                             )}
@@ -377,6 +382,7 @@ export default function RegisterScreen(props: props) {
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
                                     <TextInput
+                                        autoCapitalize='none'
                                         placeholder='Confirm Password'
                                         value={value}
                                         secureTextEntry={ConfirmPassword}
@@ -387,7 +393,7 @@ export default function RegisterScreen(props: props) {
                                         style={styles.inputTxt}
                                     />
                                     <TouchableOpacity onPress={toggleConfirmPass} >
-                                        <Icon name={CName} size={vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
+                                        <Icon name={CName} size={Auth.DeviceType ? vw(4.2) : vw(6)} color={Style.defaultRed} style={{ marginRight: vw(4) }} />
                                     </TouchableOpacity>
                                 </View>
                             )}
@@ -421,9 +427,9 @@ export default function RegisterScreen(props: props) {
                             onValueChange={(newValue) => setToggleCheckBox(newValue)}
                         />
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={{ color: '#333333', marginLeft: vw(2), fontWeight: '500' }}>I Agree with </Text>
+                            <Text style={styles.agree}>I Agree with </Text>
                             <TouchableOpacity onPress={() => setActivityEula(true)}>
-                                <Text style={{ color: Style.defaultRed, fontWeight: '500', }}>Terms & Conditions</Text>
+                                <Text style={styles.terms}>Terms & Conditions</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -468,7 +474,7 @@ export default function RegisterScreen(props: props) {
     )
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Style.quibBackColor,
@@ -477,8 +483,45 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         // borderColor: '#3333',
     },
+    quibsLogo: {
+        width: vw(35),
+        height: vw(20),
+        justifyContent: 'center',
+        alignSelf: 'center'
+    },
     headWrap: {
         marginTop: vw(0),
+    },
+    headTxt: {
+        fontSize: vw(7.2),
+        textAlign: 'center',
+        color: Style.defaultRed,
+        fontWeight: 'bold',
+        paddingTop: vw(2)
+    },
+    avatarIcon: {
+        width: vw(25),
+        height: vw(25),
+        alignSelf: 'center'
+    },
+    avatarImg: {
+        width: vw(25),
+        height: vw(25),
+        resizeMode: 'contain',
+        borderWidth: vw(.5),
+        borderColor: Style.defaultRed,
+        borderRadius: vw(13),
+    },
+    agree: {
+        color: '#333333',
+        marginLeft: vw(2),
+        fontWeight: '500',
+        fontSize: vw(3.6)
+    },
+    terms: {
+        color: Style.defaultRed,
+        fontWeight: '500',
+        fontSize: vw(3.6)
     },
     inputField: {
         marginVertical: vw(2),
@@ -535,6 +578,126 @@ const styles = StyleSheet.create({
     buttonTxt: {
         textAlign: 'center',
         fontSize: vw(3.6),
+        color: '#fff',
+        fontWeight: 'bold'
+    },
+    loadingActivity: {
+        zIndex: 2,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        // opacity: 0.5,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+});
+const stylesTab = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Style.quibBackColor,
+        // marginHorizontal: 16,
+        // marginVertical: 20,
+        // borderWidth: 1,
+        // borderColor: '#3333',
+    },
+    quibsLogo: {
+        width: vw(30),
+        height: vw(20),
+        justifyContent: 'center',
+        alignSelf: 'center'
+    },
+    headTxt: {
+        fontSize: vw(5),
+        textAlign: 'center',
+        color: Style.defaultRed,
+        fontWeight: 'bold',
+        paddingTop: vw(2)
+    },
+    headWrap: {
+        marginTop: vw(0),
+    },
+    avatarIcon: {
+        width: vw(15),
+        height: vw(15),
+        alignSelf: 'center'
+    },
+    avatarImg: {
+        width: vw(15),
+        height: vw(15),
+        resizeMode: 'contain',
+        borderWidth: vw(.5),
+        borderColor: Style.defaultRed,
+        borderRadius: vw(8),
+    },
+    agree: {
+        color: '#333333',
+        marginLeft: vw(2),
+        fontWeight: '500',
+        fontSize: vw(3)
+    },
+    terms: {
+        color: Style.defaultRed,
+        fontWeight: '500',
+        fontSize: vw(3)
+    },
+    inputField: {
+        marginVertical: vw(1.5),
+        borderWidth: 1,
+        borderColor: '#5555',
+        marginHorizontal: vw(5),
+        justifyContent: 'center',
+        borderRadius: vw(2),
+        height: vw(6.5)
+    },
+    inputTxt: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingLeft: vw(4),
+        fontSize: vw(3.6),
+        flex: 1,
+        // paddingBottom: -2,
+        // paddingTop: 20,
+        color: Style.defaultTxtColor
+    },
+    upPhotoWrap: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        marginVertical: vw(2),
+    },
+    upButton: {
+        width: 140,
+        height: 30,
+        backgroundColor: "#990000",
+        borderRadius: 10,
+    },
+    upTxt: {
+        textAlign: 'center',
+        paddingTop: 4,
+        color: '#fff',
+    },
+    scrollWrap: {
+        marginVertical: 20,
+        marginHorizontal: 16,
+        height: 200,
+        backgroundColor: '#dcdcdc',
+        padding: 15,
+    },
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Style.defaultRed,
+        width: vw(20),
+        height: vw(8),
+        borderRadius: vw(2),
+        marginBottom: 10,
+    },
+    buttonTxt: {
+        textAlign: 'center',
+        fontSize: vw(3),
         color: '#fff',
         fontWeight: 'bold'
     },

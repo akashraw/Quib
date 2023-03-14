@@ -33,9 +33,9 @@ export default function MovieCard({ title, year, director, viewStyle, textStyle,
                         colors={['#00000000', '#00000098']}
                         style={linearGradStyle || { width: vw(28), height: vw(20), justifyContent: 'flex-end', top: vw(20), borderRadius: vw(2) }}>
                         <View style={{ marginHorizontal: vw(2), marginBottom: vw(1) }}>
-                            <Text style={styles.txt} numberOfLines={1}>{title}</Text>
-                            <Text style={[...[styles.txt], { fontSize: 12 }]} numberOfLines={1}>{year}</Text>
-                            <Text style={[...[styles.txt], { fontSize: 12 }]} numberOfLines={1}>{director}</Text>
+                            <Text style={ textStyle || styles.txt} numberOfLines={1}>{title}</Text>
+                            <Text style={[...[textStyle], {fontSize:vw(2.5)}] || [...[styles.txt], { fontSize: 12 }]} numberOfLines={1}>{director}</Text>
+                            <Text style={[...[textStyle], {fontSize:vw(2.5)}] || [...[styles.txt], { fontSize: 12 }]} numberOfLines={1}>{year}</Text>
                         </View>
                     </LinearGradient>
 

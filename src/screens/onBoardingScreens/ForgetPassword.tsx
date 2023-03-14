@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useForm, Controller } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ForgetPasswordAPI, LoginAPI } from '../../constants/Api';
-import { AuthContext, useAuth } from '../../Auth';
+import { AuthContext } from '../../Auth';
 import Modal from "react-native-modal";
 
 const deviceHeight = Dimensions.get('screen').height;
@@ -24,6 +24,7 @@ export default function ForgetPassword(props: props) {
     const [Activity, setActivity] = useState(false);
     const [RecoverStatus, setRecoverStatus] = useState(false)
     const auth = useContext(AuthContext);
+    const styles = (auth.DeviceType ? stylesTab : style)
     const {
         control,
         handleSubmit,
@@ -48,7 +49,7 @@ export default function ForgetPassword(props: props) {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': '*/*'
             }
         }
         try {
@@ -57,7 +58,7 @@ export default function ForgetPassword(props: props) {
             if (response.status == 200) {
                 setActivity(false)
                 return setRecoverStatus(true);
-                 
+
             } else {
                 setFail(true)
                 setActivity(false)
@@ -80,12 +81,13 @@ export default function ForgetPassword(props: props) {
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
                 <View style={styles.headWrap}>
                     <Image
-                        style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
+                        style={styles.quibsLogo}
+                        // style={{ width: vw(35), height: vw(20), justifyContent: 'center', alignSelf: 'center' }}
                         resizeMode={'contain'}
                         source={require('../../assets/logo.png')}
                     />
-                    <Text style={{ fontSize: 24, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(15) }}>Forgot Password</Text>
-                    {Fail ? <Text style={{ fontSize: 14, textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter correct email</Text> : null}
+                    <Text style={styles.headTxt}>Forgot Password</Text>
+                    {Fail ? <Text style={{ fontSize: (auth.DeviceType ? vw(2.5) : vw(3.6)), textAlign: 'center', color: Style.defaultRed, fontWeight: 'bold', paddingTop: vw(4) }}>Please enter correct email</Text> : null}
                 </View>
                 <View style={{ marginTop: vw(1) }}>
                     <View style={styles.inputField}>
@@ -93,6 +95,7 @@ export default function ForgetPassword(props: props) {
                             control={control}
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextInput
+                                    autoCapitalize='none'
                                     placeholder='Email'
                                     value={value}
                                     placeholderTextColor={Color}
@@ -174,28 +177,45 @@ export default function ForgetPassword(props: props) {
     )
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Style.quibBackColor,
-        borderColor: '#3333',
+        // marginHorizontal: 16,
+        // marginVertical: 20,
+        // borderWidth: 1,
+        // borderColor: '#3333',
+    },
+    quibsLogo: {
+        width: vw(35),
+        height: vw(20),
+        justifyContent: 'center',
+        alignSelf: 'center'
     },
     headWrap: {
+        marginTop: vw(0),
+    },
+    headTxt: {
+        fontSize: vw(7.2),
+        textAlign: 'center',
+        color: Style.defaultRed,
+        fontWeight: 'bold',
+        paddingTop: vw(2)
     },
     inputField: {
-        marginTop: vw(3),
-        marginBottom: vw(0),
+        marginVertical: vw(2),
         borderWidth: 1,
         borderColor: '#5555',
         marginHorizontal: vw(5),
         justifyContent: 'center',
         borderRadius: vw(2),
+        height: vw(8)
     },
     inputTxt: {
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: vw(4),
-        fontSize: 16,
+        fontSize: vw(4),
         flex: 1,
         // paddingBottom: -2,
         // paddingTop: 20,
@@ -212,7 +232,79 @@ const styles = StyleSheet.create({
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: vw(3.6),
+        color: '#fff',
+        fontWeight: 'bold'
+    },
+    loadingActivity: {
+        zIndex: 2,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        // opacity: 0.5,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+});
+const stylesTab = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Style.quibBackColor,
+        // marginHorizontal: 16,
+        // marginVertical: 20,
+        // borderWidth: 1,
+        // borderColor: '#3333',
+    },
+    quibsLogo: {
+        width: vw(30),
+        height: vw(20),
+        justifyContent: 'center',
+        alignSelf: 'center'
+    },
+    headTxt: {
+        fontSize: vw(4),
+        textAlign: 'center',
+        color: Style.defaultRed,
+        fontWeight: 'bold',
+        paddingTop: vw(2)
+    },
+    headWrap: {
+        marginTop: vw(0),
+    },
+    inputField: {
+        marginVertical: vw(1.5),
+        borderWidth: 1,
+        borderColor: '#5555',
+        marginHorizontal: vw(5),
+        justifyContent: 'center',
+        borderRadius: vw(2),
+        height: vw(6.5)
+    },
+    inputTxt: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingLeft: vw(4),
+        fontSize: vw(3.6),
+        flex: 1,
+        // paddingBottom: -2,
+        // paddingTop: 20,
+        color: Style.defaultTxtColor
+    },
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Style.defaultRed,
+        width: vw(20),
+        height: vw(8),
+        borderRadius: vw(2),
+        marginBottom: 10,
+    },
+    buttonTxt: {
+        textAlign: 'center',
+        fontSize: vw(3),
         color: '#fff',
         fontWeight: 'bold'
     },

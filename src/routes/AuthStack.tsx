@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabNavigation from '../components/BottomTabNavigation';
 import QuibPlayer from '../components/quibPlayer/QuibPlayer';
@@ -24,13 +24,14 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { AuthContext } from '../Auth';
 const Stack = createNativeStackNavigator();
 
 export default function AuthStack() {
   React.useEffect(() => {
     RNBootSplash.hide({ fade: true, duration: 500 });
   }, []);
-
+  const Auth = useContext(AuthContext);
   return (
     <SafeAreaProvider>
       <Stack.Navigator
@@ -123,8 +124,8 @@ export default function AuthStack() {
           component={OtherProfileScreen}
           options={{
             headerTitleAlign: 'center',
-            headerTitle: () => <Heading title={`Profile`} />,
-            headerLeft: () => <BackIcon />,
+            headerTitle: () => <Heading device={Auth.DeviceType} title={`Profile`} />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType}/>,
             headerBackVisible: false,
           }}
         />
@@ -133,8 +134,8 @@ export default function AuthStack() {
           component={ProfileStream}
           options={{
             headerTitleAlign: 'center',
-            headerTitle: () => <Heading title={'Quib Stack'} />,
-            headerLeft: () => <BackIcon />,
+            headerTitle: () => <Heading device={Auth.DeviceType} title={'Quib Stack'} />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType} />,
             headerBackVisible: false,
           }}
         />

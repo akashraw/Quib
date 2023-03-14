@@ -39,6 +39,7 @@ import { Button } from 'react-native-paper';
 import NumberPlease from 'digicard-react-native-number-please';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { stylesCompTab } from './QuibComposeStyle';
 
 const deviceHeight = Dimensions.get('screen').height;
 
@@ -53,6 +54,7 @@ interface props {
   // mins: number,
   // secs: number,
   time: number;
+  device: boolean;
   userId: string;
 }
 type PostQuibProp = {
@@ -68,7 +70,7 @@ type Route = {
 };
 type State = NavigationState<Route>;
 
-function QuibCompose({ MovieId, time, movieLength, userId }: props) {
+function QuibCompose({ MovieId, time, movieLength, userId, device }: props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [QuibInput, setQuibInput] = useState<string>('');
   const [FlatData, setFlatData] = useState<any[]>([]);
@@ -83,6 +85,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
     { key: 'second', title: 'Saved Quib' },
   ]);
   const Input = useRef<TextInput>(null)
+  const styles = device ? stylesCompTab : style;
   // const [isModalVisible, setModalVisible] = useState(false);
 
   const CountDown = [
@@ -396,7 +399,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
   const MyStreamQuibs = ({ item, index, heart }: any) => {
     let { hours, mintues, seconds } = getFormattedTime(item.time);
 
-    if (item.isPosted == true)
+    if (item.isPosted == true && item.isScreenshot == false)
       return (
         <View style={{ width: vw(100) }} key={index}>
           <DropShadow
@@ -446,8 +449,8 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                 }
               </View>
               <View style={styles.quibTxtBody}>
-                <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>
-                  {' '}
+                <Text style={{ color: Style.defaultTxtColor, fontSize: device ? vw(2.5) : vw(3.6), textAlign: 'left' }}>
+                  {/* {' '} */}
                   {item.body}
                 </Text>
               </View>
@@ -482,6 +485,111 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
           </DropShadow>
         </View>
       );
+    else if (item.isPosted == true && item.isScreenshot == true) {
+      return (
+        <View style={{ width: vw(100) }} key={index}>
+          <DropShadow
+            style={{
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 0,
+              },
+              shadowOpacity: 0.5,
+              shadowRadius: vw(0.5),
+            }}>
+            <View style={styles.quibCard}>
+              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <View
+                  style={[
+                    ...[quibPlayerStyles.timer],
+                    { width: vw(14), height: vw(4), marginBottom: vw(1) },
+                  ]}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      color: '#fff',
+                      fontSize: vw(2.6),
+                    }}>
+                    {hours < 10 ? `0${hours}` : `${hours}`}:
+                    {mintues < 10 ? `0${mintues}` : `${mintues}`}:
+                    {seconds < 10 ? `0${seconds}` : `${seconds}`}
+                  </Text>
+                </View>
+                {heart == true ?
+                  <View style={{ right: vw(3), position: 'absolute' }}>
+                    <Icon
+                      name="heart"
+                      size={vw(5)}
+                      color={Style.defaultRed}
+                    />
+                  </View>
+                  :
+                  null
+                }
+              </View>
+              <View
+                style={{
+                  width: vw(90),
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {/* <Shadow distance={8} startColor='#00000020' endColor='#00000000' > */}
+                <DropShadow
+                  style={{
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 0,
+                    },
+                    shadowOpacity: 5,
+                    shadowRadius: vw(1),
+                  }}>
+                  <FastImage
+                    source={{
+                      uri: API + item.body,
+                      cache: FastImage.cacheControl.immutable,
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                    style={{
+                      width: vw(75),
+                      height: vw(32),
+                      marginVertical: vw(2),
+                    }}
+                  />
+                </DropShadow>
+                {/* </Shadow> */}
+              </View>
+              {/* <View
+                style={{
+                  justifyContent: 'flex-start',
+                  flexDirection: 'row',
+                  paddingLeft: vw(8),
+                }}>
+                <TouchableOpacity
+                  activeOpacity={0.4}
+                  disabled={false}
+                  onPress={() =>
+                    deleteBump({ id: item.id, movieId: item.movieId, index })
+                  }>
+                  <View
+                    style={[
+                      ...[styles.button],
+                      device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
+                    ]}>
+                    <Text style={[...[styles.buttonTxt]]}>
+                      Delete
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View> */}
+            </View>
+          </DropShadow>
+        </View>
+      );
+    }
     else return (
       <View style={{ width: vw(100) }} key={index}>
         <DropShadow
@@ -525,7 +633,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
               }
             </View>
             <View style={styles.quibTxtBody}>
-              <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>
+              <Text style={{ color: Style.defaultTxtColor, fontSize: device ? vw(2.5) : vw(3.6), textAlign: 'left' }}>
                 {item.body}
               </Text>
             </View>
@@ -544,9 +652,9 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                 <View
                   style={[
                     ...[styles.button],
-                    { width: vw(16), height: vw(6) },
+                    device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
                   ]}>
-                  <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                  <Text style={[...[styles.buttonTxt]]}>
                     Delete
                   </Text>
                 </View>
@@ -557,9 +665,9 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                 <View
                   style={[
                     ...[styles.button],
-                    { width: vw(16), height: vw(6) },
+                    device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
                   ]}>
-                  <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                  <Text style={[...[styles.buttonTxt]]}>
                     Post
                   </Text>
                 </View>
@@ -623,8 +731,8 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                 }
               </View>
               <View style={styles.quibTxtBody}>
-                <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>
-                  {' '}
+                <Text style={{ color: Style.defaultTxtColor, fontSize: device ? vw(2.5) : vw(3.6), textAlign: 'left' }}>
+                  {/* {' '} */}
                   {item.body}
                 </Text>
               </View>
@@ -647,9 +755,9 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                   <View
                     style={[
                       ...[styles.button],
-                      { width: vw(16), height: vw(6) },
+                      device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
                     ]}>
-                    <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                    <Text style={[...[styles.buttonTxt]]}>
                       Delete
                     </Text>
                   </View>
@@ -751,9 +859,9 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                   <View
                     style={[
                       ...[styles.button],
-                      { width: vw(16), height: vw(6) },
+                      device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
                     ]}>
-                    <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                    <Text style={[...[styles.buttonTxt]]}>
                       Delete
                     </Text>
                   </View>
@@ -807,7 +915,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                 }
               </View>
               <View style={styles.quibTxtBody}>
-                <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>
+                <Text style={{ color: Style.defaultTxtColor, fontSize: device ? vw(2.5) : vw(3.6), textAlign: 'left' }}>
                   {item.body}
                 </Text>
               </View>
@@ -826,9 +934,9 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
                   <View
                     style={[
                       ...[styles.button],
-                      { width: vw(16), height: vw(6) },
+                      device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
                     ]}>
-                    <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                    <Text style={[...[styles.buttonTxt]]}>
                       Delete
                     </Text>
                   </View>
@@ -854,7 +962,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
         <Text
           style={{
             color: Style.defaultTxtColor,
-            fontSize: 20,
+            fontSize: device ? vw(4) : vw(5.1),
             fontWeight: '500',
             paddingBottom: vw(1),
           }}>
@@ -873,8 +981,10 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
           backgroundColor: Style.quibPlayerCardBack,
           borderWidth: 1,
           borderRadius: vw(1),
+          fontSize: device ? vw(3) : vw(3.6),
           borderColor: '#fff',
           width: vw(90),
+          height: device ? vh(10) : vh(14),
           marginBottom: vw(1),
           flexDirection: 'row',
           alignItems: 'flex-start',
@@ -890,7 +1000,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
           flexDirection: 'row',
           justifyContent: 'space-around',
           width: vw(80),
-          marginBottom: vw(-4),
+          marginBottom: vw(2),
         }}>
         <Timer />
         <TouchableOpacity
@@ -927,7 +1037,7 @@ function QuibCompose({ MovieId, time, movieLength, userId }: props) {
   );
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -986,14 +1096,14 @@ const styles = StyleSheet.create({
     color: '#939393',
   },
   label: {
-    fontSize: 18,
+    fontSize: vw(4.6),
     marginVertical: vw(1.5),
     backgroundColor: 'transparent',
     fontWeight: 'bold',
   },
 
   txt: {
-    fontSize: 14,
+    fontSize: vw(3.6),
     color: Style.defaultTxtColor,
     fontWeight: 'bold',
     // textAlign: 'center'

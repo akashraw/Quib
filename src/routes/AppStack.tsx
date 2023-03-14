@@ -36,7 +36,7 @@ function ModalScreen({ navigation }: any) {
 
 
 export default function AppStack() {
-  // const Auth = useContext(AuthContext);
+  const Auth = useContext(AuthContext);
   // const navi = useNavigation();
   React.useEffect(() => {
     RNBootSplash.hide({ fade: true, duration: 500 });
@@ -67,8 +67,8 @@ export default function AppStack() {
             presentation: 'card',
             headerTitleAlign: 'center',
             // headerTitleStyle:{marginLeft:vw(2)},
-            headerTitle: () => <Heading title={`Recent Movies`} />,
-            headerLeft: () => <BackIcon />,
+            headerTitle: () => <Heading device={Auth.DeviceType} title={`Recent Movies`} />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType} />,
             headerBackVisible: false,
           }}
         />
@@ -79,8 +79,8 @@ export default function AppStack() {
             presentation: 'card',
             headerTitleAlign: 'center',
             // headerTitleStyle:{marginLeft:vw(2)},
-            headerTitle: () => <Heading title={`Most Active Movies`} />,
-            headerLeft: () => <BackIcon />,
+            headerTitle: () => <Heading device={Auth.DeviceType} title={`Most Active Movies`} />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType}/>,
             headerBackVisible: false,
           }}
         />
@@ -100,8 +100,8 @@ export default function AppStack() {
           component={OtherProfileScreen}
           options={{
             headerTitleAlign: 'center',
-            headerTitle: () => <Heading title={`Profile`} />,
-            headerLeft: () => <BackIcon />,
+            headerTitle: () => <Heading device={Auth.DeviceType} title={`Profile`} />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType}/>,
             headerBackVisible: false,
           }}
         />
@@ -112,8 +112,8 @@ export default function AppStack() {
             presentation: 'card',
             headerTitleAlign: 'center',
             headerTitle: () => <Heading title={`Profile`} />,
-            headerLeft: () => <BackIcon />,
-            headerRight: () => <EditIcon />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType} />,
+            headerRight: () => <EditIcon device={Auth.DeviceType} />,
             headerBackVisible: false,
           }}
         />
@@ -123,8 +123,8 @@ export default function AppStack() {
           options={{
             presentation: 'card',
             headerTitleAlign: 'center',
-            headerTitle: () => <Heading title={'Edit Profile'} />,
-            headerLeft: () => <BackIcon />,
+            headerTitle: () => <Heading device={Auth.DeviceType} title={'Edit Profile'} />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType} />,
             headerBackVisible: false,
           }}
         />
@@ -133,8 +133,8 @@ export default function AppStack() {
           component={ProfileStream}
           options={{
             headerTitleAlign: 'center',
-            headerTitle: () => <Heading title={'Quib Stack'} />,
-            headerLeft: () => <BackIcon />,
+            headerTitle: () => <Heading device={Auth.DeviceType} title={'Quib Stack'} />,
+            headerLeft: () => <BackIcon device={Auth.DeviceType} />,
             headerBackVisible: false,
           }}
         />

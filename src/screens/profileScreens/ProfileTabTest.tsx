@@ -32,6 +32,7 @@ import { API, image256API } from '../../constants/Api';
 import { Style } from '../../constants/Styles';
 import { getMovieByUserId, getFollowersByUserId, getFolloweeByUserId, UnFollowUser } from '../../services/QuibAPIs';
 import MovieCard from '../chooseMovieScreen/MovieCard';
+import ProfileStream from './ProfileStream';
 
 type Route = {
   total: number;
@@ -46,20 +47,27 @@ type Prop = {
   navi: any;
   followerId: string;
   device: boolean;
+  scrollY: Animated.Value;
+  HeaderHeight: number;
 }
 
 type State = NavigationState<Route>;
 
-export default function OtherProfileScreensTabViews({ quib, followee, follower, navi, followerId, device }: Prop) {
+export default function ProfileTabTest({ quib, followee, follower, navi, followerId, device, scrollY, HeaderHeight }: Prop) {
   const navigation = useNavigation();
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const [Quib, setQuib] = useState<any[]>([])
   const [Followee, setFollowee] = useState<any[]>([]);
   const [Follower, setFollower] = useState<any[]>([]);
+
+  // const Followings = useRef<any[]>([]);
+  // const Follow = useRef<any[]>([]);
+  // const QuibMovies = useRef<any[]>([]);
   const Auth = React.useContext(AuthContext);
   const styles = device ? stylesTab : style;
 
+  // console.log(scrollY)
   useEffect(() => {
     Promise.all([
       setQuib(quib),
@@ -75,7 +83,7 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
   ]);
 
   const Profile = (userId: string) => {
-    if (userId != Auth.userName) {
+    if (userId !== Auth.userName) {
       return navigation.navigate('OtherProfile' as never, { userId: userId } as never);
     } else return navigation.navigate('Profile' as never);
   };
@@ -96,17 +104,22 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
 
     return (
       <View style={{ flex: 1, paddingHorizontal: vw(2), alignSelf: 'center', width: vw(100), height: vh(100) }}>
-        <FlashList
+        <Animated.FlatList
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
           data={Quib}
           numColumns={3}
-          estimatedItemSize={vw(40)}
+          // estimatedItemSize={vw(40)}
+          getItemLayout={(data, index) => (
+            { length: vw(40), offset: vw(40) * index, index }
+          )}
+          // ListFooterComponent={<View style={{ height: vw(22) }} />}
+          // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => (
             <View
               style={{ justifyContent: 'center', alignItems: 'center' }}>
               <TouchableOpacity
-                onPress={() => { navigation.navigate('Stream' as never, { id: followerId, movieId: item.id, device: Auth.DeviceType  } as never) }}
+                onPress={() => { navigation.navigate('Stream' as never, { id: followerId, movieId: item.id, device: device } as never) }}
               >
                 <MovieCard
                   key={index}
@@ -121,8 +134,15 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
               </TouchableOpacity>
             </View>
           )}
-          ListFooterComponent={<></>}
-          ListFooterComponentStyle={{ paddingBottom: vh(20) }}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true },
+          )}
+          contentContainerStyle={{
+            paddingTop: HeaderHeight + (device ? vw(8) : vw(11)),
+            // paddingHorizontal: 10,
+            // minHeight: windowHeight - TabBarHeight,
+          }}
         />
       </View>
     );
@@ -132,26 +152,31 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
   const Following = React.useCallback(() => {
 
     const RenderItem = ({ item, index }: any) => {
-      // let followeeId = item.newFolloweeId;
+      let followeeId = item.newFolloweeId;
+
       return (
         <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
+              //   alignItems: 'center',
+              //   alignSelf: 'center',
               borderRadius: vw(2),
+              // marginVertical:vw(2),
             }}>
             {/* bannner top */}
 
             {/* <View style={{ flexDirection:'row' ,alignSelf:'center', justifyContent:'space-between', alignItems:'center'}}> */}
             <View style={styles.followFollowers}>
-              <TouchableOpacity key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
+              <TouchableOpacity onPress={() => Profile(followeeId)} key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
                 <View
                   style={{
                     alignSelf: 'center',
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
+                    width: vw(70)
                   }}>
                   <Image
                     style={
@@ -175,10 +200,9 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
                         }}
                     //   resizeMode={FastImage.resizeMode.contain}
                     source={{ uri: `${image256API}${item.avatarBase256ImagePath}` }}
-
                   />
-                  <View>
-                    <Text style={[styles.title, styles.txt, { fontSize: vw(3.6) }]}>
+                  <View >
+                    <Text style={[styles.title, styles.txt, { fontSize: device ? vw(3) : vw(3.6) }]}>
                       {item.userName}
                     </Text>
                     <Text
@@ -192,11 +216,11 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
                   </View>
                 </View>
               </TouchableOpacity>
-              {/* <TouchableOpacity activeOpacity={.4} onPress={() => unFollowUser({ followeeId, index })}>
+              <TouchableOpacity activeOpacity={.4} onPress={() => unFollowUser({ followeeId, index })}>
                 <View style={styles.button}>
                   <Text style={styles.buttonTxt}>Unfollow</Text>
                 </View>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
             </View>
           </View>
           {/* </View> */}
@@ -204,17 +228,14 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
       )
     }
     return (
-      <View style={{ width: vw(100), }}>
+      <View style={{ width: vw(100), height: vh(100) }}>
         <FlashList
           data={Followee}
           initialScrollIndex={0}
           showsVerticalScrollIndicator={false}
-          style={{height:vw(100)}}
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
           estimatedItemSize={20}
-          ListFooterComponent={<></>}
-          ListFooterComponentStyle={{ paddingBottom: vw(18) }}
         />
       </View>
     )
@@ -223,6 +244,7 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
 
   const Followers = React.useCallback(() => {
     const RenderItem = ({ item, index }: any) => {
+      console.log(item)
       return (
         <Shadow containerStyle={{ alignSelf: 'center', borderRadius: vw(2), marginVertical: vw(1), }} distance={5}>
           <TouchableOpacity onPress={() => Profile(item.newFollowerId)} key={index} style={{ alignSelf: 'center', borderRadius: vw(1) }}>
@@ -265,10 +287,8 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
                         }}
                     //   resizeMode={FastImage.resizeMode.contain}
                     source={{ uri: `${image256API}${item.avatarBase256ImagePath}` }}
-
                   />
-
-                  <View >
+                  <View>
                     <Text style={[styles.title, styles.txt, { fontSize: device ? vw(3) : vw(3.6) }]}>
                       {item.userName}
                     </Text>
@@ -304,8 +324,6 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
           estimatedItemSize={20}
-          ListFooterComponent={<></>}
-          ListFooterComponentStyle={{ paddingBottom: vw(18) }}
         />
       </View>
     );
@@ -340,11 +358,11 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
           <View style={styles.tab}>
             <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
               <Text style={[styles.label, styles.inactive]}>{route.total}</Text>
-              <Text style={[...[styles.label, styles.inactive], { fontSize: device ? vw(3) : vw(3.6), paddingBottom:vw(1) }]}>{route.title}</Text>
+              <Text style={[...[styles.label, styles.inactive], { fontSize: device ? vw(3) : vw(3.5), paddingBottom: vw(1) }]}>{route.title}</Text>
             </Animated.View>
             <Animated.View style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}>
               <Text style={[styles.label, styles.active]}>{route.total}</Text>
-              <Text style={[[styles.label, styles.active], { fontSize: device ? vw(3) : vw(3.6), paddingBottom:vw(1) }]}>{route.title}</Text>
+              <Text style={[[styles.label, styles.active], { fontSize: device ? vw(3) : vw(3.5), paddingBottom: vw(1) }]}>{route.title}</Text>
             </Animated.View>
           </View>
         );
@@ -352,19 +370,28 @@ export default function OtherProfileScreensTabViews({ quib, followee, follower, 
 
   const renderTabBar = (
     props: SceneRendererProps & { navigationState: State },
-  ) => (
-    <View style={styles.tabbar}>
-      {props.navigationState.routes.map((route: Route, index: number) => {
-        return (
-          <TouchableWithoutFeedback
-            key={route.key}
-            onPress={() => props.jumpTo(route.key)}>
-            {renderItem(props)({ route, index })}
-          </TouchableWithoutFeedback>
-        );
-      })}
-    </View>
-  );
+  ) => {
+    const y = scrollY.interpolate({
+      inputRange: [0, HeaderHeight],
+      outputRange: [HeaderHeight, 0],
+    });
+    return (
+      <Animated.View style={[styles.tabbar, {
+        transform: [{ translateY: y }],
+        // position: 'absolute'
+      }]}>
+        {props.navigationState.routes.map((route: Route, index: number) => {
+          return (
+            <TouchableWithoutFeedback
+              key={route.key}
+              onPress={() => props.jumpTo(route.key)}>
+              {renderItem(props)({ route, index })}
+            </TouchableWithoutFeedback>
+          );
+        })}
+      </Animated.View>
+    )
+  };
 
   return (
     <TabView
@@ -484,8 +511,10 @@ const style = StyleSheet.create({
     borderRadius: vw(2),
   },
   viewStyle: {
+
   },
   txtStyle: {
+
   }
 });
 const stylesTab = StyleSheet.create({
@@ -536,7 +565,7 @@ const stylesTab = StyleSheet.create({
     width: vw(6.5),
   },
   label: {
-    fontSize: vw(3),
+    fontSize: vw(3.6),
     marginTop: vw(1),
     backgroundColor: 'transparent',
     fontWeight: 'bold',
@@ -576,7 +605,7 @@ const stylesTab = StyleSheet.create({
   },
   buttonTxt: {
     textAlign: 'center',
-    fontSize: vw(3.6),
+    fontSize: vw(3),
     color: '#fff',
     fontWeight: '500',
   },

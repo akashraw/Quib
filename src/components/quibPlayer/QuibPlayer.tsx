@@ -43,6 +43,7 @@ import { AuthContext } from '../../Auth';
 import Modal from 'react-native-modal';
 import QuibButton from '../QuibButton';
 import Skeleton from './Skeleton';
+import { style, stylesTab } from './PlayerStyles';
 
 const deviceHeight = Dimensions.get('screen').height;
 const deviceWidth = Dimensions.get('screen').width;
@@ -98,7 +99,7 @@ export default function QuibPlayer({ navigation, route }: props) {
   const [True, setTrue] = useState(false);
   const [BumpData, setBumpData] = useState<any[]>([]);
   const BumpDataRef = useRef<any[]>([])
-
+  const styles = Auth.DeviceType ? stylesTab : style;
   //Api calls
 
   useEffect(() => {
@@ -311,18 +312,12 @@ export default function QuibPlayer({ navigation, route }: props) {
                   source={{
                     uri: `data:image/png;base64,${image}`,
                   }}
-                  style={{
-                    width: vw(8),
-                    height: vw(8),
-                    marginTop: vw(-2.5),
-                    borderRadius: vw(0.5),
-                    marginRight: vw(1),
-                  }}
+                  style={styles.avatar}
                 />
                 <Text
                   style={{
                     color: Style.defaultTxtColor,
-                    fontSize: 12,
+                    fontSize: Auth.DeviceType ? vw(2.5) : vw(3.1),
                     fontWeight: 'bold',
                   }}
                   numberOfLines={1}>
@@ -344,10 +339,10 @@ export default function QuibPlayer({ navigation, route }: props) {
               <View
                 style={[
                   ...[styles.timer],
-                  { width: vw(16), height: vw(5), marginBottom: vw(2) },
+                  Auth.DeviceType ? { width: vw(14), height: vw(3.5), marginBottom: vw(2) } : { width: vw(16), height: vw(5), marginBottom: vw(2) },
                 ]}>
                 <Text
-                  style={{ textAlign: 'center', color: '#fff', fontSize: vw(3) }}>
+                  style={{ textAlign: 'center', color: '#fff', fontSize: Auth.DeviceType ? vw(2.5) : vw(3) }}>
                   {hours < 10 ? `0${hours}` : `${hours}`}:
                   {mintues < 10 ? `0${mintues}` : `${mintues}`}:
                   {seconds < 10 ? `0${seconds}` : `${seconds}`}
@@ -371,7 +366,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               }>
               <Icon
                 name="heart-outline"
-                size={vw(5)}
+                size={Auth.DeviceType ? vw(4) : vw(5)}
                 color={Style.defaultRed}
               />
             </TouchableOpacity>
@@ -400,7 +395,11 @@ export default function QuibPlayer({ navigation, route }: props) {
               userId={item.newUserId}
             />
             <View style={[styles.flatlistComps]}>
-              <Text style={{ color: Style.defaultTxtColor }}>{item.body}</Text>
+              <Text
+                style={Auth.DeviceType ? { fontSize: vw(2.5), color: Style.defaultTxtColor }
+                  : { fontSize: vw(3.6), color: Style.defaultTxtColor }}>
+                {item.body}
+              </Text>
             </View>
           </View>
         );
@@ -420,7 +419,11 @@ export default function QuibPlayer({ navigation, route }: props) {
             />
             <View
               style={[styles.flatlistComps, { backgroundColor: '#c1323250' }]}>
-              <Text style={{ color: Style.defaultTxtColor }}>{item.body}</Text>
+              <Text
+                style={Auth.DeviceType ? { fontSize: vw(2.5), color: Style.defaultTxtColor }
+                  : { fontSize: vw(3.6), color: Style.defaultTxtColor }}>
+                {item.body}
+              </Text>
             </View>
           </View>
         );
@@ -512,7 +515,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               setActive={setActive}
               MovieId={MovieId.MovieId}
               userId={Auth.userName}
-
+              device={Auth.DeviceType}
             />
           )}
           ListEmptyComponent={Skeleton}
@@ -673,6 +676,7 @@ export default function QuibPlayer({ navigation, route }: props) {
           // secs={seconds}
           time={TimeRef.current}
           // time={Time}
+          device={Auth.DeviceType}
           movieLength={MovieLen.current}
         />
       </BottomSheetModal>
@@ -751,21 +755,9 @@ export default function QuibPlayer({ navigation, route }: props) {
           {/* Quib timeline */}
           {/* Quib timeline */}
           <View
-            style={{
-              position: 'absolute',
-              borderTopLeftRadius: vw(8),
-              borderTopRightRadius: vw(8),
-              borderTopWidth: 0,
-              borderTopColor: 'black',
-              bottom: 0,
-              overflow: 'hidden',
-              width: vw(100),
-              flexDirection: 'row',
-              height: vh(21),
-              zIndex: 100,
-            }}>
+            style={styles.timelineRapper}>
             <BlurView
-              style={{ height: vh(21), width: vw(100) }}
+              style={Auth.DeviceType ? { height: vh(21), width: vw(100) } : { height: vh(21), width: vw(100) }}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="#00000000"
@@ -787,6 +779,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                         display: 'flex',
                         alignItems: 'flex-start',
                         justifyContent: 'center',
+                        marginTop:vw(1)
                       }}>
                       <Slider
                         maximumValue={MovieLen.current}
@@ -836,14 +829,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                           return (
                             <Image
                               source={require('../../assets/top.png')}
-                              style={{
-                                width: vw(5),
-                                marginLeft: vw(-3),
-                                left: vw(2.5),
-                                height: vw(5),
-                                resizeMode: 'contain',
-                                bottom: vw(2.5),
-                              }}
+                              style={styles.movieScrub}
                             />
                           );
                           // }
@@ -877,7 +863,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         alignSelf: 'center',
-                        marginTop: vw(-5.6),
+                        marginTop: Auth.DeviceType? vw(-2):vw(-5.6),
                       }}>
                       <Slider
                         maximumValue={MovieLen.current}
@@ -973,28 +959,14 @@ export default function QuibPlayer({ navigation, route }: props) {
                             return (
                               <Image
                                 source={require('../../assets/bottom.png')}
-                                style={{
-                                  width: vw(5),
-                                  marginLeft: vw(-3),
-                                  left: vw(2.5),
-                                  height: vw(5),
-                                  resizeMode: 'contain',
-                                  bottom: vw(2),
-                                }}
+                                style={styles.quibScrub}
                               />
                             );
                           } else
                             return (
                               <Image
                                 source={require('../../assets/bottom_line.png')}
-                                style={{
-                                  width: vw(5),
-                                  marginLeft: vw(-3),
-                                  left: vw(2.5),
-                                  height: vw(5),
-                                  resizeMode: 'contain',
-                                  bottom: vw(2),
-                                }}
+                                style={styles.quibScrub}
                               />
                             );
                           // } else return null
@@ -1023,6 +995,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                     alignSelf: 'center',
                     paddingHorizontal: vw(6),
                     marginBottom: vw(2),
+                    flex:1,
+                    flexDirection:'column'
                   }}>
                   <PageHeader
                     leftNode={
@@ -1030,8 +1004,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                         <TouchableOpacity onPress={CarouselPress}>
                           <LocalSvg
                             style={{ alignSelf: 'center' }}
-                            width={vw(15)}
-                            height={vw(15)}
+                            width={Auth.DeviceType ? vw(10) : vw(15)}
+                            height={Auth.DeviceType ? vw(10) : vw(15)}
                             asset={require('../../assets/SVG/carousel-off.svg')}
                           />
                         </TouchableOpacity>
@@ -1045,6 +1019,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                           justifyContent: 'center',
                           alignItems: 'center',
                           alignSelf: 'center',
+                          
                         }}>
                         <View
                           style={{
@@ -1058,7 +1033,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                             onPress={DecSecond}>
                             <Icon
                               name="minus-circle-outline"
-                              size={36}
+                              size={Auth.DeviceType ? vw(6) : vw(9.1)}
                               color={Style.defaultRed}
                             />
                           </TouchableOpacity>
@@ -1068,7 +1043,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                             <Icon
                               name={PlayPause}
                               style={{ paddingHorizontal: vw(1) }}
-                              size={70}
+                              size={Auth.DeviceType ? vw(12) : vw(18)}
                               color={Style.defaultRed}
                             />
                           </TouchableOpacity>
@@ -1077,7 +1052,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                             onPress={IncSecond}>
                             <Icon
                               name="plus-circle-outline"
-                              size={36}
+                              size={Auth.DeviceType ? vw(6) : vw(9.1)}
                               color={Style.defaultRed}
                             />
                           </TouchableOpacity>
@@ -1096,7 +1071,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 style={{
                                   textAlign: 'center',
                                   color: '#fff',
-                                  fontSize: 16,
+                                  fontSize: Auth.DeviceType ? vw(3) : vw(4.1),
                                   fontWeight: '500',
                                 }}>
                                 {hours < 10 ? `0${hours}` : `${hours}`}:
@@ -1122,7 +1097,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                           onPress={SyncQuibTime}>
                           <IonIcon
                             name="sync-sharp"
-                            size={vw(18)}
+                            size={Auth.DeviceType ? vw(12) : vw(18)}
                             color={Style.defaultRed}
                             style={{
                               textAlign: 'center',
@@ -1153,94 +1128,3 @@ export default function QuibPlayer({ navigation, route }: props) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // zIndex:1,
-    alignItems: 'center',
-    width: vw(96),
-    paddingTop: StatusBar.currentHeight,
-    // overflow: 'hidden',
-    // padding: vw(3),
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    // marginBottom:-80,
-    paddingTop: vw(2),
-    color: Style.defaultTxtColor,
-  },
-  image: {
-    resizeMode: 'contain',
-    width: vw(70),
-    height: vh(50),
-    margin: vw(5),
-  },
-  quibScrubber: {
-    flexDirection: 'row',
-    // flex: 1,
-    justifyContent: 'center',
-    // alignSelf:'center',
-    // alignItems:'center',
-    marginHorizontal: vw(3),
-    paddingTop: vw(1.5),
-    // paddingBottom: vw(1.5)
-  },
-  quibZero: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  timer: {
-    marginHorizontal: vw(3),
-    backgroundColor: Style.defaultRed,
-    width: vw(25),
-    flexDirection: 'row',
-    height: vw(6),
-    borderRadius: vw(5),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  flatlistComps: {
-    paddingVertical: vw(2),
-  },
-  flatlistContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Style.quibPlayerCardBack,
-    borderRadius: vw(1),
-    // borderWidth: 1,
-    // borderColor: Style.borderColor,
-    paddingVertical: vw(1),
-    paddingHorizontal: vw(3),
-    marginVertical: vw(4),
-  },
-  loadingActivity: {
-    zIndex: 2,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    // opacity: 0.5,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Style.defaultRed,
-    width: vw(30),
-    height: vw(8),
-    borderRadius: vw(2),
-    marginVertical: vw(4),
-    marginHorizontal: vw(2),
-  },
-  buttonTxt: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-});

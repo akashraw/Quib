@@ -16,6 +16,7 @@ export default function ProfileStream(routes: any) {
     const [Data, setData] = useState<any>({});
     const posterRef = React.useRef(String);
     const [isPoster, setIsPoster] = useState(Boolean);
+    console.log(props)
     useEffect(() => {
         Promise.all([
             QuibByMovieAndUserId({
@@ -69,7 +70,7 @@ export default function ProfileStream(routes: any) {
                                 </View>
                             </View>
                             <View style={styles.quibTxtBody}>
-                                <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}> {item.body}</Text>
+                                <Text style={{ color: Style.defaultTxtColor, fontSize: props.device ? vw(3) : vw(3.6), textAlign: 'left' }}> {item.body}</Text>
                             </View>
                         </View>
                     </DropShadow>
@@ -144,7 +145,7 @@ export default function ProfileStream(routes: any) {
                             </View>
                         </View>
                         <View style={styles.quibTxtBody}>
-                            <Text style={{ color: Style.defaultTxtColor, textAlign: 'left' }}>{item.body}</Text>
+                            <Text style={{ color: Style.defaultTxtColor, fontSize: props.device ? vw(3) : vw(3.6), textAlign: 'left' }}>{item.body}</Text>
                         </View>
                     </View>
                 </DropShadow>
@@ -158,7 +159,14 @@ export default function ProfileStream(routes: any) {
             <View
                 style={styles.quibCard}>
                 <View>
-                    <Text style={styles.heading}>Quib stack for</Text>
+                    <Text style={props.device ? {
+                        alignSelf: 'center',
+                        fontSize: vw(5),
+                        fontWeight: 'bold',
+                        // marginBottom:-80,
+                        paddingTop: vw(2),
+                        color: Style.defaultTxtColor,
+                    } : styles.heading}>Quib stack for</Text>
                 </View>
                 <View>
                     <FastImage
@@ -179,24 +187,24 @@ export default function ProfileStream(routes: any) {
     };
 
     return (
-        <View style={{flex:1}}>
+        <View style={{ flex: 1 }}>
             <FlashList
                 ListHeaderComponent={() => (
                     <View>
-                      <DropShadow
-                        style={{
-                          shadowColor: '#000',
-                          shadowOffset: {
-                            width: 0,
-                            height: 0,
-                          },
-                          shadowOpacity: 0.5,
-                          shadowRadius: vw(1),
-                        }}>
-                        <Header />
-                      </DropShadow>
+                        <DropShadow
+                            style={{
+                                shadowColor: '#000',
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 0,
+                                },
+                                shadowOpacity: 0.5,
+                                shadowRadius: vw(1),
+                            }}>
+                            <Header />
+                        </DropShadow>
                     </View>
-                  )}
+                )}
                 showsHorizontalScrollIndicator={false}
                 // style={{ alignSelf: 'center', marginHorizontal: vw(0) }}
                 // contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center', marginHorizontal: vw(0) }}
@@ -216,7 +224,7 @@ const styles = StyleSheet.create({
     quibCard: {
         width: vw(95),
         alignSelf: 'center',
-        alignItems:'center',
+        alignItems: 'center',
         borderRadius: vw(1),
         backgroundColor: Style.quibPlayerCardBack,
         borderWidth: 0,
@@ -238,7 +246,7 @@ const styles = StyleSheet.create({
         marginBottom: vw(2)
     },
     heading: {
-        alignSelf:'center',
+        alignSelf: 'center',
         fontSize: vw(6.1),
         fontWeight: 'bold',
         // marginBottom:-80,
