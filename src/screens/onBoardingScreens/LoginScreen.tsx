@@ -239,14 +239,14 @@ const style = StyleSheet.create({
     marginHorizontal: vw(5),
     justifyContent: 'center',
     borderRadius: vw(2),
-    height: vw(8)
+    height: vw(10)
   },
   inputTxt: {
     justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: vw(4),
     fontSize: vw(4),
-    flex: 1,
+    // flex: 1,
     // paddingBottom: -2,
     // paddingTop: 20,
     color: Style.defaultTxtColor

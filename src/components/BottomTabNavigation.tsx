@@ -63,8 +63,8 @@ export default function BottomTabNavigation(navigation: any) {
                         headerLeft: () => Auth.isGuest == true ? <BackIcon device={Auth.DeviceType} /> : null,
                         headerRight: () => Auth.isGuest == true ? <QuibButton text="Log In" onPressed={() => { navi.navigate('Login' as never) }} viewStyle={styles.button} textStyle={styles.buttonTxt} /> : null,
                         tabBarIcon: ({ focused }) => {
-                            if (focused) return < IonIcon name='home' color={Style.defaultRed} size={vw(3.2)} />
-                            else return < IonIcon name='home-outline' size={vw(3.3)} color={Style.defaultRed} />
+                            if (focused) return < IonIcon name='home' color={Style.defaultRed} size={Auth.DeviceType?vw(3.3):vw(5)} />
+                            else return < IonIcon name='home-outline' size={Auth.DeviceType?vw(3.3):vw(5)} color={Style.defaultRed} />
                         }
                     }}
 
@@ -81,8 +81,8 @@ export default function BottomTabNavigation(navigation: any) {
                     headerLeft: () => <BackIcon />,
                     // headerRight: () => (<TouchableOpacity onPress={undefined}><IonIcon style={{paddingRight:vw(2)}} name='create-outline' size={20} color={Style.defaultRed}/></TouchableOpacity>),
                     tabBarIcon: ({ focused }) => {
-                        if (focused) return <IonIcon name='notifications' color={Style.defaultRed} size={vw(3.3)} />
-                        else return <IonIcon name='notifications-outline' size={vw(3.3)} color={Style.defaultRed} />
+                        if (focused) return <IonIcon name='notifications' color={Style.defaultRed} size={Auth.DeviceType?vw(3.3):vw(5)} />
+                        else return <IonIcon name='notifications-outline' size={Auth.DeviceType?vw(3.3):vw(5)} color={Style.defaultRed} />
                     }
                 }}
             /> */}
@@ -111,11 +111,11 @@ export default function BottomTabNavigation(navigation: any) {
                         headerTitle: () => <Heading device={Auth.DeviceType} title={`Profile`} />,
                         headerLeft: () => <BackIcon device={Auth.DeviceType}/>,
                         headerRight: () => <TouchableOpacity onPress={() => navi.navigate('Edit' as never)}>
-                            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={vw(3.3)} color={Style.defaultRed} />
+                            <IonIcon style={{ paddingRight: vw(6) }} name='create-outline' size={Auth.DeviceType?vw(3.3):vw(5)} color={Style.defaultRed} />
                         </TouchableOpacity>,
                         tabBarIcon: ({ focused }) => {
-                            if (focused) return < IonIcon name='person' color={Style.defaultRed} size={vw(3.3)} />
-                            else return < IonIcon name='person-outline' size={vw(3.3)} color={Style.defaultRed} />
+                            if (focused) return < IonIcon name='person' color={Style.defaultRed} size={Auth.DeviceType?vw(3.3):vw(5)} />
+                            else return < IonIcon name='person-outline' size={Auth.DeviceType?vw(3.3):vw(5)} color={Style.defaultRed} />
                         }
                     }}
                 />
@@ -130,8 +130,8 @@ export default function BottomTabNavigation(navigation: any) {
                         headerLeft: () => <BackIcon device={Auth.DeviceType} />,
                         // headerRight: () => <QuibButton text="Log In" onPress="Test" viewStyle={styles.button} textStyle={styles.buttonTxt} />,
                         tabBarIcon: ({ focused }) => {
-                            if (focused) return <IonIcon name='settings' color={Style.defaultRed} size={vw(3.3)} />
-                            else return <IonIcon name='settings-outline' size={vw(3.3)} color={Style.defaultRed} />
+                            if (focused) return <IonIcon name='settings' color={Style.defaultRed} size={Auth.DeviceType?vw(3.3):vw(5)} />
+                            else return <IonIcon name='settings-outline' size={Auth.DeviceType?vw(3.3):vw(5)} color={Style.defaultRed} />
                         }
                     }}
                 />
@@ -149,15 +149,15 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: Style.defaultRed,
-        width: vw(15),
-        height: vw(7),
+        width: vw(14),
+        height: vw(6),
         borderRadius: vw(1),
         alignSelf: 'center',
         marginRight: vw(4)
     },
     buttonTxt: {
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: vw(3),
         color: '#fff',
         fontWeight: 'bold'
     },

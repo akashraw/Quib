@@ -388,7 +388,7 @@ const style = StyleSheet.create({
         marginHorizontal: vw(5),
         justifyContent: 'center',
         borderRadius: vw(2),
-        height: vw(8)
+        height: vw(10)
     },
     inputTxt: {
         justifyContent: 'center',
