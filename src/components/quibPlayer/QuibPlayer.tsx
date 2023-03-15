@@ -994,7 +994,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                     justifyContent: 'center',
                     alignSelf: 'center',
                     paddingHorizontal: vw(6),
-                    marginBottom: vw(2),
+                    marginBottom: vw(3),
                     flex:1,
                     flexDirection:'column'
                   }}>

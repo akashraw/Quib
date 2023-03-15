@@ -92,7 +92,8 @@ export default function AppStack() {
             gestureEnabled: false,
             headerShown: false,
             statusBarTranslucent: true,
-            statusBarColor: 'transparent'
+            statusBarColor: 'transparent',
+            navigationBarHidden:true
           }}
         />
         <Stack.Screen
