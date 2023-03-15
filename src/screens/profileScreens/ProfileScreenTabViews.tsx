@@ -105,8 +105,8 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
           data={Quib}
           numColumns={3}
           estimatedItemSize={vw(40)}
-          // ListFooterComponent={<View style={{ height: vw(22) }} />}
-          // keyExtractor={(_, index) => index.toString()}
+          ListFooterComponent={<View style={{ height: vw(42) }} />}
+          keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => (
             <View
               style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -220,6 +220,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
           estimatedItemSize={20}
+          ListFooterComponent={<View style={{ height: device?vw(10):vw(16) }} />}
         />
       </View>
     )
@@ -308,6 +309,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
           estimatedItemSize={20}
+          ListFooterComponent={<View style={{ height: device?vw(10):vw(16) }} />}
         />
       </View>
     );

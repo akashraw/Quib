@@ -139,7 +139,7 @@ export default function ProfileTabTest({ quib, followee, follower, navi, followe
             { useNativeDriver: true },
           )}
           contentContainerStyle={{
-            paddingTop: HeaderHeight + (device ? vw(8) : vw(11)),
+            paddingTop: HeaderHeight + (device ? vw(14) : vw(11)),
             // paddingHorizontal: 10,
             // minHeight: windowHeight - TabBarHeight,
           }}
@@ -378,7 +378,7 @@ export default function ProfileTabTest({ quib, followee, follower, navi, followe
     return (
       <Animated.View style={[styles.tabbar, {
         transform: [{ translateY: y }],
-        // position: 'absolute'
+        position: 'absolute'
       }]}>
         {props.navigationState.routes.map((route: Route, index: number) => {
           return (
@@ -402,6 +402,7 @@ export default function ProfileTabTest({ quib, followee, follower, navi, followe
       renderTabBar={renderTabBar}
       onIndexChange={setIndex}
       initialLayout={{ width: layout.width }}
+      tabBarPosition='top'
     />
   );
 }

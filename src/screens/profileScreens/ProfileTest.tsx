@@ -37,6 +37,7 @@ export default function ProfileScreenTest({ navigation }: props) {
     //         scrollY.removeAllListeners();
     //     };
     // }, [routes, tabIndex]);
+    // console.log(HeaderHeight)
     useEffect(() => {
         Promise.all([
             getMovieByUserId({ userId: user }).then((res) => { setQuibMovies(res) }),
@@ -61,7 +62,7 @@ export default function ProfileScreenTest({ navigation }: props) {
                 }}
             >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: vw(3), }}>
-                    <View style={{ flex: 1, }}>
+                    {/* <View style={{ flex: 1, }}> */}
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: vw(2) }}>
                             <View style={{ paddingHorizontal: vw(2) }}>
                                 <FastImage
@@ -87,14 +88,14 @@ export default function ProfileScreenTest({ navigation }: props) {
                             </View>
                         </View>
                     </View>
-                </View>
+                {/* </View> */}
             </Animated.View>
         );
     };
 
     return (
-        <SafeAreaView style={{}}>
-            <View style={{ paddingVertical: vw(3), backgroundColor: Style.quibBackColor }}>
+        <SafeAreaView style={{backgroundColor: Style.quibBackColor}}>
+            {/* <View style={{ paddingVertical: vw(0), backgroundColor: Style.quibBackColor }}> */}
                 {isLoaded ?
                     <>
                         {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: vw(3) }}>
@@ -135,7 +136,7 @@ export default function ProfileScreenTest({ navigation }: props) {
                         <Wave size={65} color={Style.defaultRed} animating={isLoaded} />
                     </View>
                 }
-            </View>
+            {/* </View> */}
         </SafeAreaView>
     )
 }
