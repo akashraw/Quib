@@ -154,7 +154,6 @@ export async function getMovieLength(id: any) {
         let json;
         let response = await fetch(`${getMovieLengthAPI}?MovieId=${id.MovieId}`, headerOptions);
         json = await response.json();
-        console.log(json)
         return json;
     }
     catch (error) {

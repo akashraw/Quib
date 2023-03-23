@@ -488,10 +488,18 @@ const style = StyleSheet.create({
     borderRadius: vw(2),
   },
   viewStyle: {
-
+    width: vw(28),
+    height: vw(40),
+    borderColor: '#fff',
+    borderRadius: vw(2)
   },
   txtStyle: {
-
+    bottom: 0,
+    fontSize: vw(3),
+    // fontFamily: 'Roboto',
+    // textAlign: 'center',
+    color: '#ffffff',
+    backgroundColor: 'transparent',
   }
 });
 const stylesTab = StyleSheet.create({

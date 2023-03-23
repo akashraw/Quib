@@ -6,7 +6,7 @@ export const stylesCompTab = StyleSheet.create({
     button: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       // alignSelf:'flex-end',
       backgroundColor: Style.defaultRed,
       width: vw(14),
