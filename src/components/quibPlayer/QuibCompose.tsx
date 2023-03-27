@@ -421,8 +421,13 @@ function QuibCompose({
   };
   const MyStreamQuibs = ({item, index, heart}: any) => {
     let {hours, mintues, seconds} = getFormattedTime(item.time);
-    const [Edit, setEdit] = useState<string>('');
+    const [Edit, setEdit] = useState<string>(item.body);
     const [isEdit, setIsEdit] = useState<boolean>(false);
+    const [Trash, setTrash] = useState(false);
+    const [Pencil, setPencil] = useState(false);
+    const [Plane, setPlane] = useState(false);
+    const [Save, setSave] = useState(false);
+    const [isSave, setIsSave] = useState(false);
 
     if (item.isPosted == true && item.isScreenshot == false)
       return (
@@ -510,101 +515,102 @@ function QuibCompose({
       );
     else if (item.isPosted == true && item.isScreenshot == true) {
       return (
-        <View style={{width: vw(100)}} key={index}>
-          <DropShadow
-            style={{
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 0,
-              },
-              shadowOpacity: 0.5,
-              shadowRadius: vw(0.5),
-            }}>
-            <View style={styles.quibCard}>
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <View
-                  style={[
-                    ...[quibPlayerStyles.timer],
-                    {width: vw(14), height: vw(4), marginBottom: vw(1)},
-                  ]}>
-                  <Text
-                    style={{
-                      textAlign: 'center',
-                      color: '#fff',
-                      fontSize: vw(2.6),
-                    }}>
-                    {hours < 10 ? `0${hours}` : `${hours}`}:
-                    {mintues < 10 ? `0${mintues}` : `${mintues}`}:
-                    {seconds < 10 ? `0${seconds}` : `${seconds}`}
-                  </Text>
-                </View>
-                {heart == true ? (
-                  <View style={{right: vw(3), position: 'absolute'}}>
-                    <Icon name="heart" size={vw(5)} color={Style.defaultRed} />
-                  </View>
-                ) : null}
-              </View>
-              <View
-                style={{
-                  width: vw(90),
-                  alignSelf: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                {/* <Shadow distance={8} startColor='#00000020' endColor='#00000000' > */}
-                <DropShadow
-                  style={{
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 0,
-                    },
-                    shadowOpacity: 5,
-                    shadowRadius: vw(1),
-                  }}>
-                  <FastImage
-                    source={{
-                      uri: API + item.body,
-                      cache: FastImage.cacheControl.immutable,
-                      priority: FastImage.priority.normal,
-                    }}
-                    resizeMode={FastImage.resizeMode.cover}
-                    style={{
-                      width: vw(75),
-                      height: vw(32),
-                      marginVertical: vw(2),
-                    }}
-                  />
-                </DropShadow>
-                {/* </Shadow> */}
-              </View>
-              {/* <View
-                style={{
-                  justifyContent: 'flex-start',
-                  flexDirection: 'row',
-                  paddingLeft: vw(8),
-                }}>
-                <TouchableOpacity
-                  activeOpacity={0.4}
-                  disabled={false}
-                  onPress={() =>
-                    deleteBump({ id: item.id, movieId: item.movieId, index })
-                  }>
-                  <View
-                    style={[
-                      ...[styles.button],
-                      device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
-                    ]}>
-                    <Text style={[...[styles.buttonTxt]]}>
-                      Delete
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View> */}
-            </View>
-          </DropShadow>
-        </View>
+        // <View style={{width: vw(100)}} key={index}>
+        //   <DropShadow
+        //     style={{
+        //       shadowColor: '#000',
+        //       shadowOffset: {
+        //         width: 0,
+        //         height: 0,
+        //       },
+        //       shadowOpacity: 0.5,
+        //       shadowRadius: vw(0.5),
+        //     }}>
+        //     <View style={styles.quibCard}>
+        //       <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        //         <View
+        //           style={[
+        //             ...[quibPlayerStyles.timer],
+        //             {width: vw(14), height: vw(4), marginBottom: vw(1)},
+        //           ]}>
+        //           <Text
+        //             style={{
+        //               textAlign: 'center',
+        //               color: '#fff',
+        //               fontSize: vw(2.6),
+        //             }}>
+        //             {hours < 10 ? `0${hours}` : `${hours}`}:
+        //             {mintues < 10 ? `0${mintues}` : `${mintues}`}:
+        //             {seconds < 10 ? `0${seconds}` : `${seconds}`}
+        //           </Text>
+        //         </View>
+        //         {heart == true ? (
+        //           <View style={{right: vw(3), position: 'absolute'}}>
+        //             <Icon name="heart" size={vw(5)} color={Style.defaultRed} />
+        //           </View>
+        //         ) : null}
+        //       </View>
+        //       <View
+        //         style={{
+        //           width: vw(90),
+        //           alignSelf: 'center',
+        //           justifyContent: 'center',
+        //           alignItems: 'center',
+        //         }}>
+        //         {/* <Shadow distance={8} startColor='#00000020' endColor='#00000000' > */}
+        //         <DropShadow
+        //           style={{
+        //             shadowColor: '#000',
+        //             shadowOffset: {
+        //               width: 0,
+        //               height: 0,
+        //             },
+        //             shadowOpacity: 5,
+        //             shadowRadius: vw(1),
+        //           }}>
+        //           <FastImage
+        //             source={{
+        //               uri: API + item.body,
+        //               cache: FastImage.cacheControl.immutable,
+        //               priority: FastImage.priority.normal,
+        //             }}
+        //             resizeMode={FastImage.resizeMode.cover}
+        //             style={{
+        //               width: vw(75),
+        //               height: vw(32),
+        //               marginVertical: vw(2),
+        //             }}
+        //           />
+        //         </DropShadow>
+        //         {/* </Shadow> */}
+        //       </View>
+        //       {/* <View
+        //         style={{
+        //           justifyContent: 'flex-start',
+        //           flexDirection: 'row',
+        //           paddingLeft: vw(8),
+        //         }}>
+        //         <TouchableOpacity
+        //           activeOpacity={0.4}
+        //           disabled={false}
+        //           onPress={() =>
+        //             deleteBump({ id: item.id, movieId: item.movieId, index })
+        //           }>
+        //           <View
+        //             style={[
+        //               ...[styles.button],
+        //               device ? { width: vw(14), height: vw(5) } : { width: vw(16), height: vw(6) },
+        //             ]}>
+        //             <Text style={[...[styles.buttonTxt]]}>
+        //               Delete
+        //             </Text>
+        //           </View>
+        //         </TouchableOpacity>
+        //       </View> */}
+        //     </View>
+        //   </DropShadow>
+        // </View>
+        null
       );
     } else
       return (
@@ -643,11 +649,10 @@ function QuibCompose({
                   </View>
                 ) : null}
               </View>
-                {
-                  isEdit ?
-                  <TextInput 
-                  placeholder={item.body} 
-                  value={Edit} 
+              {isEdit ? (
+                <TextInput
+                  placeholder={item.body}
+                  value={Edit}
                   placeholderTextColor={Style.defaultTxtColor}
                   multiline={true}
                   style={{
@@ -664,22 +669,25 @@ function QuibCompose({
                     alignItems: 'flex-start',
                     justifyContent: 'flex-start',
                     color: 'black',
-                    alignSelf:'center'
+                    alignSelf: 'center',
                   }}
-                  onChange={({nativeEvent: {text}}) => setEdit(text)}
-                  />
-                  :
-                  <View style={styles.quibTxtBody}>
+                  onChange={({nativeEvent: {text}}) => {
+                    setIsSave(!Save);
+                    setEdit(text);
+                  }}
+                />
+              ) : (
+                <View style={styles.quibTxtBody}>
                   <Text
-                  style={{
-                    color: Style.defaultTxtColor,
-                    fontSize: device ? vw(2.5) : vw(3.6),
-                    textAlign: 'left',
-                  }}>
-                  {item.body}
-                </Text>
+                    style={{
+                      color: Style.defaultTxtColor,
+                      fontSize: device ? vw(2.5) : vw(3.6),
+                      textAlign: 'left',
+                    }}>
+                    {item.body}
+                  </Text>
                 </View>
-                }
+              )}
               <View
                 style={{
                   justifyContent: 'center',
@@ -708,13 +716,14 @@ function QuibCompose({
                       ? {width: vw(28), height: vw(5), borderRadius: vw(7)}
                       : {width: vw(32), height: vw(6), borderRadius: vw(8)},
                   ]}>
-
-
                   {/* <Divider orientation="vertical" color="white" /> */}
                   <TouchableOpacity
                     activeOpacity={0.4}
                     disabled={false}
-                    onPress={() => deletePost({id: item.id, index})}>
+                    onPress={() => {
+                      setTrash(Trash => (Trash = !Trash));
+                      deletePost({id: item.id, index});
+                    }}>
                     <View
                       style={{
                         width: vw(10),
@@ -723,7 +732,7 @@ function QuibCompose({
                         height: vw(6),
                       }}>
                       <IonIcon
-                        name="trash"
+                        name={Trash ? 'trash' : 'trash-outline'}
                         size={device ? vw(3) : vw(4)}
                         color={'white'}
                       />
@@ -735,7 +744,16 @@ function QuibCompose({
                   <TouchableOpacity
                     activeOpacity={0.4}
                     disabled={false}
-                    onPress={() => setIsEdit(!isEdit)}>
+                    onPress={() => {
+                      if (isSave) {
+                        setPencil(Pencil => (Pencil = !Pencil));
+                        setIsSave(!isSave);
+                        setIsEdit(!isEdit);
+                      } else {
+                        setPencil(Pencil => (Pencil = !Pencil));
+                        setIsEdit(!isEdit);
+                      }
+                    }}>
                     <View
                       style={{
                         // borderLeftWidth: 1,
@@ -745,11 +763,19 @@ function QuibCompose({
                         alignItems: 'center',
                         height: vw(6),
                       }}>
-                      <Icon
-                        name="pencil"
-                        size={device ? vw(3) : vw(4)}
-                        color={'white'}
-                      />
+                      {isSave ? (
+                        <IonIcon
+                          name={Save ? 'save' : 'save-outline'}
+                          size={device ? vw(3) : vw(4)}
+                          color={'white'}
+                        />
+                      ) : (
+                        <Icon
+                          name={Pencil ? 'pencil' : 'pencil-outline'}
+                          size={device ? vw(3) : vw(4)}
+                          color={'white'}
+                        />
+                      )}
                     </View>
                   </TouchableOpacity>
 
@@ -757,7 +783,7 @@ function QuibCompose({
 
                   <TouchableOpacity
                     activeOpacity={0.4}
-                    disabled={false} 
+                    disabled={false}
                     onPress={() =>
                       Post({
                         quibId: item.id,
@@ -773,7 +799,7 @@ function QuibCompose({
                         height: vw(6),
                       }}>
                       <IonIcon
-                        name="paper-plane"
+                        name={Plane ? 'paper-plane' : 'paper-plane-outline'}
                         size={device ? vw(3) : vw(4)}
                         color={'white'}
                       />
