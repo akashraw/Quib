@@ -49,7 +49,6 @@ export default function ChooseMovies(props: props) {
   LogBox.ignoreLogs(['FlashList']);
 
   useEffect(() => {
-    console.log(vw(1) + ' and '+vh(1))
     Promise.all([
       getAllMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { setallMovieRes(res)} }),
       getRecentMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setRecentMovies(res) } }),
@@ -93,7 +92,6 @@ export default function ChooseMovies(props: props) {
 
 
   const AllMovies = useCallback(() => {
-    console.log('render')
     return (
       < FlatList
         // bounces={false}
@@ -115,7 +113,7 @@ export default function ChooseMovies(props: props) {
 
   // for rending movie card list 
   const MovieBanner = useCallback(({ item, index }: any) => {
-    // console.log(item.title)
+    // console.log(item[0])
     const check: string = item.posterContentThumb;
     let FS: any;
     if (check != null) {
