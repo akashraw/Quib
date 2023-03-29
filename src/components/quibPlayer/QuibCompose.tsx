@@ -350,8 +350,14 @@ function QuibCompose({
           }),
         )
         .then(() =>
-          QuibByMovieAndUserId({MovieId, userId}).then((res: any) => {
-            setFlatData(res.filter((item: any) => item.newUserId == userId));
+          AddQuib({
+            MovieId: MovieId,
+            body: QuibInput,
+            userId: userId,
+            time: time
+          }).then((res:any) => {
+            // if(res.status==200)
+            // return setFlatData([...[FlatData], ]);
           }),
         );
   };

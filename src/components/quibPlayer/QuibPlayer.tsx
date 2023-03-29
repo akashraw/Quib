@@ -304,7 +304,7 @@ export default function QuibPlayer({ navigation, route }: props) {
   };
   const HandlePressed = (time: number) => {
     TimeRef.current = time;
-    bottomSheetModalRef.current?.expand();
+    bottomSheetModalRef.current?.present();
   };
   //Quib list quibs head in (profile image, name, timestamp and quib)
   const QuibHead = useCallback(
@@ -727,12 +727,12 @@ export default function QuibPlayer({ navigation, route }: props) {
 
   const QuibComposeModal = useCallback(() => {
     return (
-      <BottomSheet
+      <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
-        detached={true}
+        detached={false}
         snapPoints={snapPoints}
-        bottomInset={vh(18)}
+        // bottomInset={vh(18)}
         onChange={handleSheetPositionChange}
         backdropComponent={renderBackdrop}
         backgroundStyle={{
@@ -758,7 +758,7 @@ export default function QuibPlayer({ navigation, route }: props) {
           device={Auth.DeviceType}
           movieLength={MovieLen.current}
         />
-      </BottomSheet>
+      </BottomSheetModal>
     );
   }, [true]);
 
@@ -787,7 +787,7 @@ export default function QuibPlayer({ navigation, route }: props) {
 
   return (
     <>
-      {/* <BottomSheetModalProvider> */}
+      <BottomSheetModalProvider>
       <SafeAreaView
         style={{
           // paddingTop:StatusBar.currentHeight,
@@ -813,7 +813,9 @@ export default function QuibPlayer({ navigation, route }: props) {
             <FlashList
               data={movieQuib}
               // onScroll={onScroll}
-              showsVerticalScrollIndicator={false}
+              persistentScrollbar={true}
+              
+              showsVerticalScrollIndicator={true}
               ListHeaderComponent={InitialQuib}
               keyExtractor={(_, index) => index.toString()}
               renderItem={QuibList}
@@ -1212,7 +1214,7 @@ export default function QuibPlayer({ navigation, route }: props) {
         {/* </View> */}
         <LoginModal />
       </SafeAreaView>
-      {/* </BottomSheetModalProvider> */}
+      </BottomSheetModalProvider>
       <Toast />
     </>
   );
