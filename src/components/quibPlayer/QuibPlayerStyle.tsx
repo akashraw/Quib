@@ -4,6 +4,18 @@ import { Style } from "../../constants/Styles";
 import React from "react";
 
 export const quibPlayerStyles = StyleSheet.create({
+    sliderDummy: {
+        backgroundColor: '#d3d3d3',
+        width: 300,
+        height:30,
+        borderRadius: 50,
+        position: 'absolute',                
+    },
+    sliderReal: {
+        backgroundColor: '#119EC2',
+        width: (400/50) * 300,
+        height:30,
+    },
     quibHead:{
         flex:1,
         flexDirection:"row",

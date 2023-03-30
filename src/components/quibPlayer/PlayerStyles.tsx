@@ -1,15 +1,27 @@
-import {StatusBar, StyleSheet} from 'react-native';
-import {vw, vh} from 'rxn-units';
-import {Style} from '../../constants/Styles';
+import { StatusBar, StyleSheet } from 'react-native';
+import { vw, vh } from 'rxn-units';
+import { Style } from '../../constants/Styles';
 
 export const style = StyleSheet.create({
+  sliderDummy: {
+    backgroundColor: '#d3d3d3',
+    width: 300,
+    height: vw(2),
+    borderRadius: 50,
+    position: 'absolute',
+  },
+  sliderReal: {
+    backgroundColor: '#119EC2',
+    width: (100 / 50) * 300,
+    height: vw(2),
+  },
   container: {
     flex: 1,
     // zIndex:1,
-    justifyContent:'space-around',
+    justifyContent: 'space-around',
     alignItems: 'center',
     width: vw(100),
-    flexDirection:'row',
+    flexDirection: 'row',
     paddingTop: StatusBar.currentHeight,
     // overflow: 'hidden',
     // padding: vw(3),
@@ -66,7 +78,7 @@ export const style = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
-    width: vw(70),
+    width: vw(75),
     alignSelf: 'center',
     flex: 1,
     justifyContent: 'center',
@@ -124,7 +136,7 @@ export const style = StyleSheet.create({
     overflow: 'hidden',
     width: vw(100),
     flexDirection: 'row',
-    height: vh(18),
+    height: vh(14),
     zIndex: 100,
     alignItems: 'center',
     justifyContent: 'center',
@@ -151,12 +163,24 @@ export const stylesTab = StyleSheet.create({
   container: {
     flex: 1,
     // zIndex:1,
-    flexDirection:'row',
+    flexDirection: 'row',
     // alignItems: 'center',
     width: vw(100),
     paddingTop: StatusBar.currentHeight,
     // overflow: 'hidden',
     // padding: vw(3),
+  },
+  sliderDummy: {
+    backgroundColor: '#d3d3d3',
+    width: 300,
+    height: vw(2),
+    borderRadius: 50,
+    position: 'absolute',
+  },
+  sliderReal: {
+    backgroundColor: '#119EC2',
+    width: (400 / 50) * 300,
+    height: vw(2),
   },
   heading: {
     fontSize: vw(5),
@@ -210,7 +234,7 @@ export const stylesTab = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
-    width: vw(70),
+    width: vw(75),
     flex: 1,
     alignSelf: 'center',
     justifyContent: 'center',
@@ -268,7 +292,7 @@ export const stylesTab = StyleSheet.create({
     overflow: 'hidden',
     width: vw(100),
     flexDirection: 'row',
-    height: vh(18),
+    height: vh(14),
     zIndex: 100,
   },
   movieScrub: {
