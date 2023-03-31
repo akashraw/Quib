@@ -136,7 +136,7 @@ export const style = StyleSheet.create({
     overflow: 'hidden',
     width: vw(100),
     flexDirection: 'row',
-    height: vh(14),
+    height: vh(10),
     zIndex: 100,
     alignItems: 'center',
     justifyContent: 'center',
@@ -292,7 +292,7 @@ export const stylesTab = StyleSheet.create({
     overflow: 'hidden',
     width: vw(100),
     flexDirection: 'row',
-    height: vh(14),
+    height: vh(10),
     zIndex: 100,
   },
   movieScrub: {
