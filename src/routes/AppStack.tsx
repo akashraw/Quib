@@ -24,6 +24,7 @@ import { useNavigation } from '@react-navigation/native';
 import Net from '../Net';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import NewQuibPlayer from '../components/quibPlayer/NewQuibPlayer';
+import Ani from '../components/quibPlayer/Ani';
 
 const Stack = createNativeStackNavigator();
 function ModalScreen({ navigation }: any) {

@@ -15,9 +15,14 @@ interface props {
     handlePresentModalPress: (p: number) => void,
     isGuest: boolean,
     setActive: React.Dispatch<SetStateAction<boolean>>,
-    MovieId:number,
+    MovieId: number,
     userId: string,
     device: boolean,
+    ItemHeight: number,
+    ItemSpace: number,
+    // State: boolean,
+    isLand: boolean,
+    isCine: boolean,
 }
 
 const getFormattedTime = (time: number) => {
@@ -29,14 +34,15 @@ const getFormattedTime = (time: number) => {
 
 
 
-function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive, MovieId, userId, device }: props) {
+function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive, MovieId, userId, device, ItemHeight, ItemSpace, isLand, isCine }: props) {
+    // const ImgWidth = useMemo(() => first, [second])
     let { hours, mintues, seconds } = getFormattedTime(item.time);
-    // console.log(handlePresentModalPress(item.time))
+
     const QuibHead = ({ hours, mintues, seconds, isSS }: any) => {
         if (isSS == true)
             return (
-                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', }}>
-                    <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ justifyContent: 'center', position: 'absolute', }}>
                             <TouchableOpacity
                                 onPress={() => isGuest == true ?
@@ -76,8 +82,9 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
                 </View>
             )
         else return (
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', }}>
-                <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'rgba( 248, 251, 248, .9)' }}>
+                {/* <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', }}> */}
+                <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', backgroundColor: 'rgba( 248, 251, 248, .9)' }}>
                     <View style={{ justifyContent: 'center', position: 'absolute', }}>
                         <TouchableOpacity
                             onPress={() => isGuest == true ?
@@ -88,24 +95,24 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
                         </TouchableOpacity>
                     </View>
                     <View style={{ right: vw(2), position: 'absolute' }}>
-                    <TouchableOpacity
-                                onPress={() =>
-                                    isGuest == true
-                                        ? setActive(true)
-                                        : AddBump({
-                                            quibId: item.id,
-                                            MovieId: MovieId,
-                                            userId: userId,
-                                        }).then(() =>
-                                            Toast.show({
-                                                visibilityTime: 5000,
-                                                autoHide: true,
-                                                type: 'success',
-                                                text1: 'Bumped!',
-                                                text2: 'Quib has been add to your stream successfully.',
-                                            }),
-                                        )
-                                }>
+                        <TouchableOpacity
+                            onPress={() =>
+                                isGuest == true
+                                    ? setActive(true)
+                                    : AddBump({
+                                        quibId: item.id,
+                                        MovieId: MovieId,
+                                        userId: userId,
+                                    }).then(() =>
+                                        Toast.show({
+                                            visibilityTime: 5000,
+                                            autoHide: true,
+                                            type: 'success',
+                                            text1: 'Bumped!',
+                                            text2: 'Quib has been add to your stream successfully.',
+                                        }),
+                                    )
+                            }>
                             <Icon
                                 name="heart-outline"
                                 size={vw(5)}
@@ -118,21 +125,47 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
         )
     }
 
+
+
+
     //Quib List
     const QuibList = () => {
-        if (!item.isScreenshot)
+        if (isLand!) {
             return (
-                <View key={index} style={quibPlayerStyles.flatlistContainer}>
-                    {/* <View style={{ flex: 1, flexDirection: 'row' }}> */}
+                <View key={index} style={[...[quibPlayerStyles.flatlistContainer], { height: ItemHeight }]}>
                     <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
-                    <View style={{ flex: 1, }}>
-                        <Text style={{ flex: 1, color: Style.defaultTxtColor, fontSize: device? vw(2.5):vw(3.6), fontWeight: '500', textAlign: 'left' }}>{item.body}</Text>
+                    <View style={quibPlayerStyles.flatlistComps}>
+                        <FastImage
+                            source={{
+                                uri: API + item.body,
+                                cache: FastImage.cacheControl.immutable,
+                                priority: FastImage.priority.normal
+                            }}
+                            resizeMode={FastImage.resizeMode.contain}
+                            style={{ width: vw(60), height: vw(30), }}
+                        />
                     </View>
                 </View>
             )
-
-        else return (
-            <View key={index} style={quibPlayerStyles.flatlistContainer}>
+        } else if (isCine) {
+            return ( 
+                <View key={index} style={[...[quibPlayerStyles.flatlistContainer], { height: ItemHeight }]}>
+                    <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
+                    <View style={quibPlayerStyles.flatlistComps}>
+                        <FastImage
+                            source={{
+                                uri: API + item.body,
+                                cache: FastImage.cacheControl.immutable,
+                                priority: FastImage.priority.normal
+                            }}
+                            resizeMode={FastImage.resizeMode.contain}
+                            style={{ width: vw(60), height: vw(32), }}
+                        />
+                    </View>
+                </View>
+            )
+        } else return (
+            <View key={index} style={[...[quibPlayerStyles.flatlistContainer], { height: ItemHeight }]}>
                 <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
                 <View style={quibPlayerStyles.flatlistComps}>
                     <FastImage
@@ -142,16 +175,16 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
                             priority: FastImage.priority.normal
                         }}
                         resizeMode={FastImage.resizeMode.contain}
-                        style={{ width: vw(86), height: vw(50) }}
+                        style={{ width: vw(60), height: vw(32), }}
                     />
                 </View>
             </View>
         )
     }
     return (
-        <View style={{ marginLeft: vw(3), marginRight: vw(1) }}>
-            <QuibList />
-        </View>
+        // <View style={{ marginVertical: vw(3),  }}>
+        <QuibList />
+        // </View>
     )
 }
 

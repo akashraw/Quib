@@ -2,6 +2,8 @@ import React from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AuthProvider from './src/Auth';
 import Router from './src/Router';
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 
 export type RootStackParamList = {
   Home: undefined;

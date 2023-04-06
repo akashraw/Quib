@@ -63,19 +63,22 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
   // const QuibMovies = useRef<any[]>([]);
   const Auth = React.useContext(AuthContext);
   const styles = device ? stylesTab : style;
+  const [routes, setRoute] = useState([
+    { key: 'first', title: 'Quibbed', total: quib.length },
+    { key: 'second', title: 'Following', total: followee.length },
+    { key: 'thrid', title: 'Followers', total: follower.length },
+  ]);
   useEffect(() => {
     Promise.all([
       setQuib(quib),
       setFollowee(followee),
       setFollower(follower),
     ])
+    // setRoute(routes => [ {key:'', title:'', total: quib.length}])
+    console.log(routes)
   }, [])
 
-  const [routes] = useState([
-    { key: 'first', title: 'Quibbed', total: quib.length },
-    { key: 'second', title: 'Following', total: followee.length },
-    { key: 'thrid', title: 'Followers', total: follower.length },
-  ]);
+
 
   const Profile = (userId: string) => {
     if (userId !== Auth.userName) {
@@ -126,7 +129,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
               </TouchableOpacity>
             </View>
           )}
-          
+
         />
       </View>
     );
@@ -220,7 +223,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
           estimatedItemSize={20}
-          ListFooterComponent={<View style={{ height: device?vw(10):vw(16) }} />}
+          ListFooterComponent={<View style={{ height: device ? vw(10) : vw(16) }} />}
         />
       </View>
     )
@@ -309,7 +312,7 @@ export default function ProfileScreenTabViews({ quib, followee, follower, navi, 
           // keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }: any) => <RenderItem item={item} index={index} />}
           estimatedItemSize={20}
-          ListFooterComponent={<View style={{ height: device?vw(10):vw(16) }} />}
+          ListFooterComponent={<View style={{ height: device ? vw(10) : vw(16) }} />}
         />
       </View>
     );

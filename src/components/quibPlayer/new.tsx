@@ -1,151 +1,279 @@
-import React, { useRef, useState } from 'react';
+/**
+ *
+ * Inspiration: https://dribbble.com/shots/3731362-Event-cards-iOS-interaction
+ */
+
+import * as React from 'react';
 import {
-    Animated,
-    Dimensions,
-    FlatList,
+    StatusBar,
     Image,
+    FlatList,
+    Dimensions,
+    Animated,
+    Text,
+    View,
     StyleSheet,
-    View
+    SafeAreaView,
 } from 'react-native';
+const { width } = Dimensions.get('screen');
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import {
+    FlingGestureHandler,
+    Directions,
+    State,
+} from 'react-native-gesture-handler';
 
-const { width } = Dimensions.get('window');
-const headerHeight = 300;
-const headerFinalHeight = 70;
-const imageSize = (headerHeight / 3) * 2;
-
+// https://www.creative-flyers.com
 const DATA = [
-    { id: 'header' },
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-    { id: 7 },
-    { id: 8 },
-    { id: 9 },
-    { id: 10 },
+    {
+        title: 'Afro vibes',
+        location: 'Mumbai, India',
+        date: 'Nov 17th, 2020',
+        poster:
+            'https://www.creative-flyers.com/wp-content/uploads/2020/07/Afro-vibes-flyer-template.jpg',
+    },
+    {
+        title: 'Jungle Party',
+        location: 'Unknown',
+        date: 'Sept 3rd, 2020',
+        poster:
+            'https://www.creative-flyers.com/wp-content/uploads/2019/11/Jungle-Party-Flyer-Template-1.jpg',
+    },
+    {
+        title: '4th Of July',
+        location: 'New York, USA',
+        date: 'Oct 11th, 2020',
+        poster:
+            'https://www.creative-flyers.com/wp-content/uploads/2020/06/4th-Of-July-Invitation.jpg',
+    },
+    {
+        title: 'Summer festival',
+        location: 'Bucharest, Romania',
+        date: 'Aug 17th, 2020',
+        poster:
+            'https://www.creative-flyers.com/wp-content/uploads/2020/07/Summer-Music-Festival-Poster.jpg',
+    },
+    {
+        title: 'BBQ with friends',
+        location: 'Prague, Czech Republic',
+        date: 'Sept 11th, 2020',
+        poster:
+            'https://www.creative-flyers.com/wp-content/uploads/2020/06/BBQ-Flyer-Psd-Template.jpg',
+    },
+    {
+        title: 'Festival music',
+        location: 'Berlin, Germany',
+        date: 'Apr 21th, 2021',
+        poster:
+            'https://www.creative-flyers.com/wp-content/uploads/2020/06/Festival-Music-PSD-Template.jpg',
+    },
+    {
+        title: 'Beach House',
+        location: 'Liboa, Portugal',
+        date: 'Aug 12th, 2020',
+        poster:
+            'https://www.creative-flyers.com/wp-content/uploads/2020/06/Summer-Beach-House-Flyer.jpg',
+    },
 ];
 
-export default function ScrollAnimatedHeader2() {
-    const scrollY = useRef(new Animated.Value(0)).current;
-    const [textWidth, setTextWidth] = useState(0);
-    const offset = headerHeight - headerFinalHeight;
-    const translateHeader = scrollY.interpolate({
-        inputRange: [0, offset],
-        outputRange: [0, -offset],
-        extrapolate: 'clamp',
+const OVERFLOW_HEIGHT = 70;
+const SPACING = 10;
+const ITEM_WIDTH = width * 0.76;
+const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
+const VISIBLE_ITEMS = 3;
+
+const OverflowItems = ({ data, scrollXAnimated }: any) => {
+    const inputRange = [-1, 0, 1];
+    const translateY = scrollXAnimated.interpolate({
+        inputRange,
+        outputRange: [OVERFLOW_HEIGHT, 0, -OVERFLOW_HEIGHT],
     });
-    const translateImageY = scrollY.interpolate({
-        inputRange: [0, offset],
-        outputRange: [0, -(headerFinalHeight - headerHeight) / 2],
-        extrapolate: 'clamp',
-    });
-    const translateImageX = scrollY.interpolate({
-        inputRange: [0, offset],
-        outputRange: [
-            0,
-            -(width / 2) + (imageSize * headerFinalHeight) / headerHeight,
-        ],
-        extrapolate: 'clamp',
-    });
-    const scaleImage = scrollY.interpolate({
-        inputRange: [0, offset],
-        outputRange: [1, headerFinalHeight / headerHeight],
-        extrapolate: 'clamp',
-    });
-    const translateName = scrollY.interpolate({
-        inputRange: [0, offset / 2, offset],
-        outputRange: [0, 10, -width / 2 + textWidth / 2 + headerFinalHeight],
-        extrapolate: 'clamp',
-    });
-    const scaleName = scrollY.interpolate({
-        inputRange: [0, offset],
-        outputRange: [1, 0.8],
-        extrapolate: 'clamp',
-    });
-    const renderItem = ({ index }:any ) => {
-        if (index == 0)
-            return (
-                <Animated.View
-                    style={[styles.header, { transform: [{ translateY: translateHeader }] }]}>
-                    <Animated.View
-                        style={[
-                            styles.image,
-                            {
-                                transform: [
-                                    { translateY: translateImageY },
-                                    { translateX: translateImageX },
-                                    { scale: scaleImage },
-                                ],
-                            },
-                        ]}>
-                        <Image
-                            source={{
-                                uri: 'https://i.ibb.co/YySxPQC/pro.jpeg',
-                            }}
-                            style={styles.img}
-                            resizeMode="cover"
-                        />
-                    </Animated.View>
-                    <Animated.Text
-                        onTextLayout={e => setTextWidth(e.nativeEvent.lines[0].width)}
-                        style={[
-                            styles.name,
-                            { transform: [{ translateX: translateName }, { scale: scaleName }] },
-                        ]}>
-                        ASWIN
-                    </Animated.Text>
-                </Animated.View>
-            );
-        return <View style={styles.item} />;
-    };
     return (
-        <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            // keyExtractor={item => item.id}
-            stickyHeaderIndices={[0]}
-            onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-                useNativeDriver: false,
-            })}
-        />
+        <View style={styles.overflowContainer}>
+            <Animated.View style={{ transform: [{ translateY }] }}>
+                {data.map(({ item, index }: any) => {
+                    return (
+                        <View key={index} style={styles.itemContainer}>
+                            <Text style={[styles.title]} numberOfLines={1}>
+                                {/* {item.title} */}
+                            </Text>
+                            <View style={styles.itemContainerRow}>
+                                <Text style={[styles.location]}>
+                                    <EvilIcons
+                                        name='location'
+                                        size={16}
+                                        color='black'
+                                        style={{ marginRight: 5 }}
+                                    />
+                                    {/* {item.location} */}
+                                </Text>
+                                {/* <Text style={[styles.date]}>{item.date}</Text> */}
+                            </View>
+                        </View>
+                    );
+                })}
+            </Animated.View>
+        </View>
+    );
+};
+
+export default function New() {
+    const [data, setData] = React.useState(DATA);
+    const scrollXIndex = React.useRef(new Animated.Value(0)).current;
+    const scrollXAnimated = React.useRef(new Animated.Value(0)).current;
+    const [index, setIndex] = React.useState(0);
+    const setActiveIndex = React.useCallback((activeIndex: any) => {
+        scrollXIndex.setValue(activeIndex);
+        setIndex(activeIndex);
+    }, []);
+
+    React.useEffect(() => {
+        if (index === data.length - VISIBLE_ITEMS - 1) {
+            // get new data
+            // fetch more data
+            const newData = [...data, ...data];
+            setData(newData);
+        }
+    });
+
+    React.useEffect(() => {
+        Animated.spring(scrollXAnimated, {
+            toValue: scrollXIndex,
+            useNativeDriver: true,
+        }).start();
+    });
+
+    return (
+        <FlingGestureHandler
+            key='left'
+            direction={Directions.LEFT}
+            onHandlerStateChange={(ev) => {
+                if (ev.nativeEvent.state === State.END) {
+                    if (index === data.length - 1) {
+                        return;
+                    }
+                    setActiveIndex(index + 1);
+                }
+            }}
+        >
+            <FlingGestureHandler
+                key='right'
+                direction={Directions.RIGHT}
+                onHandlerStateChange={(ev) => {
+                    if (ev.nativeEvent.state === State.END) {
+                        if (index === 0) {
+                            return;
+                        }
+                        setActiveIndex(index - 1);
+                    }
+                }}
+            >
+                <SafeAreaView style={styles.container}>
+                    <StatusBar hidden />
+                    <OverflowItems data={data} scrollXAnimated={scrollXAnimated} />
+                    <FlatList
+                        data={data}
+                        keyExtractor={(_, index) => String(index)}
+                        horizontal
+                        inverted
+                        contentContainerStyle={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            padding: SPACING * 2,
+                            marginTop: 50,
+                        }}
+                        scrollEnabled={false}
+                        removeClippedSubviews={false}
+                        CellRendererComponent={({
+                            item,
+                            index,
+                            children,
+                            style,
+                            ...props
+                        }) => {
+                            const newStyle = [style, { zIndex: data.length - index }];
+                            return (
+                                <View style={newStyle} index={index} {...props}>
+                                    {children}
+                                </View>
+                            );
+                        }}
+                        renderItem={({ item, index }) => {
+                            const inputRange = [index - 1, index, index + 1];
+                            const translateX = scrollXAnimated.interpolate({
+                                inputRange,
+                                outputRange: [50, 0, -100],
+                            });
+                            const scale = scrollXAnimated.interpolate({
+                                inputRange,
+                                outputRange: [0.8, 1, 1.3],
+                            });
+                            const opacity = scrollXAnimated.interpolate({
+                                inputRange,
+                                outputRange: [1 - 1 / VISIBLE_ITEMS, 1, 0],
+                            });
+
+                            return (
+                                <Animated.View
+                                    style={{
+                                        position: 'absolute',
+                                        left: -ITEM_WIDTH / 2,
+                                        opacity,
+                                        transform: [
+                                            {
+                                                translateX,
+                                            },
+                                            { scale },
+                                        ],
+                                    }}
+                                >
+                                    <Image
+                                        source={{ uri: item.poster }}
+                                        style={{
+                                            width: ITEM_WIDTH,
+                                            height: ITEM_HEIGHT,
+                                            borderRadius: 14,
+                                        }}
+                                    />
+                                </Animated.View>
+                            );
+                        }}
+                    />
+                </SafeAreaView>
+            </FlingGestureHandler>
+        </FlingGestureHandler>
     );
 }
 
 const styles = StyleSheet.create({
-    item: {
-        height: 100,
-        marginBottom: 5,
-        backgroundColor: 'grey',
-        marginHorizontal: 10,
-    },
-    header: {
-        height: headerHeight,
-        marginBottom: 5,
-        backgroundColor: '#f2f2f2',
-        alignItems: 'center',
+    container: {
+        flex: 1,
         justifyContent: 'center',
-    },
-    image: {
-        height: imageSize,
-        width: imageSize,
-        borderRadius: headerHeight,
         backgroundColor: '#fff',
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: '900',
+        textTransform: 'uppercase',
+        letterSpacing: -1,
+    },
+    location: {
+        fontSize: 16,
+    },
+    date: {
+        fontSize: 12,
+    },
+    itemContainer: {
+        height: OVERFLOW_HEIGHT,
+        padding: SPACING * 2,
+    },
+    itemContainerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    overflowContainer: {
+        height: OVERFLOW_HEIGHT,
         overflow: 'hidden',
     },
-    img: {
-        height: '100%',
-        width: '100%',
-    },
-    name: {
-        fontSize: 30,
-        color: '#000',
-        position: 'absolute',
-        bottom: 0,
-        height: headerFinalHeight,
-        textAlignVertical: 'center',
-        letterSpacing: 2,
-    },
 });
-

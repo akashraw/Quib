@@ -31,23 +31,26 @@ export const quibPlayerStyles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    flatlistComps: {
-        paddingVertical: vw(0),
+    flatlistComps: { 
+        // flex: 1,
+        // paddingVertical: vw(2),
+        marginVertical: vw(1),
+        // backgroundColor:'rgba( 248, 251, 248, .9)',
+
     },
     flatlistContainer: {
-        // backgroundColor:'transparent',
-        // backgroundColor:'#fff',
+        // height:vw(60),
+        flex:1,
         backgroundColor:'rgba( 248, 251, 248, .9)',
-        height: vw(60),
-        width: vw(90),
+        width: vw(75),
         justifyContent: 'center',
         alignItems: 'center',
-        // borderWidth: 1,
         borderRadius:vw(2),
         borderColor: '#E6E6E6',
-        paddingVertical: vw(2),
-        paddingHorizontal: vw(2),
-        // marginVertical: vw(3),
+        // paddingVertical: vw(2),
+        // paddingHorizontal: vw(2),
+        alignSelf:"center",
+        
     },
    
 })
