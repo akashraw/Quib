@@ -41,7 +41,7 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
     const QuibHead = ({ hours, mintues, seconds, isSS }: any) => {
         if (isSS == true)
             return (
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: vw(6), backgroundColor: 'red' }}>
                     <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ justifyContent: 'center', position: 'absolute', }}>
                             <TouchableOpacity
@@ -132,24 +132,24 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
     const QuibList = () => {
         if (isLand!) {
             return (
-                <View key={index} style={[...[quibPlayerStyles.flatlistContainer], { height: ItemHeight }]}>
+                <View key={index} style={[...[quibPlayerStyles.flatlistContainer],]}>
                     <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
-                    <View style={quibPlayerStyles.flatlistComps}>
-                        <FastImage
-                            source={{
-                                uri: API + item.body,
-                                cache: FastImage.cacheControl.immutable,
-                                priority: FastImage.priority.normal
-                            }}
-                            resizeMode={FastImage.resizeMode.contain}
-                            style={{ width: vw(60), height: vw(30), }}
-                        />
-                    </View>
+                    {/* <View style={quibPlayerStyles.flatlistComps}> */}
+                    <FastImage
+                        source={{
+                            uri: API + item.body,
+                            cache: FastImage.cacheControl.immutable,
+                            priority: FastImage.priority.normal
+                        }}
+                        resizeMode={FastImage.resizeMode.contain}
+                        style={{ width: vw(74), height: vw(35), }}
+                    />
+                    {/* </View> */}
                 </View>
             )
         } else if (isCine) {
-            return ( 
-                <View key={index} style={[...[quibPlayerStyles.flatlistContainer], { height: ItemHeight }]}>
+            return (
+                <View key={index} style={[...[quibPlayerStyles.flatlistContainer],]}>
                     <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
                     <View style={quibPlayerStyles.flatlistComps}>
                         <FastImage
@@ -165,7 +165,7 @@ function QuibCarousel({ item, index, handlePresentModalPress, isGuest, setActive
                 </View>
             )
         } else return (
-            <View key={index} style={[...[quibPlayerStyles.flatlistContainer], { height: ItemHeight }]}>
+            <View key={index} style={[...[quibPlayerStyles.flatlistContainer],]}>
                 <QuibHead hours={hours} mintues={mintues} seconds={seconds} isSS={item.isScreenshot} />
                 <View style={quibPlayerStyles.flatlistComps}>
                     <FastImage

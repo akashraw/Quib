@@ -131,7 +131,11 @@ export default function QuibPlayer({ navigation, route }: props) {
   const AnimatedBlurView = motify(BlurView)();
   const [StateWidth, setStateWidth] = useState<number>(0);
   const [StateHeight, setStateHeight] = useState<number>(0);
-
+  const ScurbCompleteIndex = useRef<number>(0);
+  const [ITEM_SIZE, setITEM_SIZE] = useState(width * 0.38);
+  const [ITEM_SPACING, setITEM_SPACING] = useState((width - ITEM_SIZE) / 2);
+  const [IsLand, setIsLand] = useState(true);
+  const [IsCine, setIsCine] = useState(true);
   const BlurState = useDynamicAnimation(() => {
     return {
       scale: 1,
@@ -166,7 +170,7 @@ export default function QuibPlayer({ navigation, route }: props) {
       translateY: vw(-2),
       translateX: vw(0)
     }
-  })
+  });
   const animateIconButton = useDynamicAnimation(() => {
     return {
       scale: 1,
@@ -174,11 +178,15 @@ export default function QuibPlayer({ navigation, route }: props) {
       translateY: vw(2),
       translateX: vw(0)
     }
-  })
+  });
   //Api calls
 
   useEffect(() => {
     Promise.all([
+      QuibByMovieAndUserId({
+        MovieId: MovieId.MovieId,
+        userId: Auth.userName,
+      }).then((res: any) => { BumpDataRef.current = res; setBumpData((BumpData) => BumpData = res) }),
       getMoviePoster(MovieId.MovieId)
         .then(
           (res: any) =>
@@ -188,23 +196,42 @@ export default function QuibPlayer({ navigation, route }: props) {
       GetQuibsById(MovieId).then((res: any) => {
         setMovieQuib(res);
         setQuibTimeRef(res.map((res: any) => res.time));
-        let a = res.filter(
+        // Res = a;
+        setRes((Res: any) => (Res = res.filter(
           (item: any) => item.isScreenshot == true
-        );
-        resMap.current = a;
-        setRes((Res: any) => (Res = a))
+        )))
 
-        // Image.getSize(API + resMap.current[1].body, (width, height) => { setState((State: { width: number; height: number; }) => State={ width: width, height: height }) });
+        // Image.getSize(API + Res[1].body, (width, height) => { setState((State: { width: number; height: number; }) => State={ width: width, height: height }) });
       }),
       getMovieLength(MovieId).then((res: any) => {
         setMovieLen(res[0].length);
         length.current = res[0].length;
       }),
-      QuibByMovieAndUserId({
-        MovieId: MovieId.MovieId,
-        userId: Auth.userName,
-      }).then((res: any) => (BumpDataRef.current = res)),
-    ]).then(() => setIsLoading(false));
+    ]).then(() => setIsLoading(false))
+    // .then(() =>
+    //   Image.getSize(`http://3.88.43.237` + Res[1].body, (width, height) => {
+    //     // setStateWidth(StateWidth => StateWidth = width);
+    //     // setStateHeight(StateHeight => StateHeight = height);
+    //     // console.log('width: ', width, ' height: ', height);
+
+    //     if (width / height < 1.8 && width / height > 1.6) {  //is Land
+    //       console.log('valid')
+    //       setITEM_SIZE((ITEM_SIZE) => ITEM_SIZE = (width * 0.38));
+    //       setITEM_SPACING((ITEM_SPACING) => ITEM_SPACING = (width - ITEM_SIZE) / 2);
+    //       return setIsCine(IsCine => IsCine = false);
+
+    //     } else if (width / height < 1.6) {                    // is nothing
+    //       console.log('valid else if')
+    //       setITEM_SIZE((ITEM_SIZE) => ITEM_SIZE = (width * 0.38));
+    //       setITEM_SPACING((ITEM_SPACING) => ITEM_SPACING = (width - ITEM_SIZE) / 2)
+    //       setIsLand(IsLand => IsLand = false);
+    //       return setIsCine(IsCine => IsCine = false);
+    //     } else {                                              // is Cine
+    //       console.log('valid else')
+    //       setIsCine(true);
+    //       return setIsLand(true)
+    //     }
+    //   }));
   }, []);
 
   // movie timer  stopwatch
@@ -452,14 +479,14 @@ export default function QuibPlayer({ navigation, route }: props) {
   };
   //Quib list quibs head in (profile image, name, timestamp and quib)
   const QuibHead = useCallback(
-    ({ hours, mintues, seconds, name, quibId, time, userId, image }: any) => {
-      // console.log(`${API}Images/User32/${image}`);
+    ({ hours, mintues, seconds, name, quibId, time, userId, image, index }: any) => {
       let FS: any;
       if (image != null) {
         FS = image.split('.').pop();
       } else {
         FS = null;
       }
+      // console.log(BumpData.includes(quibId))
       return (
         <View
           style={{
@@ -562,7 +589,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                   Auth.isGuest == true ? setActive(true) : CheckBump(quibId)
                 }>
                 <Icon
-                  name="heart-outline"
+                  name={"heart-outline"}
+                  // name={BumpData[index].id == quibId ? "heart" : "heart-outline"}
                   size={Auth.DeviceType ? vw(4) : vw(5)}
                   color={Style.defaultRed}
                 />
@@ -572,16 +600,16 @@ export default function QuibPlayer({ navigation, route }: props) {
         </View>
       );
     },
-    [movieQuib],
+    [movieQuib, BumpData],
   );
 
   const QuibList = useCallback(
     ({ item, index }: any) => {
       let { hours, mintues, seconds } = getFormattedTime(item.time);
-
+      // console.log(BumpData.includes())
       if (!item.isSeedQuib && !item.isScreenshot) {
         return (
-          <MotiView key={index} style={styles.flatlistContainer}>
+          <View key={index} style={styles.flatlistContainer}>
             <QuibHead
               time={item.time}
               hours={hours}
@@ -592,6 +620,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               name={item.displayName}
               quibId={item.id}
               userId={item.newUserId}
+              index={index}
             />
             <View style={[styles.flatlistComps]}>
               <Text
@@ -603,11 +632,11 @@ export default function QuibPlayer({ navigation, route }: props) {
                 {item.body}
               </Text>
             </View>
-          </MotiView>
+          </View>
         );
       } else if (item.isSeedQuib == true && !item.isScreenshot) {
         return (
-          <MotiView
+          <View
             key={index}
             style={[
               ...[styles.flatlistContainer],
@@ -623,6 +652,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               name={item.displayName}
               quibId={item.id}
               userId={item.newUserId}
+              index={index}
             />
             <View style={[styles.flatlistComps]}>
               <Text
@@ -634,11 +664,11 @@ export default function QuibPlayer({ navigation, route }: props) {
                 {item.body}
               </Text>
             </View>
-          </MotiView>
+          </View>
         );
       } else {
         return (
-          <MotiView key={index} style={styles.flatlistContainer}>
+          <View key={index} style={styles.flatlistContainer}>
             <QuibHead
               time={item.time}
               hours={hours}
@@ -648,6 +678,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               image={null}
               name={null}
               quibId={item.id}
+              index={index}
             />
             <View style={styles.flatlistComps}>
               <FastImage
@@ -660,7 +691,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                 style={{ width: vw(65), height: vw(25) }}
               />
             </View>
-          </MotiView>
+          </View>
         );
       }
     },
@@ -712,123 +743,41 @@ export default function QuibPlayer({ navigation, route }: props) {
       </DropShadow>
     );
   };
-  const Flash = useCallback(() => {
-    const [IsLand, setIsLand] = useState(true);
-    const [IsCine, setIsCine] = useState(true);
-    const [ITEM_SIZE, setITEM_SIZE] = useState(width * 0.38);
-    const [ITEM_SPACING, setITEM_SPACING] = useState((width - ITEM_SIZE) / 2)
-
-    console.log('width ', StateWidth, 'height ', StateHeight);
-    const scrollY = useRef(new Animated.Value(0)).current;
-    // const ITEM_SIZE = vw(100) * 0.38;
-    // const ITEM_SPACING = (vw(100) - ITEM_SIZE);
-    // return (
-    //   <View
-    //     style={{
-    //       width: vw(90),
-    //       height: vw(60),
-    //       justifyContent: 'flex-start',
-    //       backgroundColor: 'transparent',
-    //       alignSelf: 'center',
-    //       flexGrow: 0
-    //     }}>
-    //     <FlashList
-    //       snapToInterval={vw(60)}
-    //       // snapToAlingment
-    //       // decelerationRate={'fast'}
-    //       onViewableItemsChanged={onViewableItemsChanged}
-    //       showsHorizontalScrollIndicator={false}
-    //       data={resMap.current}
-    //       bounces={false}
-    //       renderItem={({ item, index }) => {
-    //         const inputRange = [vw(60) * (index - 1), vw(60) * index, vw(60) * (index + 1)];
-    //         const outputRange1 = [0.4, 1, 0.4];
-    //         const outputRange2 = [-50, 0, 50];
-    //         const scale = scrollY.interpolate({
-    //           inputRange,
-    //           outputRange: outputRange1,
-    //           extrapolate: 'clamp',
-    //         });
-    //         const translateY = scrollY.interpolate({
-    //           inputRange,
-    //           outputRange: outputRange2,
-    //           extrapolate: 'clamp',
-    //         });
-    //         const opacity = scale;
-    //         return (
-    //           <Animated.View style={{ marginVertical: vw(3), opacity, transform: [{ translateY }, { scale }] }}>
-    //             <QuibCarousel
-    //               item={item}
-    //               index={index}
-    //               handlePresentModalPress={HandlePress}
-    //               isGuest={Auth.isGuest}
-    //               setActive={setActive}
-    //               MovieId={MovieId.MovieId}
-    //               userId={Auth.userName}
-    //               device={Auth.DeviceType}
-    //             />
-    //           </Animated.View>
-    //         )
-    //       }}
-    //       // pagingEnabled
-    //       ListEmptyComponent={Skeleton}
-    //       showsVerticalScrollIndicator={false}
-    //       keyExtractor={(_, index) => index.toString()}
-    //       initialScrollIndex={ScurbIndexCarRef.current}
-    //       ref={QuibCarRef}
-    //       snapToAlignment="center"
-    //       estimatedItemSize={vw(90)}
-    //       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-    //         useNativeDriver: false,
-    //       })}
-    //     />
-    //   </View>
-    // );
-    const scrollX = React.useRef(new Animated.Value(0)).current;
-    useEffect(() => {
-      Promise.all([Image.getSize(`http://3.88.43.237` + resMap.current[1].body, (width, height) => { setStateWidth(StateWidth => StateWidth = width); setStateHeight(StateHeight => StateHeight = height) })
-        .then(() => {
-          if (StateWidth / StateHeight < 1.8 && StateWidth / StateHeight > 1.6) {
-            setIsCine(false);
-          } else if (StateWidth / StateHeight < 1.6) {
-            setITEM_SIZE((ITEM_SIZE) => ITEM_SIZE = (width * 0.45));
-            setITEM_SPACING((ITEM_SPACING) => ITEM_SPACING = (width - ITEM_SIZE) / 2)
-            setIsLand(false);
-            setIsCine(false);
-          } else {
-
-            setIsCine(true);
-            setIsLand(true)
-          }
-        })])
-    }, []);
-
+  const Flash = useCallback(({ scrollX, scrollY, ITEM_SPACING, ITEM_SIZE, IsCine, IsLand }: any) => {
     return (
-      <View style={styles.container}>
+      <View style={[...[styles.container], { position: 'absolute' }]}>
         <View
           style={{
-            height: vh(80),
+            height: ITEM_SIZE * 3,
             justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
             // top: height / 3,
-            flex: 1,
+            // flex: 1,
           }}>
           <AnimatedFlashList
-            data={resMap.current}
+            data={Res}
+            ref={QuibCarRef}
+            // onViewableItemsChanged={onViewableItemsChanged}
             showsVerticalScrollIndicator={false}
-            // keyExtractor={item => item.toString()}
+            ListEmptyComponent={Skeleton}
             keyExtractor={(_, index) => index.toString()}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollX } } }],
-              { useNativeDriver: true }
+              { useNativeDriver: false }
             )}
             bounces={false}
-            style={{ flex: 1 }}
+            // style={{ flex: 1 }}
             contentContainerStyle={{
               paddingVertical: ITEM_SPACING,
               paddingHorizontal: ITEM_SPACING,
             }}
+            estimatedItemSize={ITEM_SIZE * 6.5}
+            viewabilityConfig={{
+              viewAreaCoveragePercentThreshold: 10
+            }}
+            onViewableItemsChanged={onViewableItemsChanged}
+            initialScrollIndex={ScurbIndexCarRef.current}
             snapToInterval={ITEM_SIZE}
             decelerationRate={'fast'}
             renderItem={({ item, index }) => {
@@ -848,10 +797,12 @@ export default function QuibPlayer({ navigation, route }: props) {
               return (
                 <Animated.View
                   style={{
-                    flex: 1,
+                    // flex: 1,
                     // width: ITEM_SIZE,
+                    height: ITEM_SIZE,
                     justifyContent: 'center',
                     alignItems: 'center',
+                    // alignSelf:'center',
                     opacity,
                     transform: [{ scale }],
                   }}>
@@ -877,20 +828,42 @@ export default function QuibPlayer({ navigation, route }: props) {
         </View>
       </View>
     );
-  }, [resMap.current]);
+  }, [Res]);
 
   //-========================
-  const CarouselPress = () => {
+  const CarouselPress = useCallback(() => {
+
     if (isVisble == false) {
       CarouselOnRef.current = true;
-      setIsVisble(!isVisble);
+      setIsVisble(true);
     } else {
       CarouselOnRef.current = false;
-      setIsVisble(!isVisble);
+      setIsVisble(false);
     }
-  };
+
+  }, [isVisble]);
 
   const QuibCarouselModal = useCallback(() => {
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const scrollX = React.useRef(new Animated.Value(0)).current;
+
+
+    // useEffect(() => {
+    //   Promise.all([Image.getSize(`http://3.88.43.237` + Res[1].body, (width, height) => { setStateWidth(StateWidth => StateWidth = width); setStateHeight(StateHeight => StateHeight = height) })
+    //     .then(() => {
+    //       if (StateWidth / StateHeight < 1.8 && StateWidth / StateHeight > 1.6) {
+    //         setIsCine(false);
+    //       } else if (StateWidth / StateHeight < 1.6) {
+    //         setITEM_SIZE((ITEM_SIZE) => ITEM_SIZE = (width * 0.45));
+    //         setITEM_SPACING((ITEM_SPACING) => ITEM_SPACING = (width - ITEM_SIZE) / 2)
+    //         setIsLand(false);
+    //         setIsCine(false);
+    //       } else {
+    //         setIsCine(true);
+    //         setIsLand(true)
+    //       }
+    //     })])
+    // }, [Res]);
     return (
       <Modal
         isVisible={isVisble}
@@ -904,7 +877,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               flex: 1,
               marginLeft: vw(-10),
               marginRight: vw(-10),
-              backgroundColor: 'rgba(0,0,0,0.8)',
+              backgroundColor: 'rgba(0,0,0,1)',
             }}></View>
         }
         onBackdropPress={() => setIsVisble(false)}
@@ -914,11 +887,12 @@ export default function QuibPlayer({ navigation, route }: props) {
         statusBarTranslucent={true}
         deviceHeight={deviceHeight}
         deviceWidth={deviceWidth}
-        style={{ flex: 1, justifyContent: 'flex-start', marginTop: StatusBar.currentHeight }}>
-        <Flash />
+        style={{ flex: 1, alignItems: "center", marginTop: StatusBar.currentHeight }}>
+        <Flash scrollX={scrollX} scrollY={scrollY} ITEM_SPACING={ITEM_SPACING} ITEM_SIZE={ITEM_SIZE} IsCine={IsCine} IsLand={IsLand} />
       </Modal>
     );
-  }, [isVisble]);
+  }, [Res]);
+
 
   // ======== LOFIN MODAL==========
   const LoginModal = useCallback(() => {
@@ -1032,16 +1006,11 @@ export default function QuibPlayer({ navigation, route }: props) {
   }, [true]);
 
   const onViewableItemsChanged = ({ viewableItems, changed }: any) => {
-    // console.log('rendered ', viewableItems[0].item.time)
     if (viewableItems[0]?.item.time == undefined) {
       return null;
     } else {
-      console.log('rendered ', viewableItems[0]?.item.time);
       setQuibTime(QuibTime => (QuibTime = viewableItems[0]?.item.time));
     }
-    // setQuibTime(QuibTime => QuibTime =QuibTimeRef[viewableItems[0].index])
-    // console.log(`Visible items are ${viewableItems[0].index}`);
-    // console.log("Changed in this iteration", changed);
   };
 
 
@@ -1088,26 +1057,27 @@ export default function QuibPlayer({ navigation, route }: props) {
                 maximumTrackTintColor={Style.defaultTxtColor}
                 style={{ width: vh(50), height: vw(15), borderRadius: vw(2), transform: [{ rotate: '90deg' }] }}
                 step={1}
-                tapToSeek={true}
+                // tapToSeek={true}
                 value={QuibTime}
                 onSlidingStart={() => {
-                  // isActive.current = false;
-                  // isSync.current = false;
+                  isActive.current = false;
+                  isSync.current = false;
                   setIsVisble(true);
+                  // CarouselOnRef.current = true;
                 }}
                 onValueChange={value => {
                   value = Array.isArray(value) ? value[0] : value;
-                  if (resMap.current.length != 0) {
-                    const Reduce = resMap.current.reduce(
-                      (accumulator, current) => {
+                  if (Res.length != 0) {
+                    const Reduce = Res.reduce(
+                      (accumulator: { time: number; }, current: { time: number; }) => {
                         // const val = Array.isArray(value) ? value[0] : value;
                         return Math.abs(current.time - value) <
                           Math.abs(accumulator.time - value)
                           ? current
                           : accumulator;
                       },);
-                    ScurbIndexCarRef.current = resMap.current.findIndex(
-                      (item, index) => {
+                    ScurbIndexCarRef.current = Res.findIndex(
+                      (item: { time: any; }, index: any) => {
                         if (item.time == Reduce.time) {
                           // quibScrubIndexRef.current = index;
                           return index;
@@ -1120,7 +1090,6 @@ export default function QuibPlayer({ navigation, route }: props) {
                         offset: 0,
                       });
                     } else {
-                      toggle;
                       QuibCarRef.current?.scrollToIndex({
                         animated: true,
                         index: ScurbIndexCarRef.current,
@@ -1129,24 +1098,21 @@ export default function QuibPlayer({ navigation, route }: props) {
                   }
                 }}
                 onSlidingComplete={value => {
-                  // isActive.current = !isActive.current;
-                  setIsVisble(false);
                   value = Array.isArray(value) ? value[0] : value;
                   setQuibTime(value);
                   if (movieQuib.length != 0) {
                     const Reduce = movieQuib.reduce((accumulator, current) => {
-                      // const val = Array.isArray(value) ? value[0] : value;
                       return Math.abs(current.time - value) <
                         Math.abs(accumulator.time - value)
                         ? current
                         : accumulator;
                     });
-                    const ScurbIndex = movieQuib.findIndex((item, index) => {
+                    ScurbCompleteIndex.current = movieQuib.findIndex((item, index) => {
                       if (item.time == Reduce.time) {
                         return index;
                       }
                     });
-                    if (ScurbIndex < 0) {
+                    if (ScurbCompleteIndex.current < 0) {
                       flatRef.current?.scrollToOffset({
                         animated: true,
                         offset: 0,
@@ -1155,7 +1121,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                       toggle;
                       flatRef.current?.scrollToIndex({
                         animated: true,
-                        index: ScurbIndex,
+                        index: ScurbCompleteIndex.current,
                       });
                     }
                   }
@@ -1213,10 +1179,10 @@ export default function QuibPlayer({ navigation, route }: props) {
                   // transition={{
                   //   type: 'timing'
                   // }}
-                  name='slideshow' size={vw(8)} color={Style.defaultRed} style={{ paddingVertical: vw(2), borderRadius: vw(8) }} />
+                  name='slideshow' size={vw(7)} color={Style.defaultRed} style={{ paddingVertical: vw(2), borderRadius: vw(7) }} />
               </TouchableOpacity>
               <AnimatedIcon
-                name='repeat' size={vw(8)} color={Style.defaultRed} style={{ paddingVertical: vw(2), }} />
+                name='repeat' size={vw(7)} color={Style.defaultRed} style={{ paddingVertical: vw(2), }} />
             </View>
           </LinearGradient>
         </MotiView>
@@ -1322,7 +1288,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                   <PageHeader
                     leftNode={
                       <View>
-                        <TouchableOpacity onPress={CarouselPress}>
+                        <TouchableOpacity >
                           <FastImage
                             style={{
                               alignSelf: 'center',

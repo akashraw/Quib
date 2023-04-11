@@ -594,8 +594,7 @@ export default function QuibPlayer({ navigation, route }: props) {
               setActive={setActive}
               MovieId={MovieId.MovieId}
               userId={Auth.userName}
-              device={Auth.DeviceType}
-            />
+              device={Auth.DeviceType} ItemHeight={0} ItemSpace={0} isLand={false} isCine={false}            />
           )}
           ListEmptyComponent={Skeleton}
           showsVerticalScrollIndicator={false}
@@ -854,7 +853,7 @@ export default function QuibPlayer({ navigation, route }: props) {
             <LinearGradient
               colors={['#00000020', Style.quibHeaderGrad, '#000000']}
               style={{ flex: 1, width: vw(100), backgroundColor: '#00000000' }}>
-              <View style={styles.quibScrubber}>
+              <View style={[...[styles.quibScrubber], {height:vh(21)}]}>
                 <View
                   style={{
                     alignItems: 'center',

@@ -41,7 +41,7 @@ export const quibPlayerStyles = StyleSheet.create({
     flatlistContainer: {
         // height:vw(60),
         flex:1,
-        backgroundColor:'rgba( 248, 251, 248, .9)',
+        // backgroundColor:'rgba( 248, 251, 248, .9)',
         width: vw(75),
         justifyContent: 'center',
         alignItems: 'center',
