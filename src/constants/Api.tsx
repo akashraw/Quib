@@ -1,4 +1,4 @@
-export const API = 'http:///44.211.90.48/';
+export const API = 'http://44.211.90.48/';
 export const GetAllMoviesAPI = `${API}Movies`;
 export const LoginAPI = `${API}api/User/Login`;
 export const RecentQuibMovieAPI = `${API}RecentMovies`;
