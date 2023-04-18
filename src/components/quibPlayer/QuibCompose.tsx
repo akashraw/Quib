@@ -142,7 +142,7 @@ function QuibCompose({
       }
     };
     function TimeModal() {
-      const [quibTime, setQuibTime] = useState(initialQuibTime);
+      const [quibTime, setQuibTime] = useState({ hours: hours, minutes: mintues, seconds: seconds });
 
       return (
         <Modal
@@ -184,7 +184,7 @@ function QuibCompose({
     return (
       <View>
         <TimeModal />
-        <TouchableOpacity onPress={toggleModal}>
+        <TouchableOpacity onPress={() => setModalVisible(!isModalVisible)}>
           <View style={styles.button}>
             <Text style={styles.buttonTxt}>
               {hours < 10 ? `0${hours}` : `${hours}`}:
@@ -465,7 +465,7 @@ function QuibCompose({
                 <View
                   style={[
                     ...[quibPlayerStyles.timer],
-                    { width: vw(15), height: vw(4.2) },
+                    { width: vw(18), height: vw(4.5) },
                   ]}>
                   <Text
                     style={{
@@ -553,7 +553,7 @@ function QuibCompose({
                       ...[styles.button],
                       device
                         ? { width: vw(28), height: vw(5), borderRadius: vw(7), }
-                        : { width: vw(32), height: vw(6), borderRadius: vw(8), },
+                        : { width: vw(30), height: vw(6.5), borderRadius: vw(8), },
                     ]}>
                     {/* <Divider orientation="vertical" color="white" /> */}
                     <View
@@ -568,7 +568,7 @@ function QuibCompose({
                         size={device ? vw(3) : vw(5)}
                         color={'white'}
                       />
-                      <Text style={{ fontWeight: '500', color: 'white', fontSize: vw(3.1) }}> Unpost</Text>
+                      <Text style={{ fontWeight: '500', color: 'white', fontSize: vw(3.2) }}> Unpost</Text>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -597,7 +597,7 @@ function QuibCompose({
                 <View
                   style={[
                     ...[quibPlayerStyles.timer],
-                    { width: vw(15), height: vw(4.2), marginBottom: vw(1) },
+                    { width: vw(18), height: vw(4.5), marginBottom: vw(1) },
                   ]}>
                   <Text
                     style={{
@@ -669,7 +669,7 @@ function QuibCompose({
                     ...[styles.button],
                     device
                       ? { width: vw(28), height: vw(5), borderRadius: vw(7) }
-                      : { width: vw(32), height: vw(6), borderRadius: vw(8) },
+                      : { width: vw(34), height: vw(6.5), borderRadius: vw(8) },
                   ]}>
                   <TouchableOpacity
                     activeOpacity={0.4}
@@ -687,7 +687,7 @@ function QuibCompose({
                       }}>
                       <IonIcon
                         name={Trash ? 'trash' : 'trash-outline'}
-                        size={device ? vw(3) : vw(4)}
+                        size={device ? vw(3) : vw(4.2)}
                         color={'white'}
                       />
                     </View>
@@ -738,13 +738,13 @@ function QuibCompose({
                       {isSave ? (
                         <IonIcon
                           name={Save ? 'save' : 'save-outline'}
-                          size={device ? vw(3) : vw(4)}
+                          size={device ? vw(3) : vw(4.2)}
                           color={'white'}
                         />
                       ) : (
                         <Icon
                           name={Pencil ? 'pencil' : 'pencil-outline'}
-                          size={device ? vw(3) : vw(4)}
+                          size={device ? vw(3) : vw(4.2)}
                           color={'white'}
                         />
                       )}

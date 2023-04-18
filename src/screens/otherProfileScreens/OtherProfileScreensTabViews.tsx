@@ -484,8 +484,18 @@ const style = StyleSheet.create({
     borderRadius: vw(2),
   },
   viewStyle: {
+    width: vw(28),
+    height: vw(40),
+    borderColor: '#fff',
+    borderRadius: vw(2)
   },
   txtStyle: {
+    bottom: 0,
+    fontSize: vw(3),
+    // fontFamily: 'Roboto',
+    // textAlign: 'center',
+    color: '#ffffff',
+    backgroundColor: 'transparent',
   }
 });
 const stylesTab = StyleSheet.create({
@@ -536,7 +546,7 @@ const stylesTab = StyleSheet.create({
     width: vw(6.5),
   },
   label: {
-    fontSize: vw(3),
+    fontSize: vw(3.6),
     marginTop: vw(1),
     backgroundColor: 'transparent',
     fontWeight: 'bold',
@@ -576,7 +586,7 @@ const stylesTab = StyleSheet.create({
   },
   buttonTxt: {
     textAlign: 'center',
-    fontSize: vw(3.6),
+    fontSize: vw(3),
     color: '#fff',
     fontWeight: '500',
   },
