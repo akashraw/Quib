@@ -78,7 +78,7 @@ export const style = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
-    width: vw(75),
+    width: vw(85),
     alignSelf: 'center',
     flex: 1,
     justifyContent: 'center',
@@ -234,7 +234,7 @@ export const stylesTab = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
-    width: vw(75),
+    width: vw(85),
     flex: 1,
     alignSelf: 'center',
     justifyContent: 'center',

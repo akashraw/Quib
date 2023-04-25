@@ -67,7 +67,7 @@ export default function ProfileEditScreen(props: props) {
             method: 'POST',
             headers: {
                 'Accept': 'text/plain',
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'application/form-data'
             },
             body: data,
         }
@@ -203,7 +203,8 @@ const style = StyleSheet.create({
         alignItems: 'center',
         paddingLeft: vw(4),
         fontSize: vw(4.1),
-        color: Style.defaultTxtColor
+        color: Style.defaultTxtColor,
+        flex:1,
     },
     inputTxtBio:{
         flex:1, 

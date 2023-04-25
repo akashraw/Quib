@@ -382,21 +382,22 @@ function QuibCompose({
         PostQuibAPI,
         headerOptions,
       );
-      if (response.status == 200) {
-        return QuibByMovieAndUserId({ MovieId, userId })
-          .then((res: any) => {
-            setFlatData(res.filter((item: any) => item.newUserId == userId));
-          })
-          .then(() =>
-            Toast.show({
-              visibilityTime: 3000,
-              autoHide: true,
-              type: 'success',
-              text1: 'Quib Posted',
-              text2: 'Quib is successfully posted.',
-            }),
-          );
-      }
+      // if (response.status == 200) {
+      //   return QuibByMovieAndUserId({ MovieId, userId })
+      //     .then((res: any) => {
+      //       setFlatData(res.filter((item: any) => item.newUserId == userId));
+      //     })
+      //     .then(() =>
+      //       Toast.show({
+      //         visibilityTime: 3000,
+      //         autoHide: true,
+      //         type: 'success',
+      //         text1: 'Quib Posted',
+      //         text2: 'Quib is successfully posted.',
+      //       }),
+      //     );
+      // }
+      return response
     } catch (error) {
       console.log('AddQuib API error: ' + error);
     }
@@ -442,6 +443,7 @@ function QuibCompose({
     const [Plane, setPlane] = useState(false);
     const [Save, setSave] = useState(false);
     const [isSave, setIsSave] = useState(false);
+    const [NowPosted, setNowPosted] = useState<boolean>(item.isPosted)
     if (item.isPosted == true && item.isScreenshot == false)
       return (
         <View style={{ width: vw(100) }} key={index}>
@@ -656,131 +658,199 @@ function QuibCompose({
                   </Text>
                 </View>
               )}
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  paddingHorizontal: vw(0),
-                }}>
-
-                {/* new button */}
+              {NowPosted ?
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    paddingHorizontal: vw(0),
+                  }}>
+                  {/* <TouchableOpacity
+                activeOpacity={0.4}
+                disabled={false}
+                onPress={() =>
+                  deleteBump({
+                    id: item.id,
+                    movieId: item.movieId,
+                    index: index,
+                  })
+                }>
                 <View
                   style={[
                     ...[styles.button],
-                    device
-                      ? { width: vw(28), height: vw(5), borderRadius: vw(7) }
-                      : { width: vw(34), height: vw(6.5), borderRadius: vw(8) },
+                    { width: vw(16), height: vw(6) },
                   ]}>
+                  <Text style={[...[styles.buttonTxt], { fontSize: vw(3.5) }]}>
+                    Delete
+                  </Text>
+                </View>
+              </TouchableOpacity> */}
                   <TouchableOpacity
                     activeOpacity={0.4}
                     disabled={false}
                     onPress={() => {
-                      setTrash(Trash => (Trash = !Trash));
-                      deletePost({ id: item.id, index });
-                    }}>
-                    <View
-                      style={{
-                        width: vw(10),
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: vw(6),
-                      }}>
-                      <IonIcon
-                        name={Trash ? 'trash' : 'trash-outline'}
-                        size={device ? vw(3) : vw(4.2)}
-                        color={'white'}
-                      />
-                    </View>
-                  </TouchableOpacity>
-
-                  <Divider orientation="vertical" color="white" />
-
-                  <TouchableOpacity
-                    activeOpacity={0.4}
-                    disabled={false}
-                    onPress={() => {
-                      if (isSave) {
-                        UnPost({
-                          body: Edit,
-                          quibId: item.id,
-                          time: item.time
-                        }).then((res) => {
-                          if (res?.status == 200) {
-                            setPencil(Pencil => (Pencil = !Pencil));
-                            setIsSave(!isSave);
-                            setIsEdit(!isEdit);
-                            return QuibByMovieAndUserId({ MovieId, userId })
-                              .then((res: any) => {
-                                setFlatData(res.filter((item: any) => item.newUserId == userId));
-                              })
-                          }
-                        }).then(() =>
-                          Toast.show({
-                            visibilityTime: 3000,
-                            autoHide: true,
-                            type: 'success',
-                            text1: 'Quib Updated',
-                            text2: 'Quib is successfully Updated.',
-                          }),
-                        );
-                      } else {
-                        setPencil(Pencil => (Pencil = !Pencil));
-                        setIsEdit(!isEdit);
-                      }
-                    }}>
-                    <View
-                      style={{
-                        width: vw(10),
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: vw(6),
-                      }}>
-                      {isSave ? (
-                        <IonIcon
-                          name={Save ? 'save' : 'save-outline'}
-                          size={device ? vw(3) : vw(4.2)}
-                          color={'white'}
-                        />
-                      ) : (
-                        <Icon
-                          name={Pencil ? 'pencil' : 'pencil-outline'}
-                          size={device ? vw(3) : vw(4.2)}
-                          color={'white'}
-                        />
-                      )}
-                    </View>
-                  </TouchableOpacity>
-
-                  <Divider orientation="vertical" color="white" />
-
-                  <TouchableOpacity
-                    activeOpacity={0.4}
-                    disabled={false}
-                    onPress={() =>
-                      Post({
-                        quibId: item.id,
+                      UnPost({
                         body: item.body,
-                        time: item.time,
+                        quibId: item.id,
+                        time: item.time
+                      }).then((res) => {
+                        if (res?.status == 200) {
+                          return setNowPosted((NowPosted) => NowPosted = false)
+                        }
                       })
-                    }>
+                    }}
+                  >
                     <View
-                      style={{
-                        width: vw(10),
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: vw(6),
-                      }}>
-                      <IonIcon
-                        name={Plane ? 'paper-plane' : 'paper-plane-outline'}
-                        size={device ? vw(3) : vw(4)}
-                        color={'white'}
-                      />
+                      style={[
+                        ...[styles.button],
+                        device
+                          ? { width: vw(28), height: vw(5), borderRadius: vw(7), }
+                          : { width: vw(30), height: vw(6.5), borderRadius: vw(8), },
+                      ]}>
+                      {/* <Divider orientation="vertical" color="white" /> */}
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          flexDirection: 'row',
+                          // flex:1,
+                        }}>
+                        <Icon
+                          name={'cancel'}
+                          size={device ? vw(3) : vw(5)}
+                          color={'white'}
+                        />
+                        <Text style={{ fontWeight: '500', color: 'white', fontSize: vw(3.2) }}> Unpost</Text>
+                      </View>
                     </View>
                   </TouchableOpacity>
                 </View>
+                :
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    paddingHorizontal: vw(0),
+                  }}>
 
-                {/*  */}
-              </View>
+                  {/* new button */}
+                  <View
+                    style={[
+                      ...[styles.button],
+                      device
+                        ? { width: vw(28), height: vw(5), borderRadius: vw(7) }
+                        : { width: vw(34), height: vw(6.5), borderRadius: vw(8) },
+                    ]}>
+                    <TouchableOpacity
+                      activeOpacity={0.4}
+                      disabled={false}
+                      onPress={() => {
+                        setTrash(Trash => (Trash = !Trash));
+                        deletePost({ id: item.id, index });
+                      }}>
+                      <View
+                        style={{
+                          width: vw(10),
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          height: vw(6),
+                        }}>
+                        <IonIcon
+                          name={Trash ? 'trash' : 'trash-outline'}
+                          size={device ? vw(3) : vw(4.2)}
+                          color={'white'}
+                        />
+                      </View>
+                    </TouchableOpacity>
+
+                    <Divider orientation="vertical" color="white" />
+
+                    <TouchableOpacity
+                      activeOpacity={0.4}
+                      disabled={false}
+                      onPress={() => {
+                        if (isSave) {
+                          UnPost({
+                            body: Edit,
+                            quibId: item.id,
+                            time: item.time
+                          }).then((res) => {
+                            if (res?.status == 200) {
+                              setPencil(Pencil => (Pencil = !Pencil));
+                              setIsSave(!isSave);
+                              setIsEdit(!isEdit);
+                              return QuibByMovieAndUserId({ MovieId, userId })
+                                .then((res: any) => {
+                                  setFlatData(res.filter((item: any) => item.newUserId == userId));
+                                })
+                            }
+                          }).then(() =>
+                            Toast.show({
+                              visibilityTime: 3000,
+                              autoHide: true,
+                              type: 'success',
+                              text1: 'Quib Updated',
+                              text2: 'Quib is successfully Updated.',
+                            }),
+                          );
+                        } else {
+                          setPencil(Pencil => (Pencil = !Pencil));
+                          setIsEdit(!isEdit);
+                        }
+                      }}>
+                      <View
+                        style={{
+                          width: vw(10),
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          height: vw(6),
+                        }}>
+                        {isSave ? (
+                          <IonIcon
+                            name={Save ? 'save' : 'save-outline'}
+                            size={device ? vw(3) : vw(4.2)}
+                            color={'white'}
+                          />
+                        ) : (
+                          <Icon
+                            name={Pencil ? 'pencil' : 'pencil-outline'}
+                            size={device ? vw(3) : vw(4.2)}
+                            color={'white'}
+                          />
+                        )}
+                      </View>
+                    </TouchableOpacity>
+
+                    <Divider orientation="vertical" color="white" />
+
+                    <TouchableOpacity
+                      activeOpacity={0.4}
+                      disabled={false}
+                      onPress={() =>
+                        Post({
+                          quibId: item.id,
+                          body: item.body,
+                          time: item.time,
+                        })
+                      }>
+                      <View
+                        style={{
+                          width: vw(10),
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          height: vw(6),
+                        }}>
+                        <IonIcon
+                          name={Plane ? 'paper-plane' : 'paper-plane-outline'}
+                          size={device ? vw(3) : vw(4)}
+                          color={'white'}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/*  */}
+                </View>}
             </View>
           </DropShadow >
         </View >
