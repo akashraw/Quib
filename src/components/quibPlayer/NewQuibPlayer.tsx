@@ -1387,15 +1387,6 @@ export default function QuibPlayer({ navigation, route }: props) {
                             justifyContent: 'center',
                             alignContent: 'center',
                           }}>
-                          <TouchableOpacity
-                            activeOpacity={0.5}
-                            onPress={DecSecond}>
-                            <Icon
-                              name="minus-circle-outline"
-                              size={Auth.DeviceType ? vw(6) : vw(9.1)}
-                              color={Style.defaultRed}
-                            />
-                          </TouchableOpacity>
                           <View>
                             <TouchableOpacity
                               activeOpacity={0.5}
@@ -1419,7 +1410,16 @@ export default function QuibPlayer({ navigation, route }: props) {
                                 </Text>
                               </View>
                             </TouchableOpacity>
-                            <View style={{justifyContent:'center', alignItems:'center'}}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection:'row', alignSelf:'center' }}>
+                              <TouchableOpacity
+                                activeOpacity={0.5}
+                                onPress={DecSecond}>
+                                <Icon
+                                  name="minus-circle-outline"
+                                  size={Auth.DeviceType ? vw(6) : vw(7)}
+                                  color={Style.defaultRed}
+                                />
+                              </TouchableOpacity>
                               <TouchableOpacity
                                 hitSlop={{
                                   top: vw(2),
@@ -1427,19 +1427,19 @@ export default function QuibPlayer({ navigation, route }: props) {
                                   left: vw(4),
                                   right: vw(4)
                                 }} onPress={SyncQuibTime} disabled={Sync}>
-                                <AnimatedIcon name='repeat' size={vw(7)} color={Sync ? Style.defaultGrey : Style.defaultRed} style={{ paddingVertical: vw(.8), }} />
+                                <AnimatedIcon name='repeat' size={Auth.DeviceType ? vw(6) : vw(9.1)} color={Sync ? Style.defaultGrey : Style.defaultRed} style={{ paddingVertical: vw(.8), paddingHorizontal:vw(3) }} />
                               </TouchableOpacity>
+                              <TouchableOpacity
+                                activeOpacity={0.5}
+                                onPress={IncSecond}>
+                                <Icon
+                                  name="plus-circle-outline"
+                                  size={Auth.DeviceType ? vw(6) : vw(7)}
+                                  color={Style.defaultRed}
+                                />
+                                </TouchableOpacity>
                             </View>
                           </View>
-                          <TouchableOpacity
-                            activeOpacity={0.5}
-                            onPress={IncSecond}>
-                            <Icon
-                              name="plus-circle-outline"
-                              size={Auth.DeviceType ? vw(6) : vw(9.1)}
-                              color={Style.defaultRed}
-                            />
-                          </TouchableOpacity>
                         </View>
 
                       </View>
