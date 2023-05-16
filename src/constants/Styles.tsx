@@ -12,5 +12,6 @@ export const Style={
     defaultGrey:'#3C4048',
     defaultLightGrey:'#73777B',
     quibBackColor: '#E0DECA',
-    quibPlayerCardBack: '#EEEEEE'
+    quibPlayerCardBack: '#EEEEEE',
+    quibBlue:"#386890"
 }

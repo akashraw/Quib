@@ -1125,12 +1125,12 @@ function QuibCompose({
         flex: 1,
         alignItems: 'center',
         paddingTop: vw(0),
-        backgroundColor: Style.quibBackColor,
+        backgroundColor: Style.defaultRed,
       }}>
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Text
           style={{
-            color: Style.defaultTxtColor,
+            color: 'white',
             fontSize: device ? vw(4) : vw(5.1),
             fontWeight: '500',
             paddingBottom: vw(1),

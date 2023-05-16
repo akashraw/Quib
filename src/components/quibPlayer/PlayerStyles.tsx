@@ -66,19 +66,19 @@ export const style = StyleSheet.create({
   flatlistComps: {
     flex: 1,
     paddingVertical: vw(2),
-    marginVertical: vw(1.5),
+    // marginVertical: vw(1.5),
   },
   flatlistContainer: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 4,
+    // },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 4.65,
 
-    elevation: 8,
-    width: vw(85),
+    // elevation: 8,
+    width: vw(90),
     alignSelf: 'center',
     flex: 1,
     justifyContent: 'center',
@@ -89,7 +89,8 @@ export const style = StyleSheet.create({
     // borderColor: Style.borderColor,
     paddingVertical: vw(0),
     paddingHorizontal: vw(3),
-    marginVertical: vw(4),
+    marginVertical: vw(2),
+    marginRight:vw(3),
   },
   loadingActivity: {
     zIndex: 2,
@@ -222,19 +223,19 @@ export const stylesTab = StyleSheet.create({
   flatlistComps: {
     flex: 1,
     paddingVertical: vw(2),
-    marginVertical: vw(1),
+    // marginVertical: vw(1),
   },
   flatlistContainer: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 4,
+    // },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 4.65,
 
-    elevation: 8,
-    width: vw(85),
+    // elevation: 8,
+    width: vw(90),
     flex: 1,
     alignSelf: 'center',
     justifyContent: 'center',
@@ -246,6 +247,7 @@ export const stylesTab = StyleSheet.create({
     paddingVertical: vw(0),
     paddingHorizontal: vw(3),
     marginVertical: vw(4),
+    marginRight:vw(5),
   },
   loadingActivity: {
     zIndex: 2,
