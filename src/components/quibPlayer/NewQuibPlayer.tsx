@@ -89,7 +89,7 @@ export default function QuibPlayer({ navigation, route }: props) {
   const [Res, setRes] = useState<any>([]);
   const QuibScurbCarRef = useRef<Slider>(null);
   // const isQuibMove = useRef<boolean>(); //used for dualSync
-  const [AllSync, setAllSync] = useState<boolean>(true)
+  const [AllSync, setAllSync] = useState<boolean>(false)
   const [Active, setActive] = useState(false);
   const [MovieLen, setMovieLen] = useState<number>(0);
   const length = useRef<number>(0);
@@ -142,6 +142,23 @@ export default function QuibPlayer({ navigation, route }: props) {
   const [IsCine, setIsCine] = useState(true);
   const [FlatTouch, setFlatTouch] = useState<boolean>(true);
   const TouchRef = React.useRef<boolean>(false);
+  const AllSyncRef = useRef<boolean>(true)
+  const onViewableItemsChangedMain = ({ viewableItems, changed }: any) => {
+
+    if (TouchRef.current == true) {
+      if (viewableItems[0]?.item.time == undefined) {
+        return null;
+      } else if (AllSyncRef.current == true) {
+        console.log(`AllSyncRef ==> ${AllSyncRef.current}`)
+        setMovieTime(viewableItems[0]?.item.time)
+        setQuibTime(viewableItems[0]?.item.time);
+      } else {
+        console.log(`AllSyncRef ==> ${AllSyncRef.current}`)
+        setQuibTime(viewableItems[0]?.item.time)
+      }
+    }
+  }
+
   const BlurState = useDynamicAnimation(() => {
     return {
       scale: 1,
@@ -513,31 +530,33 @@ export default function QuibPlayer({ navigation, route }: props) {
   const SyncQuibTime = () => {
     // isMovieMove.current = false; //used for dualSync
     // isQuibMove.current = false;
-    if (AllSync == false) {
-      setSync(true);
-      setQuibTime(Time => (Time = MovieTime));
-      const Reduce = movieQuib.reduce((accumulator, current) => {
+    setSync(true);
+    setQuibTime(Time => (Time = MovieTime));
+    const Reduce = movieQuib.reduce(
+      (accumulator, current) => {
         return Math.abs(current.time - MovieTime) <
           Math.abs(accumulator.time - MovieTime)
           ? current
           : accumulator;
-      });
-      let Scurb: number = movieQuib.findIndex((item, index) => {
+      },
+    );
+    let Scurb: number = movieQuib.findIndex(
+      (item, index) => {
         if (item.time == Reduce.time) {
           return index;
         }
+      },
+    );
+    if (Scurb < 0) {
+      flatRef.current?.scrollToOffset({
+        animated: true,
+        offset: 0,
       });
-      if (Scurb < 0) {
-        flatRef.current?.scrollToOffset({
-          animated: true,
-          offset: 0,
-        });
-      } else {
-        flatRef.current?.scrollToIndex({
-          animated: true,
-          index: Scurb,
-        });
-      }
+    } else {
+      flatRef.current?.scrollToIndex({
+        animated: true,
+        index: Scurb,
+      });
     }
   };
   //used for dualSync
@@ -1128,24 +1147,16 @@ export default function QuibPlayer({ navigation, route }: props) {
     );
   }, [true]);
 
-  const onViewableItemsChangedMain = ({ viewableItems, changed }: any) => {
-      if (TouchRef.current == true) {
-        if (viewableItems[0]?.item.time == undefined) {
-          return null;
-        } else {
-          setMovieTime(viewableItems[0]?.item.time)
-          setQuibTime(viewableItems[0]?.item.time);
-        }
-      }
-  };
+
   const onViewableItemsChangedMainNotSync = ({ viewableItems, changed }: any) => {
-      if (TouchRef.current == true) {
-        if (viewableItems[0]?.item.time == undefined) {
-          return null;
-        } else {
-          setQuibTime(viewableItems[0]?.item.time);
-        }
+    console.log(AllSync + ' AllSync')
+    if (TouchRef.current == true) {
+      if (viewableItems[0]?.item.time == undefined) {
+        return null;
+      } else {
+        setQuibTime(viewableItems[0]?.item.time);
       }
+    }
   };
   const onViewableItemsChanged = ({ viewableItems, changed }: any) => {
     if (TouchRef.current == true) {
@@ -1422,7 +1433,8 @@ export default function QuibPlayer({ navigation, route }: props) {
                 viewabilityConfig={{
                   viewAreaCoveragePercentThreshold: 10,
                 }}
-                onViewableItemsChanged={AllSync? onViewableItemsChangedMain : onViewableItemsChangedMainNotSync}
+                // viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+                onViewableItemsChanged={AllSyncRef.current ? onViewableItemsChangedMain : onViewableItemsChangedMainNotSync}
                 ref={flatRef}
                 estimatedItemSize={vh(15)}
                 contentContainerStyle={{ paddingHorizontal: vw(0) }}
@@ -1551,7 +1563,7 @@ export default function QuibPlayer({ navigation, route }: props) {
                           }}>
                           <TouchableOpacity
                             activeOpacity={0.5}
-                            onLongPress={() => setAllSync(!AllSync)}>
+                            onLongPress={() => { setAllSync(!AllSync); AllSyncRef.current = !AllSyncRef.current }}>
                             {
                               AllSync ?
                                 <Icon
