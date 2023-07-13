@@ -84,7 +84,7 @@ export default function RegisterScreen(props: props) {
     }
 
     const Register = async (formData: any) => {
-        var data = new FormData();
+        let data = new FormData();
         let pathParts: string;
         if (Img.path == undefined) {
             // pathParts = Img.path.split('/');
@@ -283,14 +283,6 @@ export default function RegisterScreen(props: props) {
                                     value: true,
                                     message: 'First name is required!'
                                 },
-                                // pattern:{
-                                //     value:,
-                                //     message:,
-                                // },
-                                // minLength: {
-                                //     value: 8,
-                                //     message: ' Password is too short ',
-                                // }
                             }}
                         />
                     </View>
@@ -309,7 +301,6 @@ export default function RegisterScreen(props: props) {
                                     placeholderTextColor={Color}
                                     onBlur={onBlur}
                                     onChangeText={value => onChange(value)}
-                                    // onChangeText={(text) => setEmail(text)}
                                     style={styles.inputTxt}
                                 />
                             )}
@@ -319,14 +310,6 @@ export default function RegisterScreen(props: props) {
                                     value: true,
                                     message: 'Last Name is required!'
                                 },
-                                // pattern:{
-                                //     value:,
-                                //     message:,
-                                // },
-                                // minLength: {
-                                //     value: 8,
-                                //     message: ' Password is too short ',
-                                // }
                             }}
                         />
                     </View>
@@ -338,7 +321,7 @@ export default function RegisterScreen(props: props) {
                         <Controller
                             control={control}
                             render={({ field: { onChange, onBlur, value } }) => (
-                                <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flex:1}}>
                                     <TextInput
                                         autoCapitalize='none'
                                         placeholder='Password'

@@ -43,7 +43,6 @@ export default function OtherProfileScreen({ navigation, route }: props) {
         ]).then(() => setIsLoaded(true)).then(() => console.log(User.id))
     }, [IsUserFollowed])
 
-    const check: string = User.avatarBase256ImagePath;
 
     //*********************************************************************************************\\
     async function isUserFollowed(Quib: QuibFollow) {
@@ -148,7 +147,7 @@ export default function OtherProfileScreen({ navigation, route }: props) {
                                         <Shadow distance={5}>
                                         <FastImage
                                             source={{
-                                                uri: (( check.split('.').pop() == 'jpeg' || check.split('.').pop() == 'jpg' || check.split('.').pop() == 'png') ? `${image256API}${check}` : `data:image/png;base64,${User.avatarBase256ImagePath}`),
+                                                uri: (( User.avatarBase256ImagePath.split('.').pop() == 'jpeg' || User.avatarBase256ImagePath.split('.').pop() == 'jpg' || User.avatarBase256ImagePath.split('.').pop() == 'png') ? `${image256API}${User.avatarBase256ImagePath}` : `data:image/png;base64,${User.avatarBase256ImagePath}`),
                                                 priority: FastImage.priority.high,
                                                 cache: FastImage.cacheControl.immutable,
                                             }}

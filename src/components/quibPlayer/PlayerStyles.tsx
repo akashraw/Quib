@@ -1,13 +1,27 @@
-import {StatusBar, StyleSheet} from 'react-native';
-import {vw, vh} from 'rxn-units';
-import {Style} from '../../constants/Styles';
+import { StatusBar, StyleSheet } from 'react-native';
+import { vw, vh } from 'rxn-units';
+import { Style } from '../../constants/Styles';
 
 export const style = StyleSheet.create({
+  sliderDummy: {
+    backgroundColor: '#d3d3d3',
+    width: 300,
+    height: vw(2),
+    borderRadius: 50,
+    position: 'absolute',
+  },
+  sliderReal: {
+    backgroundColor: '#119EC2',
+    width: (100 / 50) * 300,
+    height: vw(2),
+  },
   container: {
     flex: 1,
     // zIndex:1,
+    justifyContent: 'space-around',
     alignItems: 'center',
-    width: vw(96),
+    width: vw(100),
+    flexDirection: 'row',
     paddingTop: StatusBar.currentHeight,
     // overflow: 'hidden',
     // padding: vw(3),
@@ -52,18 +66,18 @@ export const style = StyleSheet.create({
   flatlistComps: {
     flex: 1,
     paddingVertical: vw(2),
-    marginVertical: vw(1.5),
+    // marginVertical: vw(1.5),
   },
   flatlistContainer: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 4,
+    // },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 4.65,
 
-    elevation: 8,
+    // elevation: 8,
     width: vw(90),
     alignSelf: 'center',
     flex: 1,
@@ -75,7 +89,8 @@ export const style = StyleSheet.create({
     // borderColor: Style.borderColor,
     paddingVertical: vw(0),
     paddingHorizontal: vw(3),
-    marginVertical: vw(4),
+    marginVertical: vw(2),
+    marginRight:vw(3),
   },
   loadingActivity: {
     zIndex: 2,
@@ -122,7 +137,7 @@ export const style = StyleSheet.create({
     overflow: 'hidden',
     width: vw(100),
     flexDirection: 'row',
-    height: vh(21),
+    height: vh(10),
     zIndex: 100,
     alignItems: 'center',
     justifyContent: 'center',
@@ -149,11 +164,24 @@ export const stylesTab = StyleSheet.create({
   container: {
     flex: 1,
     // zIndex:1,
-    alignItems: 'center',
-    width: vw(96),
+    flexDirection: 'row',
+    // alignItems: 'center',
+    width: vw(100),
     paddingTop: StatusBar.currentHeight,
     // overflow: 'hidden',
     // padding: vw(3),
+  },
+  sliderDummy: {
+    backgroundColor: '#d3d3d3',
+    width: 300,
+    height: vw(2),
+    borderRadius: 50,
+    position: 'absolute',
+  },
+  sliderReal: {
+    backgroundColor: '#119EC2',
+    width: (400 / 50) * 300,
+    height: vw(2),
   },
   heading: {
     fontSize: vw(5),
@@ -195,18 +223,18 @@ export const stylesTab = StyleSheet.create({
   flatlistComps: {
     flex: 1,
     paddingVertical: vw(2),
-    marginVertical: vw(1),
+    // marginVertical: vw(1),
   },
   flatlistContainer: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 4,
+    // },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 4.65,
 
-    elevation: 8,
+    // elevation: 8,
     width: vw(90),
     flex: 1,
     alignSelf: 'center',
@@ -219,6 +247,7 @@ export const stylesTab = StyleSheet.create({
     paddingVertical: vw(0),
     paddingHorizontal: vw(3),
     marginVertical: vw(4),
+    marginRight:vw(5),
   },
   loadingActivity: {
     zIndex: 2,
@@ -265,7 +294,7 @@ export const stylesTab = StyleSheet.create({
     overflow: 'hidden',
     width: vw(100),
     flexDirection: 'row',
-    height: vh(21),
+    height: vh(10),
     zIndex: 100,
   },
   movieScrub: {

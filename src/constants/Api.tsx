@@ -1,4 +1,4 @@
-export const API = 'http://3.88.43.237/';
+export const API = 'http://44.211.90.48/';
 export const GetAllMoviesAPI = `${API}Movies`;
 export const LoginAPI = `${API}api/User/Login`;
 export const RecentQuibMovieAPI = `${API}RecentMovies`;
@@ -24,4 +24,5 @@ export const isUserFollowedAPI = `${API}api/Community/isUserFollowed`;
 export const UpdateUserAPI = `${API}api/Community/UpdateUser`;
 export const ForgetPasswordAPI = `${API}api/User/ForgetPassword`;
 export const ResetPasswordAPI = `${API}api/User/ResetPassword`;
-export const PostQuibAPI = `${API}api/QuibStream/UpdateQuibPostedDate`
+export const PostQuibAPI = `${API}api/QuibStream/UpdateQuibPostedDate`;
+export const UpdateQuibByIdAPI =`${API}api/QuibStream/UpdateQuibById`;

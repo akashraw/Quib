@@ -1,4 +1,4 @@
-import { addBumpAPI, addQuibAPI, deleteBumpAPI, deleteQuibAPI, FollowUserAPI, GetAllMoviesAPI, getFolloweeByUserIdAPI, getFollowersByUserIdAPI, getMovieByIdAPI, getMovieByUserIdAPI, getMovieLengthAPI, getQuibByMovieAndUserIdAPI, GetQuibsByIdAPI, getUserByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI, UnFollowUserAPI } from "../constants/Api"
+import { addBumpAPI, addQuibAPI, deleteBumpAPI, deleteQuibAPI, FollowUserAPI, GetAllMoviesAPI, getFolloweeByUserIdAPI, getFollowersByUserIdAPI, getMovieByIdAPI, getMovieByUserIdAPI, getMovieLengthAPI, getQuibByMovieAndUserIdAPI, GetQuibsByIdAPI, getUserByIdAPI, MostActiveQuibAPI, MoviePosterByIdAPI, RecentQuibMovieAPI, UnFollowUserAPI, UpdateQuibByIdAPI } from "../constants/Api"
 
 interface props {
     user: string;
@@ -201,7 +201,7 @@ export async function DeleteBump(Bump: BumpProp) {
         },
     }
     try {
-       let res = await fetch(`${deleteBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
+        let res = await fetch(`${deleteBumpAPI}?quibId=${Bump.quibId}&userId=${Bump.userId}&movieId=${Bump.MovieId}`, headerOptions);
         console.log(res)
         // return;
     }
@@ -259,19 +259,28 @@ export async function QuibByMovieAndUserId(Quib: QuibProp) {
 }
 
 export async function AddQuib(Quib: PostQuibProp) {
+    let data = new FormData();
+    data.append('MovieId', Quib.MovieId);
+    data.append('Body', Quib.body);
+    data.append('Time', Quib.time);
+    data.append('UserId', Quib.userId);
+    data.append('isSeedQuib', false);
+    data.append('isSeedQuibType', null);
+
     const headerOptions = {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
-            'Content-type': 'application/json'
+            'Content-Type': 'multipart/form-data',
         },
+        body: data,
     }
-    console.log(Quib.body)
+    // console.log(Quib.body)
     // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
     // console.log(Quib.tim
     try {
         let json;
-        let response = await fetch(`${addQuibAPI}?body=${Quib.body}&UserId=${Quib.userId}&MovieId=${Quib.MovieId}&isSeedQuib=false&isSeedQuibType=null&isScreenShot=false&Time=${Quib.time}`, headerOptions);
+        let response = await fetch(`${addQuibAPI}`, headerOptions);
         json = await response.json();
         console.log(json)
         // return json;
@@ -482,3 +491,37 @@ export async function PostQuib(Quib: PostProp) {
     }
 
 }
+
+//================= UpdateQuibById for Unpost
+
+export const UnPost = async (Quib: PostProp) => {
+    let data = new FormData();
+    data.append('Body', Quib.body);
+    data.append('Time', Quib.time);
+    data.append('Id', Quib.quibId);
+    data.append('isEnabled', true);
+    data.append('isPosted', false);
+    const headerOptions = {
+        method: 'PUT',
+        headers: {
+            'Accept': 'text/plain',
+            'Content-type': 'multipart/form-data'
+        },
+        body: data,
+    }
+    // console.log(Quib.body)
+    // Quib.userId = 'a5a17ac9-d977-41b7-811c-05c4a6f62c4c';
+    // console.log(Quib.tim
+    try {
+        // let json;
+        let response = await fetch(UpdateQuibByIdAPI, headerOptions);
+        // json = await response.json();
+        // console.log(json)
+        return response;
+    }
+    catch (error) {
+        console.log('Unpost API error: ' + error);
+
+    }
+}
+

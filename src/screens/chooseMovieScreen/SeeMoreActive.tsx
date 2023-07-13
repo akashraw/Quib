@@ -6,10 +6,11 @@ import FastImage from 'react-native-fast-image'
 import { API } from '../../constants/Api'
 import { Style } from '../../constants/Styles'
 import { useNavigation } from '@react-navigation/native'
+import { Slider } from '@rneui/themed'
 
 export default function SeeMoreRecent(route: any) {
     const Data = route.route.params.Data;
-    const Device =  route.route.params.Auth;
+    const Device = route.route.params.Auth;
     const navigation = useNavigation();
     const MovieBanner = useCallback(({ item, index }: any) => {
         const check: string = item.posterContentThumb;
@@ -23,7 +24,7 @@ export default function SeeMoreRecent(route: any) {
                         <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                             {/* <Shadow distance={1} style={{ borderRadius: vw(2) }} > */}
                             <FastImage
-                                style={{ width: vw(15), height: vw(20), marginRight: vw(2), borderRadius: vw(1), marginVertical:vw(2)}}
+                                style={{ width: vw(15), height: vw(20), marginRight: vw(2), borderRadius: vw(1), marginVertical: vw(2) }}
                                 // resizeMode={FastImage.resizeMode.contain}
                                 source={{
                                     uri: ((FS == 'jpeg' || FS == 'jpg') ? `${API}${item.posterContentThumb}` : `data:image/png;base64,${item.posterContentThumb}`),
@@ -56,8 +57,8 @@ export default function SeeMoreRecent(route: any) {
 
     }, [Data])
     return (
-            <View style={{ alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(100) }}>
-                <FlatList
+        <View style={{ alignItems: 'center', backgroundColor: Style.quibBackColor, height: vh(100) }}>
+            <FlatList
                     showsVerticalScrollIndicator={false}
                     style={{ width: vw(100) }}
                     showsHorizontalScrollIndicator={false}
@@ -66,7 +67,7 @@ export default function SeeMoreRecent(route: any) {
                     ListEmptyComponent={() => <SkeletonHorizontal />}
                 // estimatedItemSize={vw(40)}
                 />
-            </View>
+        </View>
     )
 }
 

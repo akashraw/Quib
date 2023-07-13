@@ -49,11 +49,15 @@ export default function ChooseMovies(props: props) {
   LogBox.ignoreLogs(['FlashList']);
 
   useEffect(() => {
+    const Abort = new AbortController();
     Promise.all([
-      getAllMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { setallMovieRes(res)} }),
+      getAllMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { setallMovieRes(res) } }),
       getRecentMovies().then(res => { if (res === undefined) { return isRecentMovieWorking.current = false } else { return setRecentMovies(res) } }),
       getMostActiveMovies().then(res => { if (res === undefined) { return isActiveMovieWorking.current = false } else { return setActiveMovies(res) } }),
     ])
+    return () => {
+      Abort.abort();
+    }
   }, []);
 
   //=============================Login Modal=========================================================\\
@@ -161,7 +165,7 @@ export default function ChooseMovies(props: props) {
       </View>
     )
 
-  },[allMovieRes])
+  }, [allMovieRes])
 
   const SectionHeading = (section: any) => {
     if (!section.sort) {
@@ -181,7 +185,7 @@ export default function ChooseMovies(props: props) {
               ListEmptyComponent={() => <SkeletonHorizontal />}
             // estimatedItemSize={vw(40)}
             />
-            <TouchableOpacity onPress={() => props.navigation.navigate('SeeMostActive', { Data: section.data, Auth:Auth.DeviceType })} >
+            <TouchableOpacity onPress={() => props.navigation.navigate('SeeMostActive', { Data: section.data, Auth: Auth.DeviceType })} >
               <Text style={{ color: Style.defaultRed, fontSize: vw(2.5), fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
             </TouchableOpacity>
           </View>
@@ -201,7 +205,7 @@ export default function ChooseMovies(props: props) {
             ListEmptyComponent={() => <SkeletonHorizontal />}
           // estimatedItemSize={vw(40)}
           />
-          <TouchableOpacity onPress={() => props.navigation.navigate('SeeRecent', { Data: section.data, Auth:Auth.DeviceType})} >
+          <TouchableOpacity onPress={() => props.navigation.navigate('SeeRecent', { Data: section.data, Auth: Auth.DeviceType })} >
             <Text style={{ color: Style.defaultRed, fontSize: vw(2.5), fontWeight: 'bold', alignSelf: 'flex-end', flex: 1, right: vw(4), marginBottom: vw(2) }}>see more</Text>
           </TouchableOpacity>
         </View>
@@ -231,11 +235,11 @@ export default function ChooseMovies(props: props) {
 
     return (
       <TouchableOpacity onPress={() => props.navigation.navigate("Qplayer", { MovieId: item.id, Movietitle: item.title })}>
-        <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director} 
-        viewStyle={Auth.DeviceType ? styles.viewStyle : styles.viewStyle} 
-        textStyle={Auth.DeviceType ? styles.txtStyle : styles.txtStyle} 
-        linearGradStyle={undefined} 
-        imgSrc={item.posterContentThumb} />
+        <MovieCard key={index} title={item.title} year={item.releaseYear} director={item.director}
+          viewStyle={Auth.DeviceType ? styles.viewStyle : styles.viewStyle}
+          textStyle={Auth.DeviceType ? styles.txtStyle : styles.txtStyle}
+          linearGradStyle={undefined}
+          imgSrc={item.posterContentThumb} />
       </TouchableOpacity>
 
     )
@@ -246,7 +250,7 @@ export default function ChooseMovies(props: props) {
       if (Auth.isGuest == true) {
         const sect: any[] = [
           // { title: 'All Movies', sort: true, data: allMovieRes, renderItem: ({ item, index }: any) => <MovieBanner item={item} index={index} /> },
-          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: () =>  null },
+          { title: 'All Movies', sort: true, data: allMovieRes, renderItem: () => null },
         ]
         return sect;
       }
@@ -357,11 +361,11 @@ const styles = StyleSheet.create({
     borderRadius: vw(2)
   },
   txtStyle: {
-      bottom: 0,
-      fontSize: vw(3),
-      // fontFamily: 'Roboto',
-      // textAlign: 'center',
-      color: '#ffffff',
-      backgroundColor: 'transparent',
+    bottom: 0,
+    fontSize: vw(3),
+    // fontFamily: 'Roboto',
+    // textAlign: 'center',
+    color: '#ffffff',
+    backgroundColor: 'transparent',
   }
 })

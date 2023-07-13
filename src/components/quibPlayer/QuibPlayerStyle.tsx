@@ -4,6 +4,18 @@ import { Style } from "../../constants/Styles";
 import React from "react";
 
 export const quibPlayerStyles = StyleSheet.create({
+    sliderDummy: {
+        backgroundColor: '#d3d3d3',
+        width: 300,
+        height:30,
+        borderRadius: 50,
+        position: 'absolute',                
+    },
+    sliderReal: {
+        backgroundColor: '#119EC2',
+        width: (400/50) * 300,
+        height:30,
+    },
     quibHead:{
         flex:1,
         flexDirection:"row",
@@ -19,23 +31,26 @@ export const quibPlayerStyles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    flatlistComps: {
-        paddingVertical: vw(0),
+    flatlistComps: { 
+        // flex: 1,
+        // paddingVertical: vw(2),
+        marginVertical: vw(1),
+        // backgroundColor:'rgba( 248, 251, 248, .9)',
+
     },
     flatlistContainer: {
-        // backgroundColor:'transparent',
-        // backgroundColor:'#fff',
-        backgroundColor:'rgba( 248, 251, 248, .9)',
-        height: vw(60),
-        width: vw(90),
+        // height:vw(60),
+        flex:1,
+        // backgroundColor:'rgba( 248, 251, 248, .9)',
+        width: vw(75),
         justifyContent: 'center',
         alignItems: 'center',
-        // borderWidth: 1,
         borderRadius:vw(2),
         borderColor: '#E6E6E6',
-        paddingVertical: vw(2),
-        paddingHorizontal: vw(2),
-        // marginVertical: vw(3),
+        // paddingVertical: vw(2),
+        // paddingHorizontal: vw(2),
+        alignSelf:"center",
+        
     },
    
 })

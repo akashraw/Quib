@@ -233,6 +233,7 @@ const style = StyleSheet.create({
     paddingTop: vw(2)
   },
   inputField: {
+    flex:1,
     marginVertical: vw(2),
     borderWidth: 1,
     borderColor: '#5555',
@@ -246,7 +247,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: vw(4),
     fontSize: vw(4),
-    // flex: 1,
+    flex: 1,
     // paddingBottom: -2,
     // paddingTop: 20,
     color: Style.defaultTxtColor
@@ -311,6 +312,7 @@ const stylesTab = StyleSheet.create({
     marginTop: vw(0),
   },
   inputField: {
+    flex:1,
     marginVertical: vw(1.5),
     borderWidth: 1,
     borderColor: '#5555',
